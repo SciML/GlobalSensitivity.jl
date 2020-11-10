@@ -1,4 +1,4 @@
-using DiffEqSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq
+using GlobalSensitivityAnalysis, QuasiMonteCarlo, Test, OrdinaryDiffEq
 
 function ishi_batch(X)
     A= 7

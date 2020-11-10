@@ -1,0 +1,18 @@
+# Documentation: http://docs.travis-ci.com/user/languages/julia/
+language: julia
+# avoid duplicate tests in PRs
+branches:
+  only:
+    - master
+os:
+  - linux
+  # - osx
+julia:
+  - 1
+#  - nightly
+notifications:
+  email: false
+jobs:
+  allow_failures:
+    - julia: nightly
+  fast_finish: true

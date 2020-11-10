@@ -1,4 +1,4 @@
-using DiffEqSensitivity, Test, OrdinaryDiffEq
+using GlobalSensitivityAnalysis, Test, OrdinaryDiffEq
 
 @info "Morris Method"
 

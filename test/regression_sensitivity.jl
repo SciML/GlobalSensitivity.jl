@@ -1,4 +1,4 @@
-using DiffEqSensitivity, QuasiMonteCarlo, Test
+using GlobalSensitivityAnalysis, QuasiMonteCarlo, Test
 
 function linear_batch(X)
     A= 7

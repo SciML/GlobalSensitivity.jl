@@ -1,4 +1,4 @@
-using Test, DiffEqSensitivity, Distributions
+using GlobalSensitivityAnalysis, Test, Distributions
 
 samples = 2000000
 
