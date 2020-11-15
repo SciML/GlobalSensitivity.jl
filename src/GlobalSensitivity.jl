@@ -1,4 +1,4 @@
-module GlobalSensitivityAnalysis
+module GlobalSensitivity
 
 using Statistics, RecursiveArrayTools, LinearAlgebra
 using QuasiMonteCarlo, ForwardDiff

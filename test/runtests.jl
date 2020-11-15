@@ -1,4 +1,4 @@
-using GlobalSensitivityAnalysis, SafeTestsets
+using GlobalSensitivity, SafeTestsets
 using Test
 
 const GROUP = get(ENV, "GROUP", "All")

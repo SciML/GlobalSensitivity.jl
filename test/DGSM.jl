@@ -1,4 +1,4 @@
-using GlobalSensitivityAnalysis, Test, Distributions
+using GlobalSensitivity, Test, Distributions
 
 samples = 2000000
 
