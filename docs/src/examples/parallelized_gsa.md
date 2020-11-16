@@ -1,4 +1,4 @@
-#Parallelized GSA Example
+# Parallelized GSA Example
 
 In all of the previous examples, `f(p)` was calculated serially. However, we can parallelize our computations
 by using the batch interface. In the batch interface, each column `p[:,i]` is a set of parameters, and we output
