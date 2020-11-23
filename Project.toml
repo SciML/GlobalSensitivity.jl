@@ -21,6 +21,7 @@ Parameters = "0.12"
 QuasiMonteCarlo = "0.2"
 RecursiveArrayTools = "2.7"
 Statistics = "1.4"
+julia = "1.5"
 
 [extras]
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
