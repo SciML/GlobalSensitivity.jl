@@ -8,7 +8,7 @@ struct eFASTResult{T1}
     total_order::T1
 end
 
-function gsa(f,method::eFAST,p_range::AbstractVector;n::Int=1000,batch=false, distributed::Val{SHARED_ARRAY} = Val(false), kwargs...) where {SHARED_ARRAY}
+function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), kwargs...) where {SHARED_ARRAY}
     @unpack num_harmonics = method
     num_params = length(p_range)
     omega = [ (n-1) ÷ (2*num_harmonics) ]
