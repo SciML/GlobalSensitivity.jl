@@ -12,10 +12,8 @@ makedocs(
 
     pages=[
         "GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)" => "index.md",
-        "Examples" => Any[
-          "examples/l_k_global.md",
-          "examples/design_matrices.md",
-          "examples/parallelized_gsa.md"
+        "Tutorials" => Any[
+          "tutorials/parallelized_gsa.md",
         ],
         "Methods" => Any[
           "methods/morris.md",
