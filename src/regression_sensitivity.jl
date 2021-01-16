@@ -17,7 +17,7 @@ and a measure of the correlation of linear models of the
 - `rank::Bool = false`: Flag determining whether to also run a rank regression analysis
 """
 struct RegressionGSA <: GSAMethod
-    rank::Bool = false
+    rank::Bool
 end
 
 RegressionGSA(;rank::Bool = false) = RegressionGSA(rank)
