@@ -16,9 +16,11 @@ and a measure of the correlation of linear models of the
 # Arguments
 - `rank::Bool = false`: Flag determining whether to also run a rank regression analysis
 """
-@with_kw mutable struct RegressionGSA <: GSAMethod
-    rank::Bool = false
+struct RegressionGSA <: GSAMethod
+    rank::Bool
 end
+
+RegressionGSA(;rank::Bool = false) = RegressionGSA(rank)
 
 struct RegressionGSAResult{T, TR}
     pearson::T

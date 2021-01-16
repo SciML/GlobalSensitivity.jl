@@ -1,10 +1,13 @@
-@with_kw mutable struct Morris <: GSAMethod
-    p_steps::Array{Int,1}=Int[]
-    relative_scale::Bool=false
-    num_trajectory::Int=10
-    total_num_trajectory::Int=5*num_trajectory
-    len_design_mat::Int=10
+struct Morris <: GSAMethod
+    p_steps::Array{Int,1}
+    relative_scale::Bool
+    num_trajectory::Int
+    total_num_trajectory::Int
+    len_design_mat::Int
 end
+
+Morris(;p_steps::Array{Int,1}=Int[], relative_scale::Bool=false, num_trajectory::Int=10, 
+total_num_trajectory::Int=5*num_trajectory, len_design_mat::Int=10) = Morris(p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat)
 
 struct MatSpread{T1,T2}
     mat::T1

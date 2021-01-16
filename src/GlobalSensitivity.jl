@@ -2,7 +2,7 @@ module GlobalSensitivity
 
 using Statistics, RecursiveArrayTools, LinearAlgebra
 using QuasiMonteCarlo, ForwardDiff
-using Parameters: @unpack, @with_kw
+using Parameters: @unpack
 using FFTW, Distributions
 
 abstract type GSAMethod end
