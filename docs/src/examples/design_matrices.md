@@ -6,6 +6,7 @@ we use [QuasiMonteCarlo.jl](https://github.com/SciML/QuasiMonteCarlo.jl) to gene
 as follows:
 
 ```julia
+using GlobalSensitivity, QuasiMonteCarlo, Plots
 N = 10000
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
@@ -13,7 +14,7 @@ sampler = SobolSample()
 A,B = QuasiMonteCarlo.generate_design_matrices(N,lb,ub,sampler)
 ```
 
-and now we tell it to calculate the Sobol indices on these designs:
+and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka Volterra example:
 
 ```julia
 sobol_result = gsa(f1,Sobol(),A,B)
