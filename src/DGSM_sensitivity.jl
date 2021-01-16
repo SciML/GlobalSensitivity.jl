@@ -1,6 +1,8 @@
-@with_kw struct DGSM <: GSAMethod
-    crossed::Bool = false
+struct DGSM <: GSAMethod
+    crossed::Bool 
 end
+
+DGSM(;crossed::Bool = false) = DGSM(crossed)
 
 mutable struct DGSMResult{T}
     a::Array{T,1}

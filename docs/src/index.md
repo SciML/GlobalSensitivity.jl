@@ -1,9 +1,9 @@
 # Global Sensitivity Analysis
 
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
-output of a model w.r.t. the parameters, their individual contributions, or the
-contribution of their interactions. The GSA interface allows for utilizing batched
-functions for parallel computation of GSA quantities.
+output of a model w.r.t. the parameters. These methods allow practitioners to 
+measure both parameter's individual contributions and the contribution of their interactions
+to the output uncertainity. 
 
 ## Installation
 
@@ -44,3 +44,5 @@ from [QuasiMonteCarlo.jl](https://github.com/JuliaDiffEq/QuasiMonteCarlo.jl) can
 matrices.
 
 The descriptions of the available methods can be found in the Methods section.
+The GSA interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel 
+computation of GSA results.

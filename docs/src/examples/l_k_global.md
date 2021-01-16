@@ -63,3 +63,4 @@ For the Sobol method, we can similarly do:
 
 ```julia
 m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],N=1000)
+```

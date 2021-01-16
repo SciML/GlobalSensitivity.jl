@@ -1,5 +1,11 @@
 # Regression Method
 
+```julia
+struct RegressionGSA <: GSAMethod
+    rank::Bool = false
+end
+```
+
 `RegressionGSA` has the following keyword arguments:
 
 - `rank`: flag which determines whether to calculate the rank coefficients. Defaults to `false`.
@@ -46,3 +52,30 @@ linear model where ``X_j`` is absent. PCC measures the sensitivity of ``Y`` to
 ``X_j`` when the effects of the other inputs have been canceled.
 
 If `rank` is set to `true`, then the rank coefficients are also calculated.
+
+### API
+
+`function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, batch::Bool = false, kwargs...)`
+
+### Example
+
+```julia
+using GlobalSensitivity
+
+function linear_batch(X)
+    A= 7
+    B= 0.1
+    @. A*X[1,:]+B*X[2,:]
+end
+function linear(X)
+    A= 7
+    B= 0.1
+    A*X[1]+B*X[2]
+end
+
+p_range = [[-1, 1], [-1, 1]]
+reg = gsa(linear_batch, RegressionGSA(), p_range; batch = true)
+
+reg = gsa(linear, RegressionGSA(), p_range; batch = false)
+reg = gsa(linear, RegressionGSA(true), p_range; batch = false) #with rank coefficients
+```

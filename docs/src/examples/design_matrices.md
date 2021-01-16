@@ -2,7 +2,7 @@
 
 For the Sobol Method, we can have more control over the sampled points by generating design matrices.
 Doing it in this manner lets us directly specify a quasi-Monte Carlo sampling method for the parameter space. Here
-we use [QuasiMonteCarlo.jl](https://github.com/JuliaDiffEq/QuasiMonteCarlo.jl) to generate the design matrices
+we use [QuasiMonteCarlo.jl](https://github.com/SciML/QuasiMonteCarlo.jl) to generate the design matrices
 as follows:
 
 ```julia

@@ -1,5 +1,4 @@
-# @with_kw
-mutable struct Sobol <: GSAMethod
+struct Sobol <: GSAMethod
     order::Vector{Int}
     nboot::Int
     conf_int::Float64
