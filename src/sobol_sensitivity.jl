@@ -1,9 +1,9 @@
 struct Sobol <: GSAMethod
     order::Vector{Int}
     nboot::Int
-    conf_int::Float64
+    conf_level::Float64
 end
-Sobol(; order = [0, 1], nboot = 1, conf_int = 0.95) = Sobol(order, nboot, conf_int)
+Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95) = Sobol(order, nboot, conf_level)
       
 mutable struct SobolResult{T1, T2, T3, T4}
     S1::T1
@@ -132,7 +132,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
         ST = [[Tᵢ[i] for Tᵢ in Tᵢs] for i in 1:length(Tᵢs[1])]
 
         function calc_ci(x,mean=nothing)
-            alpha = (1 - method.conf_int)
+            alpha = (1 - method.conf_level)
             std(x,mean=mean)/sqrt(length(x))
         end
         S1_CI = map(calc_ci,S1)
