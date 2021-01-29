@@ -8,7 +8,7 @@ struct eFASTResult{T1}
     total_order::T1
 end
 
-function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), kwargs...) where {SHARED_ARRAY}
+function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
     @unpack num_harmonics = method
     num_params = length(p_range)
     omega = [ (n-1) ÷ (2*num_harmonics) ]
@@ -36,7 +36,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
             omega_temp[k] = omega[k]
         end
         l = (i-1)*n+1:i*n
-        phi = 2rand()
+        phi = 2rand(rng)
         for j in 1:num_params
             ps[j,l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]), 0.5 .+ (1/pi) .* (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
         end

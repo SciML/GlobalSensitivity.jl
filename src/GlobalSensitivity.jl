@@ -1,6 +1,6 @@
 module GlobalSensitivity
 
-using Statistics, RecursiveArrayTools, LinearAlgebra
+using Statistics, RecursiveArrayTools, LinearAlgebra, Random
 using QuasiMonteCarlo, ForwardDiff
 using Parameters: @unpack
 using FFTW, Distributions
