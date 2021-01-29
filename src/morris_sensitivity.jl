@@ -21,14 +21,14 @@ struct MorrisResult{T1,T2}
     elementary_effects::T2
 end
 
-function generate_design_matrix(p_range,p_steps;len_design_mat = 10)
+function generate_design_matrix(p_range, p_steps, rng;len_design_mat = 10)
     ps = [range(p_range[i][1], stop=p_range[i][2], length=p_steps[i]) for i in 1:length(p_range)]
-    indices = [rand(1:i) for i in p_steps]
+    indices = [rand(rng, 1:i) for i in p_steps]
     all_idxs = Vector{typeof(indices)}(undef,len_design_mat)
 
     for i in 1:len_design_mat
-        j = rand(1:length(p_range))
-        indices[j] += (rand() < 0.5 ? -1 : 1)
+        j = rand(rng, 1:length(p_range))
+        indices[j] += (rand(rng) < 0.5 ? -1 : 1)
         if indices[j] > p_steps[j]
             indices[j] -= 2
         elseif indices[j] < 1.0
@@ -53,13 +53,13 @@ function calculate_spread(matrix)
     spread
 end
 
-function sample_matrices(p_range,p_steps;num_trajectory=10,total_num_trajectory=5*num_trajectory,len_design_mat=10)
+function sample_matrices(p_range,p_steps, rng;num_trajectory=10,total_num_trajectory=5*num_trajectory,len_design_mat=10)
     matrix_array = []
     if total_num_trajectory<num_trajectory
         error("total_num_trajectory should be greater than num_trajectory preferably atleast 3-4 times higher")
     end
     for i in 1:total_num_trajectory
-        mat = generate_design_matrix(p_range,p_steps;len_design_mat = len_design_mat)
+        mat = generate_design_matrix(p_range, p_steps, rng;len_design_mat = len_design_mat)
         spread = calculate_spread(mat)
         push!(matrix_array,MatSpread(mat,spread))
     end
@@ -68,7 +68,7 @@ function sample_matrices(p_range,p_steps;num_trajectory=10,total_num_trajectory=
     reduce(hcat,matrices)
 end
 
-function gsa(f, method::Morris, p_range::AbstractVector; batch=false, kwargs...)
+function gsa(f, method::Morris, p_range::AbstractVector; batch=false, rng::AbstractRNG = Random.default_rng(), kwargs...)
     @unpack p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat  = method
     if !(length(p_steps) == length(p_range))
         for i in 1:length(p_range)-length(p_steps)
@@ -76,7 +76,7 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch=false, kwargs...)
         end
     end
 
-    design_matrices = sample_matrices(p_range,p_steps;num_trajectory=num_trajectory,
+    design_matrices = sample_matrices(p_range, p_steps, rng;num_trajectory=num_trajectory,
                                         total_num_trajectory=total_num_trajectory,len_design_mat=len_design_mat)
 
     multioutput = false
