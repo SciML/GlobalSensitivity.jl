@@ -33,45 +33,39 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     # Iterate over each class
     weighted_class_seps = zeros(length(class_cutoffs)-1)
     for j in 1:length(class_cutoffs)-1
-
-            # get X and Y indicies for samples that are in this class (where
-            # class designation is based on the X value)
-            condition(x) = (x > class_cutoffs[j]) ==  (x <= class_cutoffs[j+1])
-            in_class_indices = findall(condition, x_rank)
-            number_in_class = length(in_class_indices)
-
-            # Get the the subset of Y values in this class
-            in_class_Y = Y[in_class_indices]
-
-            if length(in_class_Y) == 0
-                    continue
-            end
-
-            # get the separation between the total y pdf and the condition y pdf induced by this class
-            fyc = pdf(kde(in_class_Y), Ygrid) # eq 23.2 - Estimated conditional distribution of y (using normal kernel)
-            pdf_diff = abs.(fy .- fyc) # eq 24
-
-            # Use trapezoidal rule to estimate the difference between the curves.
-            class_separation = trapz(Ygrid, pdf_diff) # eq 25
-
-            # Increment estimator
-            weighted_class_seps[j] = number_in_class * class_separation # eq 26
+        # get X and Y indicies for samples that are in this class (where
+        # class designation is based on the X value)
+        condition(x) = (x > class_cutoffs[j]) ==  (x <= class_cutoffs[j+1])
+        in_class_indices = findall(condition, x_rank)
+        number_in_class = length(in_class_indices)
+        # Get the the subset of Y values in this class
+        in_class_Y = Y[in_class_indices]
+        if length(in_class_Y) == 0
+                continue
+        end
+        # get the separation between the total y pdf and the condition y pdf induced by this class
+        fyc = pdf(kde(in_class_Y), Ygrid) # eq 23.2 - Estimated conditional distribution of y (using normal kernel)
+        pdf_diff = abs.(fy .- fyc) # eq 24
+        # Use trapezoidal rule to estimate the difference between the curves.
+        class_separation = trapz(Ygrid, pdf_diff) # eq 25
+        # Increment estimator
+        weighted_class_seps[j] = number_in_class * class_separation # eq 26
     end
 
     d_hat = sum(weighted_class_seps)/(2*N)
     return d_hat
 end
 
-function gsa(f, method::Delta, p_range; N, batch = false, rng = default_rng(), kwargs...)
+function gsa(f, method::Delta, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing
-            exp = (2 / (7 + tanh((1500 - N) / 500)))
-            M = Integer(round(min(Integer(ceil(N^exp)), 48))) # Number of classes
+        exp = (2 / (7 + tanh((1500 - N) / 500)))
+        M = Integer(round(min(Integer(ceil(N^exp)), 48))) # Number of classes
     else
-            M = num_classes
+        M = num_classes
     end
     class_cutoffs =  range(0, N, length=M+1) # class cutoffs.
 
