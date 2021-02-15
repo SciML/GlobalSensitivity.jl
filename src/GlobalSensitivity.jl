@@ -16,6 +16,6 @@ include("delta_sensitivity.jl")
 
 
 export Sobol, Morris, gsa,
-       SensitivityAlg, RegressionGSA, DGSM, eFAST, Delta
+       SensitivityAlg, RegressionGSA, DGSM, eFAST, DeltaMoment
 
 end # module

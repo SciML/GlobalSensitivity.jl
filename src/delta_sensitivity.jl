@@ -1,10 +1,10 @@
-struct Delta{T} <: GSAMethod
+struct DeltaMoment{T} <: GSAMethod
     nboot::Int
     conf_level::Float64
     Ygrid_length::Int
     num_classes::T
 end
-Delta(;nboot=500, conf_level=0.95, Ygrid_length=2048, num_classes=nothing) = Delta(nboot, conf_level, Ygrid_length, num_classes)
+DeltaMoment(;nboot=500, conf_level=0.95, Ygrid_length=2048, num_classes=nothing) = DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
 
 struct DeltaResult{T}
     deltas::T
@@ -56,7 +56,7 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     return d_hat
 end
 
-function gsa(f, method::Delta, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
+function gsa(f, method::DeltaMoment, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
@@ -73,7 +73,7 @@ function gsa(f, method::Delta, p_range; N, batch = false, rng::AbstractRNG = Ran
         Y = f(X)
         multioutput = Y isa AbstractMatrix
         if multioutput
-            throw(ArgumentError("Delta sensitivity only supports scalar output functions"))
+            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
         end
     else
         Y = [f(X[:, j]) for j in axes(X, 2)]
@@ -84,7 +84,7 @@ function gsa(f, method::Delta, p_range; N, batch = false, rng::AbstractRNG = Ran
             desol = true
         end
         if multioutput
-            throw(ArgumentError("Delta sensitivity only supports scalar output functions"))
+            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
         end
     end
 
