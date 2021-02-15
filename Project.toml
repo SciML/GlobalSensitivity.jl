@@ -21,10 +21,13 @@ Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 Distributions = "0.23, 0.24"
 FFTW = "1.2"
 ForwardDiff = "0.10"
+KernelDensity = "0.6"
 Parameters = "0.12"
 QuasiMonteCarlo = "0.2"
 RecursiveArrayTools = "2.7"
 Statistics = "1.4"
+StatsBase = "0.33"
+Trapz = "2"
 julia = "1"
 
 [extras]
