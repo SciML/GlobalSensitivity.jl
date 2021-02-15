@@ -25,6 +25,7 @@ Parameters = "0.12"
 QuasiMonteCarlo = "0.2"
 RecursiveArrayTools = "2.7"
 Statistics = "1.4"
+Trapz = "2.0"
 julia = "1"
 
 [extras]
