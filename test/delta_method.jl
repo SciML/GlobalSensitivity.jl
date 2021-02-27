@@ -1,4 +1,4 @@
-using GlobalSensitivity, Test, OrdinaryDiffEq
+using GlobalSensitivity, Test
 
 function ishi(X)
     A= 7

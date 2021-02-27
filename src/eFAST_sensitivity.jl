@@ -4,8 +4,8 @@ end
 eFAST(; num_harmonics::Int=4) = eFAST(num_harmonics)
 
 struct eFASTResult{T1}
-    first_order::T1
-    total_order::T1
+    S1::T1
+    ST::T1
 end
 
 function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}

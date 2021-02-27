@@ -13,9 +13,10 @@ include("regression_sensitivity.jl")
 include("DGSM_sensitivity.jl")
 include("eFAST_sensitivity.jl")
 include("delta_sensitivity.jl")
+include("easi_sensitivity.jl")
 
+export gsa
 
-export Sobol, Morris, gsa,
-       SensitivityAlg, RegressionGSA, DGSM, eFAST, DeltaMoment
+export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI
 
 end # module
