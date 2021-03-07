@@ -53,7 +53,7 @@ function gsa(f, method::EASI, p_range; N, batch = false, rng::AbstractRNG = Rand
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
-    println(size(X))
+    
     if batch
         Y = f(X)
         multioutput = Y isa AbstractMatrix
