@@ -18,6 +18,6 @@ include("rbd-fast_sensitivity.jl")
 
 export gsa
 
-export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, RBDFAST
+export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI
 
 end # module
