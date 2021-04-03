@@ -15,9 +15,10 @@ include("eFAST_sensitivity.jl")
 include("delta_sensitivity.jl")
 include("easi_sensitivity.jl")
 include("rbd-fast_sensitivity.jl")
+include("fractional_factorial_sensitivity.jl")
 
 export gsa
 
-export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI
+export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial
 
 end # module
