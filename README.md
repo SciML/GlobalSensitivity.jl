@@ -10,4 +10,4 @@
 For information on using the package,
 [see the stable documentation](https://gsa.sciml.ai/stable/). Use the
 [in-development documentation](https://gsa.sciml.ai/dev/) for the version of
-the documentation, which contains the unreleased features.
+the documentation, which contains the unreleased features. 
