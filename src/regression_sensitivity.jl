@@ -84,13 +84,13 @@ end
 
 function _calculate_standard_regression_coefficients(X, Y)
     β̂ = X' \ Y'
-    srcs = β̂ .* std(X, dims = 2) ./ std(Y, dims = 2)'
-    return srcs
+    srcs = (β̂ .* std(X, dims = 2) ./ std(Y, dims = 2)')
+    return Matrix(transpose(srcs))
 end
 
 function _calculate_correlation_matrix(X, Y)
     corr = cov(X, Y, dims = 2) ./ (std(X, dims = 2) .* std(Y, dims = 2)')
-    return corr
+    return Matrix(transpose(corr))
 end
 
 function _calculate_partial_correlation_coefficients(X, Y)
@@ -99,5 +99,5 @@ function _calculate_partial_correlation_coefficients(X, Y)
     prec = pinv(corr) # precision matrix
     pcc_XY = -prec ./ sqrt.(diag(prec) .* diag(prec)')
     # return partial correlation matrix relating f: X -> Y model values
-    return pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]
+    return Matrix(transpose(pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]))
 end
