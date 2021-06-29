@@ -31,10 +31,10 @@ fnm(x) = [x[1], -x[2]]
     @test reg.partial_rank_correlation[1, 1] ≈ -1
 
     # loose tolerances, exact in limit
-    @test reg.pearson[1, 2] ≈ -1
-    @test reg.standard_regression[1, 2] ≈ -1
-    @test reg.partial_correlation[1, 2] ≈ 1
-    @test reg.standard_rank_regression[2, 1] ≈ 0 atol=1e-2
+    @test reg.pearson[2, 1] ≈ -1
+    @test reg.standard_regression[2, 1] ≈ -1
+    @test reg.partial_correlation[2, 1] ≈ 1
+    @test reg.standard_rank_regression[1, 2] ≈ 0 atol=1e-2
 end
 
 @testset "f: R^n -> R" begin
@@ -47,10 +47,10 @@ end
     @test reg.partial_rank_correlation[1, 1] ≈ -1
 
     # loose tolerances, exact in limit
-    @test reg.pearson[2, 1] ≈ 0 atol=1e-2
-    @test reg.standard_regression[2, 1] ≈ 0 atol=1e-2
-    @test reg.partial_correlation[2, 1] ≈ 0 atol=1e-2
-    @test reg.standard_rank_regression[2, 1] ≈ 0 atol=1e-2
+    @test reg.pearson[1, 2] ≈ 0 atol=1e-2
+    @test reg.standard_regression[1, 2] ≈ 0 atol=1e-2
+    @test reg.partial_correlation[1, 2] ≈ 0 atol=1e-2
+    @test reg.standard_rank_regression[1, 2] ≈ 0 atol=1e-2
 end
 
 @testset "f: R^n -> R^m" begin
@@ -61,10 +61,10 @@ end
     @test reg.partial_correlation[2, 2] ≈ 1
 
     # loose tolerances, exact in limit
-    @test reg.pearson[2, 1] ≈ 0 atol=1e-2
-    @test reg.standard_regression[2, 1] ≈ 0 atol=1e-2
-    @test reg.partial_correlation[2, 1] ≈ 0 atol=1e-2
     @test reg.pearson[1, 2] ≈ 0 atol=1e-2
     @test reg.standard_regression[1, 2] ≈ 0 atol=1e-2
     @test reg.partial_correlation[1, 2] ≈ 0 atol=1e-2
+    @test reg.pearson[2, 1] ≈ 0 atol=1e-2
+    @test reg.standard_regression[2, 1] ≈ 0 atol=1e-2
+    @test reg.partial_correlation[2, 1] ≈ 0 atol=1e-2
 end
