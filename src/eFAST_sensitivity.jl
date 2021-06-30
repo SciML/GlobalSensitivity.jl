@@ -13,7 +13,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
     num_params = length(p_range)
     omega = [ (n-1) ÷ (2*num_harmonics) ]
     m = omega[1] ÷ (2*num_harmonics)
-    
+
     if m >= num_params-1
         append!(omega, floor.(Int, collect(range(1,stop=m,length=num_params-1))))
     else

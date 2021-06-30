@@ -80,7 +80,7 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch=false, rng::Abstr
                                         total_num_trajectory=total_num_trajectory,len_design_mat=len_design_mat)
 
     multioutput = false
-    desol = false 
+    desol = false
     local y_size
     if batch
         all_y = f(design_matrices)
@@ -147,8 +147,8 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch=false, rng::Abstr
             push!(variances, zero(effects[1][1]))
         end
     end
-    if desol 
-        f_shape = x -> [reshape(x[:,i],y_size) for i in 1:size(x,2)]  
+    if desol
+        f_shape = x -> [reshape(x[:,i],y_size) for i in 1:size(x,2)]
         means = map(f_shape,means)
         means_star = map(f_shape,means_star)
         variances = map(f_shape,variances)

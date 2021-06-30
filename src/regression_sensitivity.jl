@@ -31,10 +31,7 @@ struct RegressionGSAResult{T, TR}
     partial_rank_correlation::TR
 end
 
-function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, batch::Bool = false, kwargs...)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
+function gsa(f, method::RegressionGSA, X::AbstractMatrix; batch::Bool = false, kwargs...)
     desol = false
 
     if batch
@@ -100,4 +97,11 @@ function _calculate_partial_correlation_coefficients(X, Y)
     pcc_XY = -prec ./ sqrt.(diag(prec) .* diag(prec)')
     # return partial correlation matrix relating f: X -> Y model values
     return Matrix(transpose(pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]))
+end
+
+function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, kwargs...)
+    lb = [i[1] for i in p_range]
+    ub = [i[2] for i in p_range]
+    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
+    gsa(f, method, X; kwargs...)
 end
