@@ -14,6 +14,7 @@ makedocs(
         "GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)" => "index.md",
         "Tutorials" => Any[
           "tutorials/parallelized_gsa.md",
+          "tutorials/juliacon21.md"
         ],
         "Methods" => Any[
           "methods/morris.md",
