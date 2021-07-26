@@ -97,7 +97,8 @@ p1_ = bar(["a","b","c","d"],sobol_result.ST[2,:],title="Total Order Indices pred
 p2_ = bar(["a","b","c","d"],sobol_result.S1[2,:],title="First Order Indices predator",legend=false)
 plot(p1,p2,p1_,p2_)
 ```
-![sobolplot](../assets/sobolbars.png)
+
+![sobolbars](https://user-images.githubusercontent.com/23134958/127019349-686f968d-7c8a-4dc4-abdc-c70f58b043dd.png)
 
 ## Parallelizing the Global Sensitivity Analysis
 
