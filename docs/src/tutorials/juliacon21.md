@@ -1,4 +1,4 @@
-# Script for JuliaCon'21 talk on GlobalSensitivity.jl
+# JuliaCon'21 talk on GlobalSensitivity.jl
 
 The tutorial covers a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation.
 We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to
