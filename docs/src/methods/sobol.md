@@ -4,7 +4,7 @@
 struct Sobol <: GSAMethod
     order::Vector{Int}
     nboot::Int
-    conf_int::Float64
+    conf_level::Float64
 end
 ```
 
@@ -13,7 +13,7 @@ The `Sobol` object has as its fields the `order` of the indices to be estimated.
   Total and First order indices. Passing `2` enables calculation of the Second order indices as well.
 
 For confidence interval calculation `nboot` should be specified for the number (>0) of bootstrap runs 
-and `conf_int` for the confidence level, the default for which is `0.95`.
+and `conf_level` for the confidence level, the default for which is `0.95`.
 
 ## Sobol Method Details
 
