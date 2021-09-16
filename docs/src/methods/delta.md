@@ -15,7 +15,7 @@ end
     - `Ygrid_length`: number of quadrature points to consider when performing the kernel density estimation and the integration steps. Should be a power of 2 for efficient FFT in kernel density estimates. Defaults to `2048`.
     - `num_classes`: Determine how many classes to split each factor into to when generating distributions of model output conditioned on class.
 
-## Delta Method Details
+## Method Details
 
 The Delta moment-independent method relies on new estimators for 
 density-based statistics.  It allows for the estimation of both 
