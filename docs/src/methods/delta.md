@@ -24,6 +24,9 @@ look at contributions to a specific moment. One of the primary advantage
 of this method is the independence of computation cost from the number of 
 parameters.
 
+!!! note
+    `DeltaMoment` only works for scalar output.
+
 ### API
 
 ```julia
