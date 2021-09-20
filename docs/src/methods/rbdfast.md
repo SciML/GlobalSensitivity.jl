@@ -7,8 +7,8 @@ end
 ```
 
 `RBDFAST` has the following keyword arguments:
-    -`num_harmonics`: Number of harmonics to consider during power 
-    spectral density analysis.
+
+- `num_harmonics`: Number of harmonics to consider during power spectral density analysis.
 
 ## Method Details
 

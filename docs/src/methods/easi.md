@@ -7,9 +7,8 @@ end
 ```
 
 `EASI` has the following keyword arguments:
-    -`max_harmonic`: Maximum harmonic of the input frequency
-        for which the output power spectrum is analyzed for.
-        Defaults to `10`.
+
+- `max_harmonic`: Maximum harmonic of the input frequency for which the output power spectrum is analyzed for. Defaults to `10`.
 
 ## Method Details
 

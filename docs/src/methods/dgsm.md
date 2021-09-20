@@ -7,7 +7,8 @@ end
 ```
 
 The keyword arguments for DGSM are as follows:
-    `crossed`: A string(True/False) which act as indicator for computation of DGSM crossed indices. Defaults to `false`.
+
+- `crossed`: A string(True/False) which act as indicator for computation of DGSM crossed indices. Defaults to `false`.
 
 ## Method Details
 
@@ -17,7 +18,7 @@ random parameter sets. Derivatives of the function being analysed are
 then computed at the sampled parameters and specific statistics of those 
 derivatives are used. The paper by [Sobol and Kucherenko](http://www.sciencedirect.com/science/article/pii/S0378475409000354) 
 discusses the relationship between the DGSM results, `tao` and 
-`sigma`.
+`sigma` and the Morris elementary effects and Sobol Indices.
 
 ### API
 
@@ -25,7 +26,7 @@ discusses the relationship between the DGSM results, `tao` and
 function gsa(f, method::DGSM, dist::AbstractArray; samples::Int, kwargs...)
 ```
 
-`dist`: Array of distribution of respective variables. Eg- dist = [Normal(5,6),Uniform(2,3)] for two variables.
+`dist`: Array of distribution of respective variables. E.g. `dist = [Normal(5,6),Uniform(2,3)]` for two variables.
 
 ### Example
 
