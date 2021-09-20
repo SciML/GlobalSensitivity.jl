@@ -11,7 +11,6 @@ end
         for which the output power spectrum is analyzed for.
         Defaults to `10`.
 
-
 ## Method Details
 
 The EASI method is a Fourier-based technique for performing 

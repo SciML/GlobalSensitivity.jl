@@ -1,4 +1,4 @@
-# Delta Moment-Independent method
+# Delta Moment-Independent Method
 
 ```julia
 struct DeltaMoment{T} <: GSAMethod
