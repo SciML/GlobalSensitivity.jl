@@ -20,7 +20,12 @@ makedocs(
           "methods/morris.md",
           "methods/sobol.md",
           "methods/regression.md",
-          "methods/efast.md"
+          "methods/efast.md",
+          "methods/delta.md",
+          "methods/dgsm.md",
+          "methods/easi.md",
+          "methods/fractional.md",
+          "methods/rbdfast.md"
         ],
     ]
 )

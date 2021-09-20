@@ -191,7 +191,7 @@ function ff_main_effects(design_matrix::AbstractArray, response_values::Abstract
       return main_effects ./ num_rows
 end
 
-function gsa(f, method::FractionalFactorial; num_params, N, p_range = nothing, kwargs...)
+function gsa(f, method::FractionalFactorial; num_params, p_range = nothing, kwargs...)
     design_matrix = generate_ff_design_matrix(num_params)
     sample_matrix = generate_ff_sample_matrix(design_matrix, p_range)
 
