@@ -4,7 +4,7 @@ struct Sobol <: GSAMethod
     conf_level::Float64
 end
 Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95) = Sobol(order, nboot, conf_level)
-      
+
 mutable struct SobolResult{T1, T2, T3, T4}
     S1::T1
     S1_Conf_Int::T2
@@ -71,7 +71,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
     Eys = multioutput ? Matrix{T}[] : T[]
     Varys = multioutput ? Matrix{T}[] : T[]
     Vᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
-    Vᵢⱼs = multioutput ? Matrix{T}[] : Vector{T}[]
+    Vᵢⱼs = multioutput ?  Matrix{Matrix{T}}() : Matrix{T}[]
     Eᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
     if !multioutput
         for i in 1:d+2:(d+2)*nboot
@@ -83,8 +83,14 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             fAⁱ= [all_y[(j*n+1):((j+1)*n)] for j in i+1:(i+d)]
 
             push!(Vᵢs, [sum(fB.*(fAⁱ[k].-fA)) for k in 1:d]./n)
-            if 2 in method.order 
-                push!(Vᵢⱼs, [sum(abs2, fAⁱ[k] - fAⁱ[j]) for k in 1:d for j in k+1:d] ./= (2n))
+            if 2 in method.order
+                M = zeros(T, d, d)
+                for k in 1:d
+                    for j in k+1:d
+                        M[k,j] = sum((fAⁱ[k] .* fAⁱ[j]) .- (fA .* fB))/n
+                    end
+                end
+                push!(Vᵢⱼs, M)
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,[Varys[i] .- sum(fA .* fAⁱ[k])./(n) + Eys[i].^2 for k in 1:d])
@@ -105,8 +111,8 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
 
             push!(Vᵢs,reduce(hcat, [sum(fB.*(fAⁱ[k].-fA), dims=2) for k in 1:d]./n))
 
-            if 2 in method.order 
-                push!(Vᵢⱼs,reduce(hcat, [sum(abs2, fAⁱ[k] - fAⁱ[j], dims=2) for k in 1:d for j in k+1:d]./(2n)))
+            if 2 in method.order
+                push!(Vᵢⱼs,reduce(hcat, [sum((fAⁱ[k] *fAⁱ[j]) - (fA*fB), dims=2) for k in 1:d for j in k+1:d]./n))
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,reduce(hcat, [Varys[i] .- sum(fA .* fAⁱ[k], dims=2)./(n) + Eys[i].^2 for k in 1:d]))
@@ -120,7 +126,13 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
     if 2 in method.order
         Sᵢⱼs = similar(Vᵢⱼs)
         for i ∈ 1:nboot
-            Sᵢⱼs[i] = Vᵢⱼs[i] ./ Varys[i]
+            M = zeros(T, d, d)
+            for k in 1:d
+                for j in k+1:d
+                    M[k,j] = Vᵢs[i][k] + Vᵢs[i][j]
+                end
+            end
+            Sᵢⱼs[i] = (Vᵢⱼs[i] - M) ./ Varys[i]
         end
     end
 
