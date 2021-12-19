@@ -14,11 +14,18 @@ mutable struct SobolResult{T1, T2, T3, T4}
     ST_Conf_Int::T2
 end
 
-function fuse_designs(A, B)
+function fuse_designs(A, B; second_order=false)
     d = size(A,1)
     Aᵦ = [copy(A) for i in 1:d]
     for i in 1:d
         Aᵦ[i][i,:] = @view(B[i,:])
+    end
+    if second_order
+        Bₐ = [copy(B) for i in 1:d]
+        for i in 1:d
+            Bₐ[i][i,:] = @view(A[i,:])
+        end
+        return hcat(A,B,reduce(hcat,Aᵦ),reduce(hcat,Bₐ))
     end
     hcat(A,B,reduce(hcat,Aᵦ))
 end
@@ -37,7 +44,7 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
     for i ∈ 1:nboot
         Bnb[i] = B[:,n*(i-1)+1:n*(i)]
     end
-    _all_points = mapreduce(fuse_designs, hcat, Anb, Bnb)
+    _all_points = mapreduce((args...) -> fuse_designs(args...;second_order = 2 in method.order), hcat, Anb, Bnb)
     if SHARED_ARRAY && isbits(TA)
         all_points = SharedMatrix{TA}(size(_all_points))
         all_points .= _all_points
@@ -67,11 +74,11 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
     end
 end
 function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_estimator, y_size, ::Val{multioutput}) where {T, multioutput}
-    nboot = method.nboot 
+    nboot = method.nboot
     Eys = multioutput ? Matrix{T}[] : T[]
     Varys = multioutput ? Matrix{T}[] : T[]
     Vᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
-    Vᵢⱼs = multioutput ?  Matrix{Matrix{T}}() : Matrix{T}[]
+    Vᵢⱼs = multioutput ?  Array{T, 3}[] : Matrix{T}[]
     Eᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
     if !multioutput
         for i in 1:d+2:(d+2)*nboot
@@ -81,13 +88,16 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             fA = all_y[(i-1)*n+1:i*n]
             fB = all_y[(i*n+1):(i+1)*n]
             fAⁱ= [all_y[(j*n+1):((j+1)*n)] for j in i+1:(i+d)]
+            if 2 in method.order
+                fBⁱ= [all_y[(j*n+1):((j+1)*n)] for j in i+d+1:(i+2*d)]
+            end
 
             push!(Vᵢs, [sum(fB.*(fAⁱ[k].-fA)) for k in 1:d]./n)
             if 2 in method.order
                 M = zeros(T, d, d)
                 for k in 1:d
                     for j in k+1:d
-                        M[k,j] = sum((fAⁱ[k] .* fAⁱ[j]) .- (fA .* fB))/n
+                        M[k,j] = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB))/n
                     end
                 end
                 push!(Vᵢⱼs, M)
@@ -108,11 +118,23 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             fA = all_y[:, (i-1)*n+1:i*n]
             fB = all_y[:, (i*n+1):(i+1)*n]
             fAⁱ= [all_y[:, (j*n+1):((j+1)*n)] for j in i+1:(i+d)]
+            if 2 in method.order
+                fBⁱ= [all_y[:, (j*n+1):((j+1)*n)] for j in i+d+1:(i+2*d)]
+            end
 
             push!(Vᵢs,reduce(hcat, [sum(fB.*(fAⁱ[k].-fA), dims=2) for k in 1:d]./n))
 
             if 2 in method.order
-                push!(Vᵢⱼs,reduce(hcat, [sum((fAⁱ[k] *fAⁱ[j]) - (fA*fB), dims=2) for k in 1:d for j in k+1:d]./n))
+                M = zeros(T, d, d, length(Eys[1]))
+                for k in 1:d
+                    for j in k+1:d
+                        Vₖⱼ = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB), dims = 2)/n
+                        for l in 1:length(Eys[1])
+                            M[k,j,l] = Vₖⱼ[l]
+                        end
+                    end
+                end
+                push!(Vᵢⱼs,M)
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,reduce(hcat, [Varys[i] .- sum(fA .* fAⁱ[k], dims=2)./(n) + Eys[i].^2 for k in 1:d]))
@@ -126,13 +148,25 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
     if 2 in method.order
         Sᵢⱼs = similar(Vᵢⱼs)
         for i ∈ 1:nboot
-            M = zeros(T, d, d)
-            for k in 1:d
-                for j in k+1:d
-                    M[k,j] = Vᵢs[i][k] + Vᵢs[i][j]
+            if !multioutput
+                M = zeros(T, d, d)
+                for k in 1:d
+                    for j in k+1:d
+                        M[k,j] =Vᵢs[i][k] + Vᵢs[i][j]
+                    end
                 end
+                Sᵢⱼs[i] = (Vᵢⱼs[i] - M) ./ Varys[i]
+            else
+                M = zeros(T, d, d, length(Eys[1]))
+                for l in 1:length(Eys[1])
+                    for k in 1:d
+                        for j in k+1:d
+                            M[k,j,l] = Vᵢs[i][l,k] + Vᵢs[i][l, j]
+                        end
+                    end
+                end
+                Sᵢⱼs[i] = cat([(Vᵢⱼs[i][:,:,l] - M[:,:,l]) ./ Varys[i][l] for l in 1:length(Eys[1])]...; dims = 3)
             end
-            Sᵢⱼs[i] = (Vᵢⱼs[i] - M) ./ Varys[i]
         end
     end
 
@@ -185,10 +219,10 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
         _Tᵢ = f_shape(Tᵢ)
     end
     return SobolResult(_Sᵢ,
-                     nboot > 1 ? reshape(S1_CI,size_...) : nothing,  
-                     2 in method.order ? Sᵢⱼ : nothing,  
-                     nboot > 1 && 2 in method.order ? S2_CI : nothing, 
-                     _Tᵢ , 
+                     nboot > 1 ? reshape(S1_CI,size_...) : nothing,
+                     2 in method.order ? Sᵢⱼ : nothing,
+                     nboot > 1 && 2 in method.order ? S2_CI : nothing,
+                     _Tᵢ ,
                      nboot > 1 ? reshape(ST_CI,size_...) : nothing)
 end
 
