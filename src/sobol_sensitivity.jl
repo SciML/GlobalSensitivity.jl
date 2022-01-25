@@ -80,8 +80,9 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
     Vᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
     Vᵢⱼs = multioutput ?  Array{T, 3}[] : Matrix{T}[]
     Eᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
+    step = 2 in method.order ? 2*d+2 : d+2
     if !multioutput
-        for i in 1:d+2:(d+2)*nboot
+        for i in 1:step:step*nboot
             push!(Eys,mean(all_y[(i-1)*n+1:(i+1)*n]))
             push!(Varys,var(all_y[(i-1)*n+1:(i+1)*n]))
 
@@ -111,7 +112,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
         end
     else
-        for i in 1:d+2:(d+2)*nboot
+        for i in 1:step:step*nboot
             push!(Eys,mean(all_y[:, (i-1)*n+1:(i+1)*n],dims=2))
             push!(Varys,var(all_y[:, (i-1)*n+1:(i+1)*n],dims=2))
 
