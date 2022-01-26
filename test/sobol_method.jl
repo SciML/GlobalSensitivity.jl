@@ -138,3 +138,6 @@ f1 = let prob = prob, t = t
 end
 
 m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],N=100)
+@test m isa GlobalSensitivity.SobolResult
+m = gsa(f1,Sobol(order=[0,1,2], nboot = 10),[[1,5],[1,5],[1,5],[1,5]],N=100)
+@test m isa GlobalSensitivity.SobolResult

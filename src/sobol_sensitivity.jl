@@ -210,13 +210,11 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
     if isnothing(y_size)
         _Sᵢ = Sᵢ
         _Tᵢ = Tᵢ
-        _Sᵢⱼ = 2 in method.order ? Sᵢⱼ : nothing
     else
         f_shape = let y_size = y_size
             x -> [reshape(x[:,i],y_size) for i in 1:size(x,2)]
         end
         _Sᵢ = f_shape(Sᵢ)
-        _Sᵢⱼ = 2 in method.order ? f_shape(Sᵢⱼ) : nothing
         _Tᵢ = f_shape(Tᵢ)
     end
     return SobolResult(_Sᵢ,
