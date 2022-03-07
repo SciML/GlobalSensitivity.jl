@@ -126,3 +126,5 @@ CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end], label = "Predator", mar
 title = Label(fig[0,:], "First order Sobol indices")
 legend = Legend(fig[2,3], ax)
 ```
+
+![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
