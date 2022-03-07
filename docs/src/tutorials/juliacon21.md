@@ -5,7 +5,7 @@ We showcase how to use multiple GSA methods, analyse their results and leverage 
 perform Global Sensitivity analysis at scale.
 
 ```julia
-using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, WGLMakie
+using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
 
 function f(du,u,p,t)
   du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
@@ -22,16 +22,15 @@ t = collect(range(0, stop=10, length=200))
 f1 = function (p)
     prob1 = remake(prob;p=p)
     sol = solve(prob1,Tsit5();saveat=t)
-    [mean(sol[1,:]), maximum(sol[2,:])]
 end
 
 bounds = [[1,5],[1,5],[1,5],[1,5]]
 
 reg_sens = gsa(f1, RegressionGSA(true), bounds)
 fig = Figure(resolution = (600, 400))
-ax, hm = WGLMakie.heatmap(fig[1,1], reg_sens.partial_correlation, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Partial correlation"))
+ax, hm = CairoMakie.heatmap(fig[1,1], reg_sens.partial_correlation, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Partial correlation"))
 Colorbar(fig[1, 2], hm)
-ax, hm = WGLMakie.heatmap(fig[2,1], reg_sens.standard_regression, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Standard regression"))
+ax, hm = CairoMakie.heatmap(fig[2,1], reg_sens.standard_regression, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Standard regression"))
 Colorbar(fig[2, 2], hm)
 fig
 ```
@@ -87,7 +86,6 @@ f_batch = function (p)
 
   sol = solve(ensemble_prob, Tsit5(), EnsembleThreads(); saveat=t, trajectories=size(p,2))
 
-  # Now sol[i] is the solution for the ith set of parameters
   out = zeros(2,size(p,2))
 
   for i in 1:size(p,2)
@@ -95,11 +93,36 @@ f_batch = function (p)
     out[2,i] = maximum(sol[i][2,:])
   end
 
-  out
+  return out
 end
 
 sobol_sens_batch = gsa(f_batch,Sobol(),A,B,batch=true)
 
 @time gsa(f1,Sobol(),A,B)
 @time gsa(f_batch,Sobol(),A,B,batch=true)
+```
+
+```julia
+f1 = function (p)
+           prob1 = remake(prob;p=p)
+           sol = solve(prob1,Tsit5();saveat=t)
+       end
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, N=5000)
+fig = Figure(resolution = (600, 400))
+ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end], label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end], label = "Predator", markersize = 4)
+
+# Legend(fig[1,2], ax)
+
+ax, hm = CairoMakie.scatter(fig[1,2], sobol_sens.S1[2][1,2:end], label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[1,2], sobol_sens.S1[2][2,2:end], label = "Predator", markersize = 4)
+
+ax, hm = CairoMakie.scatter(fig[2,1], sobol_sens.S1[3][1,2:end], label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[2,1], sobol_sens.S1[3][2,2:end], label = "Predator", markersize = 4)
+
+ax, hm = CairoMakie.scatter(fig[2,2], sobol_sens.S1[4][1,2:end], label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end], label = "Predator", markersize = 4)
+
+title = Label(fig[0,:], "First order Sobol indices")
+legend = Legend(fig[2,3], ax)
 ```
