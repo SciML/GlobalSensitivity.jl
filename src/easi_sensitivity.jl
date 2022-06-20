@@ -22,20 +22,30 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
     """
     Triangular shape permutation of the precomputed inputs
     """
-   permutation_index = sortperm(X) # non-mutating
-   result = cat(permutation_index[1:2:end], reverse(permutation_index[2:2:end]), dims=1)
-   return @view Y[result]
+    permutation_index = sortperm(X) # non-mutating
+    result = cat(permutation_index[1:2:end], reverse(permutation_index[2:2:end]), dims=1)
+    return @view Y[result]
 end
 
 
 function _compute_first_order_fft(permuted_outputs, max_harmonic, N)
-    ft = (fft(permuted_outputs))[2:(N ÷ 2)]
+    ft = (fft(permuted_outputs))[2:(N÷2)]
     ys = abs2.(ft) .* inv(N)
-    V = 2*sum(ys)
-    Vi = 2*sum(ys[(1:max_harmonic)])
-    Si = Vi/V
+    V = 2 * sum(ys)
+    Vi = 2 * sum(ys[(1:max_harmonic)])
+    Si = Vi / V
 end
 
+"""
+Elmar Plischke,
+How to compute variance-based sensitivity indicators with your spreadsheet software,
+Environmental Modelling & Software,
+Volume 35,
+2012,
+Pages 188-191,
+ISSN 1364-8152,
+https://doi.org/10.1016/j.envsoft.2012.03.004.
+"""
 function _compute_first_order_dct(permuted_outputs, max_harmonic, N)
     ft = dct(permuted_outputs)[2:end]
     V = sum(abs2, ft)
@@ -51,12 +61,12 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, N::Integer)
     Reliability Engineering and System Safety, Elsevier, 107, 205-213.
     doi:10.1016/j.ress.2012.06.010)
     """
-    λ = (2 * max_harmonic)/N
-    return S1 - (λ/(1-λ))*(1-S1)
+    λ = (2 * max_harmonic) / N
+    return S1 - (λ / (1 - λ)) * (1 - S1)
 end
 
 
-function gsa(f, method::EASI, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
+function gsa(f, method::EASI, p_range; N, batch=false, rng::AbstractRNG=Random.default_rng(), kwargs...)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
