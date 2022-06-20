@@ -1,7 +1,8 @@
-struct EASI <: GSAMethod 
+struct EASI <: GSAMethod
     max_harmonic::Int
+    dct_method::Bool
 end
-EASI(;max_harmonic = 10) = EASI(max_harmonic)
+EASI(; max_harmonic=4, dct_method=false) = EASI(max_harmonic, dct_method)
 
 struct EASIResult{T}
     S1::T
@@ -27,7 +28,7 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
 end
 
 
-function _compute_first_order(permuted_outputs, max_harmonic, N)
+function _compute_first_order_fft(permuted_outputs, max_harmonic, N)
     ft = (fft(permuted_outputs))[2:(N ÷ 2)]
     ys = abs2.(ft) .* inv(N)
     V = 2*sum(ys)
@@ -35,6 +36,12 @@ function _compute_first_order(permuted_outputs, max_harmonic, N)
     Si = Vi/V
 end
 
+function _compute_first_order_dct(permuted_outputs, max_harmonic, N)
+    ft = dct(permuted_outputs)[2:end]
+    V = sum(abs2, ft)
+    Vi = sum(abs2, ft[(1:max_harmonic)])
+    Si = Vi / V
+end
 
 function _unskew_S1(S1::Number, max_harmonic::Integer, N::Integer)
     """
@@ -53,7 +60,7 @@ function gsa(f, method::EASI, p_range; N, batch = false, rng::AbstractRNG = Rand
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
-    
+
     if batch
         Y = f(X)
         multioutput = Y isa AbstractMatrix
@@ -75,8 +82,12 @@ function gsa(f, method::EASI, p_range; N, batch = false, rng::AbstractRNG = Rand
     for i in 1:K
         Xi = @view X[i, :]
 
-        Y_reordered = _permute_outputs(Xi, Y)
-        S1 = _compute_first_order(Y_reordered, method.max_harmonic, N)
+        if method.dct_method
+            S1 = _compute_first_order_dct(Y[sortperm(Xi)], method.max_harmonic, N)
+        else
+            Y_reordered = _permute_outputs(Xi, Y)
+            S1 = _compute_first_order_fft(Y_reordered, method.max_harmonic, N)
+        end
 
         S1_C = _unskew_S1(S1, method.max_harmonic, N) # get bias-corrected version
         sensitivites[i] = S1
