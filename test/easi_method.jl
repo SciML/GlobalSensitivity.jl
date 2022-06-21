@@ -1,4 +1,4 @@
-using GlobalSensitivity, Test
+using GlobalSensitivity, Test, QuasiMonteCarlo
 
 function ishi_batch(X)
     A = 7
@@ -39,6 +39,13 @@ res2 = gsa(ishi_batch, EASI(; dct_method=true), [[lb[i], ub[i]] for i in 1:4], N
 
 @test res1.S1 ≈ res1efast.S1[1, :] atol = 3e-2
 @test res2.S1 ≈ res2efast.S1[1, :] atol = 3e-2
+
+X = QuasiMonteCarlo.sample(15000, lb, ub, QuasiMonteCarlo.SobolSample())
+Y = ishi.([X[:, i] for i in 1:15000])
+res1 = gsa(X, Y, EASI())
+@test res1.S1 ≈ res1efast.S1[1, :] atol = 3e-2
+res1 = gsa(X, Y, EASI(; dct_method=true))
+@test res1.S1 ≈ res1efast.S1[1, :] atol = 3e-2
 
 res1 = gsa(linear, EASI(), [[lb[i], ub[i]] for i in 1:4], N=15000)
 res2 = gsa(linear_batch, EASI(), [[lb[i], ub[i]] for i in 1:4], batch=true, N=15000)

@@ -66,26 +66,11 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, N::Integer)
 end
 
 
-function gsa(f, method::EASI, p_range; N, batch=false, rng::AbstractRNG=Random.default_rng(), kwargs...)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
-
-    if batch
-        Y = f(X)
-        multioutput = Y isa AbstractMatrix
-    else
-        Y = [f(X[:, j]) for j in axes(X, 2)]
-        multioutput = !(eltype(Y) <: Number)
-        if eltype(Y) <: RecursiveArrayTools.AbstractVectorOfArray
-            y_size = size(Y[1])
-            Y = vec.(Y)
-            desol = true
-        end
-    end
+function gsa(X, Y, method::EASI)
 
     # K is the number of variables, N is the number of simulations
     K = size(X, 1)
+    N = size(X, 2)
     sensitivites = zeros(K)
     sensitivites_c = zeros(K)
 
@@ -105,4 +90,24 @@ function gsa(f, method::EASI, p_range; N, batch=false, rng::AbstractRNG=Random.d
     end
 
     return EASIResult(sensitivites, sensitivites_c)
+end
+
+function gsa(f, method::EASI, p_range; N, batch=false)
+    lb = [i[1] for i in p_range]
+    ub = [i[2] for i in p_range]
+    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+
+    if batch
+        Y = f(X)
+        multioutput = Y isa AbstractMatrix
+    else
+        Y = [f(X[:, j]) for j in axes(X, 2)]
+        multioutput = !(eltype(Y) <: Number)
+        if eltype(Y) <: RecursiveArrayTools.AbstractVectorOfArray
+            y_size = size(Y[1])
+            Y = vec.(Y)
+            desol = true
+        end
+    end
+    return gsa(X, Y, method)
 end

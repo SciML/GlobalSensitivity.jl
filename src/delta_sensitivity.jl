@@ -56,41 +56,21 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     return d_hat
 end
 
-function gsa(f, method::DeltaMoment, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
+
+    N = size(X, 2)
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing
         exp = (2 / (7 + tanh((1500 - N) / 500)))
         M = Integer(round(min(Integer(ceil(N^exp)), 48))) # Number of classes
     else
-        M = num_classes
+        M = method.num_classes
     end
-    class_cutoffs =  range(0, N, length=M+1) # class cutoffs.
-
-    if batch
-        Y = f(X)
-        multioutput = Y isa AbstractMatrix
-        if multioutput
-            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
-        end
-    else
-        Y = [f(X[:, j]) for j in axes(X, 2)]
-        multioutput = !(eltype(Y) <: Number)
-        if eltype(Y) <: RecursiveArrayTools.AbstractVectorOfArray
-            y_size = size(Y[1])
-            Y = vec.(Y)
-            desol = true
-        end
-        if multioutput
-            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
-        end
-    end
+    class_cutoffs = range(0, N, length=M + 1) # class cutoffs
 
     # quadrature points.
     # Length should be a power of 2 for efficient FFT in kernel density estimates.
-    Ygrid = range(minimum(Y), maximum(Y), length = method.Ygrid_length)
+    Ygrid = range(minimum(Y), maximum(Y), length=method.Ygrid_length)
 
     num_factors = size(X, 1)
 
@@ -112,10 +92,36 @@ function gsa(f, method::DeltaMoment, p_range; N, batch = false, rng::AbstractRNG
             bootstrap_deltas[i] = _calc_delta(Xi[r_i], Y[r_i], Ygrid, class_cutoffs)
         end
         adjusted_deltas[factor_num] = 2 * delta - mean(bootstrap_deltas)
-        band = quantile(Normal(0.0, 1.0), 0.5+method.conf_level/2)*std(bootstrap_deltas)/(sqrt(method.nboot))
+        band = quantile(Normal(0.0, 1.0), 0.5 + method.conf_level / 2) * std(bootstrap_deltas) / (sqrt(method.nboot))
         adjusted_deltas_low[factor_num] = adjusted_deltas[factor_num] - band
         adjusted_deltas_high[factor_num] = adjusted_deltas[factor_num] + band
     end
 
     return DeltaResult(deltas, adjusted_deltas, adjusted_deltas_low, adjusted_deltas_high)
+end
+
+function gsa(f, method::DeltaMoment, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng())
+    lb = [i[1] for i in p_range]
+    ub = [i[2] for i in p_range]
+    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+
+    if batch
+        Y = f(X)
+        multioutput = Y isa AbstractMatrix
+        if multioutput
+            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
+        end
+    else
+        Y = [f(X[:, j]) for j in axes(X, 2)]
+        multioutput = !(eltype(Y) <: Number)
+        if eltype(Y) <: RecursiveArrayTools.AbstractVectorOfArray
+            y_size = size(Y[1])
+            Y = vec.(Y)
+            desol = true
+        end
+        if multioutput
+            throw(ArgumentError("DeltaMoment sensitivity only supports scalar output functions"))
+        end
+    end
+    return gsa(X, Y, method; rng)
 end
