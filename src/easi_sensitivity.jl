@@ -28,9 +28,9 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
 end
 
 
-function _compute_first_order_fft(permuted_outputs, max_harmonic, N)
+function _compute_first_order_fft(permuted_outputs, max_harmonic, samples)
     ft = (fft(permuted_outputs))[2:(N÷2)]
-    ys = abs2.(ft) .* inv(N)
+    ys = abs2.(ft) .* inv(samples)
     V = 2 * sum(ys)
     Vi = 2 * sum(ys[(1:max_harmonic)])
     Si = Vi / V
@@ -46,14 +46,14 @@ Pages 188-191,
 ISSN 1364-8152,
 https://doi.org/10.1016/j.envsoft.2012.03.004.
 """
-function _compute_first_order_dct(permuted_outputs, max_harmonic, N)
+function _compute_first_order_dct(permuted_outputs, max_harmonic, samples)
     ft = dct(permuted_outputs)[2:end]
     V = sum(abs2, ft)
     Vi = sum(abs2, ft[(1:max_harmonic)])
     Si = Vi / V
 end
 
-function _unskew_S1(S1::Number, max_harmonic::Integer, N::Integer)
+function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
     """
     Unskew the sensivity index
     (Jean-Yves Tissot, Clémentine Prieur (2012) "Bias correction for the
@@ -61,16 +61,16 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, N::Integer)
     Reliability Engineering and System Safety, Elsevier, 107, 205-213.
     doi:10.1016/j.ress.2012.06.010)
     """
-    λ = (2 * max_harmonic) / N
+    λ = (2 * max_harmonic) / samples
     return S1 - (λ / (1 - λ)) * (1 - S1)
 end
 
 
 function gsa(X, Y, method::EASI)
 
-    # K is the number of variables, N is the number of simulations
+    # K is the number of variables, samples is the number of simulations
     K = size(X, 1)
-    N = size(X, 2)
+    samples = size(X, 2)
     sensitivites = zeros(K)
     sensitivites_c = zeros(K)
 
@@ -78,13 +78,13 @@ function gsa(X, Y, method::EASI)
         Xi = @view X[i, :]
 
         if method.dct_method
-            S1 = _compute_first_order_dct(Y[sortperm(Xi)], method.max_harmonic, N)
+            S1 = _compute_first_order_dct(Y[sortperm(Xi)], method.max_harmonic, samples)
         else
             Y_reordered = _permute_outputs(Xi, Y)
-            S1 = _compute_first_order_fft(Y_reordered, method.max_harmonic, N)
+            S1 = _compute_first_order_fft(Y_reordered, method.max_harmonic, samples)
         end
 
-        S1_C = _unskew_S1(S1, method.max_harmonic, N) # get bias-corrected version
+        S1_C = _unskew_S1(S1, method.max_harmonic, samples) # get bias-corrected version
         sensitivites[i] = S1
         sensitivites_c[i] = S1_C
     end
@@ -92,10 +92,10 @@ function gsa(X, Y, method::EASI)
     return EASIResult(sensitivites, sensitivites_c)
 end
 
-function gsa(f, method::EASI, p_range; N, batch=false)
+function gsa(f, method::EASI, p_range; samples, batch=false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
 
     if batch
         Y = f(X)

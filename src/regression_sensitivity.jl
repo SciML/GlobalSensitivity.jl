@@ -83,10 +83,10 @@ function _calculate_partial_correlation_coefficients(X, Y)
     return Matrix(transpose(pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]))
 end
 
-function gsa(f, method::RegressionGSA, p_range::AbstractVector; N::Int, batch = false)
+function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
     desol = false
 
     if batch

@@ -20,8 +20,8 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
             return 0
     end
 
-    N = length(Y) # Number of simulations
-    @assert length(Xi) == N # Length of Y should equal length of X
+    samples = length(Y) # Number of simulations
+    @assert length(Xi) == samples # Length of Y should equal length of X
 
      # Model pdf of Y using KDE, kde uses normal kernel by default
     fy = pdf(kde(Y), Ygrid) # eq 23.1
@@ -52,21 +52,21 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
         weighted_class_seps[j] = number_in_class * class_separation # eq 26
     end
 
-    d_hat = sum(weighted_class_seps)/(2*N)
+    d_hat = sum(weighted_class_seps)/(2*samples)
     return d_hat
 end
 
 function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
 
-    N = size(X, 2)
+    samples = size(X, 2)
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing
-        exp = (2 / (7 + tanh((1500 - N) / 500)))
-        M = Integer(round(min(Integer(ceil(N^exp)), 48))) # Number of classes
+        exp = (2 / (7 + tanh((1500 - samples) / 500)))
+        M = Integer(round(min(Integer(ceil(samples^exp)), 48))) # Number of classes
     else
         M = method.num_classes
     end
-    class_cutoffs = range(0, N, length=M + 1) # class cutoffs
+    class_cutoffs = range(0, samples, length=M + 1) # class cutoffs
 
     # quadrature points.
     # Length should be a power of 2 for efficient FFT in kernel density estimates.
@@ -86,7 +86,7 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
         deltas[factor_num] = delta
         # eq. 30, bias reduction via bootstrapping.
         bootstrap_deltas = zeros(method.nboot)
-        r = rand(rng, 1:N, method.nboot, N)
+        r = rand(rng, 1:samples, method.nboot, samples)
         for i in 1:method.nboot
             r_i = r[i, :]
             bootstrap_deltas[i] = _calc_delta(Xi[r_i], Y[r_i], Ygrid, class_cutoffs)
@@ -100,10 +100,10 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
     return DeltaResult(deltas, adjusted_deltas, adjusted_deltas_low, adjusted_deltas_high)
 end
 
-function gsa(f, method::DeltaMoment, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng())
+function gsa(f, method::DeltaMoment, p_range; samples, batch = false, rng::AbstractRNG = Random.default_rng())
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
-    X = QuasiMonteCarlo.sample(N, lb, ub, QuasiMonteCarlo.SobolSample())
+    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
 
     if batch
         Y = f(X)

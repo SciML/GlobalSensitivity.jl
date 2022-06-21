@@ -225,8 +225,8 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
                      nboot > 1 ? reshape(ST_CI,size_...) : nothing)
 end
 
-function gsa(f,method::Sobol,p_range::AbstractVector; N, kwargs...)
-    AB = QuasiMonteCarlo.generate_design_matrices(N, [i[1] for i in p_range], [i[2] for i in p_range], QuasiMonteCarlo.SobolSample(),2*method.nboot)
+function gsa(f,method::Sobol,p_range::AbstractVector; samples, kwargs...)
+    AB = QuasiMonteCarlo.generate_design_matrices(samples, [i[1] for i in p_range], [i[2] for i in p_range], QuasiMonteCarlo.SobolSample(),2*method.nboot)
     A = reduce(hcat, @view(AB[1:method.nboot]))
     B = reduce(hcat, @view(AB[method.nboot+1:end]))
     gsa(f, method, A, B; kwargs...)

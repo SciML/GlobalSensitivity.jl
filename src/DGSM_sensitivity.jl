@@ -22,7 +22,7 @@ The inputs for DGSM are as follows:
     This is the input function based on which the values of DGSM are to be evaluated
     Eg- f(x) = x[1]+x[2]^2
         This is function in 2 variables
-2.N:
+2.samples:
     Depicts the number of sampling set of points to be used for evaluation of E(a), E(|a|) and E(a^2)
     a = partial derivative of f wrt x_i
 3.distri:
@@ -33,14 +33,14 @@ The inputs for DGSM are as follows:
     A string(True/False) which act as indicator for computation of DGSM crossed indices
     Eg- a True value over there will lead to evauation of crossed indices
 """
-function gsa(f, method::DGSM, distr::AbstractArray; N::Int, kwargs...)
+function gsa(f, method::DGSM, distr::AbstractArray; samples::Int, kwargs...)
 
     k = length(distr)
 
-    #XX is the matrix consisting of 'N' number of sampling based on respective
+    #XX is the matrix consisting of 'samples' number of sampling based on respective
     #distributions of variables
 
-    XX = [rand.(distr) for x = 1:N]
+    XX = [rand.(distr) for x = 1:samples]
 
     #function to evaluate gradient of f wrt x
     grad(x)= ForwardDiff.gradient(f,x)
@@ -50,7 +50,7 @@ function gsa(f, method::DGSM, distr::AbstractArray; N::Int, kwargs...)
 
     #Evaluating the derivatives with AD
 
-    dfdx = [grad(XX[i]) for i = 1:N]
+    dfdx = [grad(XX[i]) for i = 1:samples]
     dfdx = reduce(hcat,dfdx)
     dfdx = dfdx'
 
@@ -67,25 +67,25 @@ function gsa(f, method::DGSM, distr::AbstractArray; N::Int, kwargs...)
     #Evaluating tao_i for all input parameters
 
     for i in 1:k
-        for j in 1:N
-            tao[i] += (dfdx[j + (i-1)*N]^2)*(1 - 3*XX[j][i] + XX[j][i]^2)/6
+        for j in 1:samples
+            tao[i] += (dfdx[j + (i-1)*samples]^2)*(1 - 3*XX[j][i] + XX[j][i]^2)/6
         end
-        tao[i] = tao[i]/N
+        tao[i] = tao[i]/samples
     end
 
     #Evaluating sigma_i for all input parameters
 
     for i in 1:k
-        for j in 1:N
-            sigma[i] += 0.5*(XX[j][i])*(1-XX[j][i])*dfdx[j + (i-1)*N]^2
+        for j in 1:samples
+            sigma[i] += 0.5*(XX[j][i])*(1-XX[j][i])*dfdx[j + (i-1)*samples]^2
         end
-        sigma[i] = sigma[i]/N
+        sigma[i] = sigma[i]/samples
     end
 
     if method.crossed == true
 
         #Evaluating the derivatives with AD
-        dfdxdy = [hess(XX[i]) for i in 1 : N]
+        dfdxdy = [hess(XX[i]) for i in 1 : samples]
 
         crossed = zeros(Float64,k,k)
         crossedsq = zeros(Float64,k,k)
@@ -95,11 +95,11 @@ function gsa(f, method::DGSM, distr::AbstractArray; N::Int, kwargs...)
 
         for a in 1:k
             for b in a+1:k
-                crossed[b + (a-1)*k] = mean(dfdxdy[i][b + (a-1)*k] for i in 1:N)
+                crossed[b + (a-1)*k] = mean(dfdxdy[i][b + (a-1)*k] for i in 1:samples)
                 crossed[a + (b-1)*k] = crossed[b + (a-1)*k]
-                crossedsq[b + (a-1)*k] = mean(dfdxdy[i][b + (a-1)*k]^2 for i in 1:N)
+                crossedsq[b + (a-1)*k] = mean(dfdxdy[i][b + (a-1)*k]^2 for i in 1:samples)
                 crossedsq[a + (b-1)*k] = crossedsq[b + (a-1)*k]
-                abscrossed[b + (a-1)*k] = mean(abs(dfdxdy[i][b + (a-1)*k]) for i in 1:N)
+                abscrossed[b + (a-1)*k] = mean(abs(dfdxdy[i][b + (a-1)*k]) for i in 1:samples)
                 abscrossed[a + (b-1)*k] = abscrossed[b + (a-1)*k]
             end
         end
