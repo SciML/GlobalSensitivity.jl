@@ -25,7 +25,7 @@ bibliography: paper.bib
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
 output of a model w.r.t. the parameters. These methods allow practitioners to
 measure both parameter's individual contributions and the contribution of their interactions
-to the output uncertainity. GlobalSensitivity.jl is a julia package containing implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent, DGSM, EASI, eFAST, Morris, Fractional Factorial, RBD-FAST, Sobol and Regression based sensitivity methods.
+to the output uncertainity. GlobalSensitivity.jl is a julia package containing implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent [@Borgonovo2007,@Plischke2013], DGSM [@Sobol2009], EASI [@PLISCHKE2010, @PLISCHKE2012], eFAST [@Saltelli1999, @Saltelli1998], Morris [@Morris1991,@Campolongo2007], Fractional Factorial [@Saltelli2008b] , RBD-FAST [@Tarantola2006], Sobol [@Saltelli2008b, @Sobol2001, @Saltelli2002a] and Regression based sensitivity [@Guido2016] methods.
 
 # Statement of need
 
@@ -165,29 +165,5 @@ legend = Legend(fig[2,3], ax)
 ```
 
 ![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
-
-# Citations
-
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
-
-# Figures
-
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
-and referenced from text using \autoref{fig:example}.
-
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
 
 # References
