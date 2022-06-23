@@ -25,7 +25,7 @@ bibliography: paper.bib
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
 output of a model with respect to the parameters. These methods allow practitioners to
 measure both parameter's individual contributions and the contribution of their interactions
-to the output uncertainity. GlobalSensitivity.jl is a julia [@Bezanson2017] package containing implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent [@Borgonovo2007,@Plischke2013], DGSM [@Sobol2009], EASI [@Plischke2010,@Plischke2012], eFAST [@Saltelli1999,@Saltelli1998], Morris [@Morris1991,@Campolongo2007], Fractional Factorial [@Saltelli2008b] , RBD-FAST [@Tarantola2006], Sobol [@Saltelli2008b,@Sobol2001,@Saltelli2002a] and Regression based sensitivity [@Guido2016] methods.
+to the output uncertainity. GlobalSensitivity.jl is a julia [@Bezanson2017] package containing implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent [@Borgonovo2007,@Plischke2013], DGSM [@Sobol2009], EASI [@Plischke2010] [@Plischke2012], eFAST [@Saltelli1999] [@Saltelli1998], Morris [@Morris1991] [@Campolongo2007], Fractional Factorial [@Saltelli2008b] , RBD-FAST [@Tarantola2006], Sobol [@Saltelli2008b] [@Sobol2001] [@Saltelli2002a] and Regression based sensitivity [@Guido2016] methods.
 
 # Statement of need
 
