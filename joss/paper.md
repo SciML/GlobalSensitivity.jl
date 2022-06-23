@@ -29,11 +29,11 @@ to the output uncertainity. GlobalSensitivity.jl is a julia [@Bezanson2017] pack
 
 # Statement of need
 
-Global Sensitivity Analysis has become an essential part of modeling workflow for practitioners in various fields such as Quantitative Systems Pharmacology, Environmental Modeling, etc. It can be used primarily in two stages, either before parameter estimation to simplify the fitting problem by fixing unimportant parameters or for analysis of the input parameters' influence on the output.
+Global Sensitivity Analysis has become an essential part of modeling workflow for practitioners in various fields such as Quantitative Systems Pharmacology and Environmental Modeling [@saltelli2020five] [@JAKEMAN2006602] [@sher2022quantitative] [@zhang2015sobol]. It can be used primarily in two stages, either before parameter estimation to simplify the fitting problem by fixing unimportant parameters or for analysis of the input parameters' influence on the output.
 
 GlobalSensitivity.jl provides julia implementation of some of the popular GSA methods. Thus it benefits from the performance advantage of julia, provides a convenient unified API for different GSA methods by leveraging multiple dispatch and has a parallelized implementation for some of the methods.
 
-This package allows users to conveniently perform GSA on arbitrary functions and get the sensitivity analysis results. Since it is housed in the SciML organisation there is also focus on using these on differential equations based models.
+This package allows users to conveniently perform GSA on arbitrary functions and get the sensitivity analysis results and at the same time provides out of the box support for differential equations based models defined using the SciML interface [@Rackauckas2017DifferentialEquationsjlA].
 
 ## Examples
 
