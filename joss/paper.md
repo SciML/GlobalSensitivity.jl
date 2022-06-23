@@ -65,9 +65,21 @@ bounds = [[1,5],[1,5],[1,5],[1,5]]
 
 reg_sens = gsa(f1, RegressionGSA(true), bounds)
 fig = Figure(resolution = (600, 400))
-ax, hm = CairoMakie.heatmap(fig[1,1], reg_sens.partial_correlation, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Partial correlation"))
+ax, hm = CairoMakie.heatmap(fig[1,1], reg_sens.partial_correlation,
+                            figure = (resolution = (300, 200),),
+                            axis = (xticksvisible = false,
+                            yticksvisible = false,
+                            yticklabelsvisible = false,
+                            xticklabelsvisible = false,
+                            title = "Partial correlation"))
 Colorbar(fig[1, 2], hm)
-ax, hm = CairoMakie.heatmap(fig[2,1], reg_sens.standard_regression, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Standard regression"))
+ax, hm = CairoMakie.heatmap(fig[2,1], reg_sens.standard_regression,
+                            figure = (resolution = (300, 200),),
+                            axis = (xticksvisible = false,
+                            yticksvisible = false,
+                            yticklabelsvisible = false,
+                            xticklabelsvisible = false,
+                            title = "Standard regression"))
 Colorbar(fig[2, 2], hm)
 fig
 ```
@@ -78,9 +90,13 @@ fig
 using StableRNGs
 _rng = StableRNG(1234)
 morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
-fig = Figure(resolution = (600, 400))
-scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey",))
-scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator",))
+fig = Figure(resolution = (300, 200))
+scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:],
+        color = :green, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Prey",))
+scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:],
+        color = :red, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Predator",))
 fig
 ```
 
@@ -89,18 +105,36 @@ fig
 ```julia
 sobol_sens = gsa(f1, Sobol(), bounds, N=5000)
 efast_sens = gsa(f1, eFAST(), bounds)
-fig = Figure(resolution = (600, 400))
-barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (Sobol)", ylabel = "First order"))
-barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = "Total order"))
-barplot(fig[1,2], [1,2,3,4], efast_sens.S1[1, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (eFAST)"))
-barplot(fig[2,2], [1,2,3,4], efast_sens.ST[1, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false))
+fig = Figure(resolution = (300, 200))
+barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :],
+        color = :green, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Prey (Sobol)",
+        ylabel = "First order"))
+barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[1, :],
+        color = :green, axis = (xticksvisible = false,
+        xticklabelsvisible = false, ylabel = "Total order"))
+barplot(fig[1,2], [1,2,3,4], efast_sens.S1[1, :],
+        color = :red, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Prey (eFAST)"))
+barplot(fig[2,2], [1,2,3,4], efast_sens.ST[1, :],
+        color = :red, axis = (xticksvisible = false,
+        xticklabelsvisible = false))
 fig
 
-fig = Figure(resolution = (600, 400))
-barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[2, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator (Sobol)", ylabel = "First order"))
-barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[2, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = "Total order"))
-barplot(fig[1,2], [1,2,3,4], efast_sens.S1[2, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator (eFAST)"))
-barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false))
+fig = Figure(resolution = (300, 200))
+barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[2, :],
+        color = :green, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Predator (Sobol)",
+        ylabel = "First order"))
+barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[2, :],
+        color = :green, axis = (xticksvisible = false,
+        xticklabelsvisible = false, ylabel = "Total order"))
+barplot(fig[1,2], [1,2,3,4], efast_sens.S1[2, :],
+        color = :red, axis = (xticksvisible = false,
+        xticklabelsvisible = false, title = "Predator (eFAST)"))
+barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :],
+        color = :red, axis = (xticksvisible = false,
+        xticklabelsvisible = false))
 fig
 ```
 
@@ -121,7 +155,8 @@ f_batch = function (p)
   prob_func(prob,i,repeat) = remake(prob;p=p[:,i])
   ensemble_prob = EnsembleProblem(prob,prob_func=prob_func)
 
-  sol = solve(ensemble_prob, Tsit5(), EnsembleThreads(); saveat=t, trajectories=size(p,2))
+  sol = solve(ensemble_prob, Tsit5(), EnsembleThreads();
+              saveat=t, trajectories=size(p,2))
 
   out = zeros(2,size(p,2))
 
@@ -145,20 +180,28 @@ f1 = function (p)
            sol = solve(prob1,Tsit5();saveat=t)
        end
 sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, N=5000)
-fig = Figure(resolution = (600, 400))
-ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end], label = "Prey", markersize = 4)
-CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end], label = "Predator", markersize = 4)
+fig = Figure(resolution = (300, 200))
+ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end],
+                            label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end],
+                    label = "Predator", markersize = 4)
 
 # Legend(fig[1,2], ax)
 
-ax, hm = CairoMakie.scatter(fig[1,2], sobol_sens.S1[2][1,2:end], label = "Prey", markersize = 4)
-CairoMakie.scatter!(fig[1,2], sobol_sens.S1[2][2,2:end], label = "Predator", markersize = 4)
+ax, hm = CairoMakie.scatter(fig[1,2], sobol_sens.S1[2][1,2:end],
+                            label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[1,2], sobol_sens.S1[2][2,2:end],
+                    label = "Predator", markersize = 4)
 
-ax, hm = CairoMakie.scatter(fig[2,1], sobol_sens.S1[3][1,2:end], label = "Prey", markersize = 4)
-CairoMakie.scatter!(fig[2,1], sobol_sens.S1[3][2,2:end], label = "Predator", markersize = 4)
+ax, hm = CairoMakie.scatter(fig[2,1], sobol_sens.S1[3][1,2:end],
+                            label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[2,1], sobol_sens.S1[3][2,2:end],
+                    label = "Predator", markersize = 4)
 
-ax, hm = CairoMakie.scatter(fig[2,2], sobol_sens.S1[4][1,2:end], label = "Prey", markersize = 4)
-CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end], label = "Predator", markersize = 4)
+ax, hm = CairoMakie.scatter(fig[2,2], sobol_sens.S1[4][1,2:end],
+                            label = "Prey", markersize = 4)
+CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end],
+                    label = "Predator", markersize = 4)
 
 title = Label(fig[0,:], "First order Sobol indices")
 legend = Legend(fig[2,3], ax)
