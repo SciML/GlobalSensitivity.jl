@@ -4,7 +4,10 @@ struct DeltaMoment{T} <: GSAMethod
     Ygrid_length::Int
     num_classes::T
 end
-DeltaMoment(;nboot=500, conf_level=0.95, Ygrid_length=2048, num_classes=nothing) = DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
+function DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
+                     num_classes = nothing)
+    DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
+end
 
 struct DeltaResult{T}
     deltas::T
@@ -17,13 +20,13 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     # Make sure Ys are not identical, otherwise KDE will be undefined.
     # If Ys are identical, then we know X and Y are independent, so return 0
     if all(Y[1] .== Y)
-            return 0
+        return 0
     end
 
     samples = length(Y) # Number of simulations
     @assert length(Xi) == samples # Length of Y should equal length of X
 
-     # Model pdf of Y using KDE, kde uses normal kernel by default
+    # Model pdf of Y using KDE, kde uses normal kernel by default
     fy = pdf(kde(Y), Ygrid) # eq 23.1
 
     # Get probability of each y in Ygrid.
@@ -31,17 +34,17 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     d_hat = 0 # the delta estimator.
 
     # Iterate over each class
-    weighted_class_seps = zeros(length(class_cutoffs)-1)
-    for j in 1:length(class_cutoffs)-1
+    weighted_class_seps = zeros(length(class_cutoffs) - 1)
+    for j in 1:(length(class_cutoffs) - 1)
         # get X and Y indicies for samples that are in this class (where
         # class designation is based on the X value)
-        condition(x) = (x > class_cutoffs[j]) ==  (x <= class_cutoffs[j+1])
+        condition(x) = (x > class_cutoffs[j]) == (x <= class_cutoffs[j + 1])
         in_class_indices = findall(condition, x_rank)
         number_in_class = length(in_class_indices)
         # Get the the subset of Y values in this class
         in_class_Y = Y[in_class_indices]
         if length(in_class_Y) == 0
-                continue
+            continue
         end
         # get the separation between the total y pdf and the condition y pdf induced by this class
         fyc = pdf(kde(in_class_Y), Ygrid) # eq 23.2 - Estimated conditional distribution of y (using normal kernel)
@@ -52,12 +55,11 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
         weighted_class_seps[j] = number_in_class * class_separation # eq 26
     end
 
-    d_hat = sum(weighted_class_seps)/(2*samples)
+    d_hat = sum(weighted_class_seps) / (2 * samples)
     return d_hat
 end
 
-function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
-
+function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
     samples = size(X, 2)
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing
@@ -66,11 +68,11 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
     else
         M = method.num_classes
     end
-    class_cutoffs = range(0, samples, length=M + 1) # class cutoffs
+    class_cutoffs = range(0, samples, length = M + 1) # class cutoffs
 
     # quadrature points.
     # Length should be a power of 2 for efficient FFT in kernel density estimates.
-    Ygrid = range(minimum(Y), maximum(Y), length=method.Ygrid_length)
+    Ygrid = range(minimum(Y), maximum(Y), length = method.Ygrid_length)
 
     num_factors = size(X, 1)
 
@@ -87,12 +89,13 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
         # eq. 30, bias reduction via bootstrapping.
         bootstrap_deltas = zeros(method.nboot)
         r = rand(rng, 1:samples, method.nboot, samples)
-        for i in 1:method.nboot
+        for i in 1:(method.nboot)
             r_i = r[i, :]
             bootstrap_deltas[i] = _calc_delta(Xi[r_i], Y[r_i], Ygrid, class_cutoffs)
         end
         adjusted_deltas[factor_num] = 2 * delta - mean(bootstrap_deltas)
-        band = quantile(Normal(0.0, 1.0), 0.5 + method.conf_level / 2) * std(bootstrap_deltas) / (sqrt(method.nboot))
+        band = quantile(Normal(0.0, 1.0), 0.5 + method.conf_level / 2) *
+               std(bootstrap_deltas) / (sqrt(method.nboot))
         adjusted_deltas_low[factor_num] = adjusted_deltas[factor_num] - band
         adjusted_deltas_high[factor_num] = adjusted_deltas[factor_num] + band
     end
@@ -100,7 +103,8 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG=Random.default_rng())
     return DeltaResult(deltas, adjusted_deltas, adjusted_deltas_low, adjusted_deltas_high)
 end
 
-function gsa(f, method::DeltaMoment, p_range; samples, batch = false, rng::AbstractRNG = Random.default_rng())
+function gsa(f, method::DeltaMoment, p_range; samples, batch = false,
+             rng::AbstractRNG = Random.default_rng())
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())

@@ -2,7 +2,7 @@ struct EASI <: GSAMethod
     max_harmonic::Int
     dct_method::Bool
 end
-EASI(; max_harmonic=4, dct_method=false) = EASI(max_harmonic, dct_method)
+EASI(; max_harmonic = 4, dct_method = false) = EASI(max_harmonic, dct_method)
 
 struct EASIResult{T}
     S1::T
@@ -23,13 +23,12 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
     Triangular shape permutation of the precomputed inputs
     """
     permutation_index = sortperm(X) # non-mutating
-    result = cat(permutation_index[1:2:end], reverse(permutation_index[2:2:end]), dims=1)
+    result = cat(permutation_index[1:2:end], reverse(permutation_index[2:2:end]), dims = 1)
     return @view Y[result]
 end
 
-
 function _compute_first_order_fft(permuted_outputs, max_harmonic, samples)
-    ft = (fft(permuted_outputs))[2:(N÷2)]
+    ft = (fft(permuted_outputs))[2:(N ÷ 2)]
     ys = abs2.(ft) .* inv(samples)
     V = 2 * sum(ys)
     Vi = 2 * sum(ys[(1:max_harmonic)])
@@ -65,7 +64,6 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
     return S1 - (λ / (1 - λ)) * (1 - S1)
 end
 
-
 function gsa(X, Y, method::EASI)
 
     # K is the number of variables, samples is the number of simulations
@@ -92,7 +90,7 @@ function gsa(X, Y, method::EASI)
     return EASIResult(sensitivites, sensitivites_c)
 end
 
-function gsa(f, method::EASI, p_range; samples, batch=false)
+function gsa(f, method::EASI, p_range; samples, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
