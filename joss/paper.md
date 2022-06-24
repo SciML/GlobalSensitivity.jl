@@ -37,9 +37,11 @@ This package allows users to conveniently perform GSA on arbitrary functions and
 
 ## Examples
 
-The example covers a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation.
-We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to
-perform Global Sensitivity analysis at scale.
+The following examples cover a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation, popularly known as the predator-prey model. We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to perform Global Sensitivity analysis at scale.
+
+The function of interest, for performing GSA, is defined to be the mean of the prey population and maximum of the predator population.
+
+First, we use the Regression based method and plot the partial correlation and standard regression coefficients as a heatmap.
 
 ```julia
 using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
@@ -59,6 +61,7 @@ t = collect(range(0, stop=10, length=200))
 f1 = function (p)
     prob1 = remake(prob;p=p)
     sol = solve(prob1,Tsit5();saveat=t)
+    return [mean(sol[1,:]), maximum(sol[2,:])]
 end
 
 bounds = [[1,5],[1,5],[1,5],[1,5]]
@@ -86,6 +89,8 @@ fig
 
 ![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
 
+Next, the Morris method is used and results are visualized as a scatter plot.
+
 ```julia
 using StableRNGs
 _rng = StableRNG(1234)
@@ -101,6 +106,8 @@ fig
 ```
 
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
+
+Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
 ```julia
 sobol_sens = gsa(f1, Sobol(), bounds, N=5000)
@@ -141,6 +148,8 @@ fig
 ![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
 ![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
 
+Leveraging the batch interface it is possible to parallelize the Sobol indices calculation, this is showcased in the example below.
+
 ```julia
 using QuasiMonteCarlo
 N = 5000
@@ -173,6 +182,8 @@ sobol_sens_batch = gsa(f_batch,Sobol(),A,B,batch=true)
 @time gsa(f1,Sobol(),A,B)
 @time gsa(f_batch,Sobol(),A,B,batch=true)
 ```
+
+As mentioned before, you can call the `gsa` function directly on the differential equation solution and compute sensitivities across the timeseries. This is demonstrated in the example below, the Sobol indices for each time point are then displayed as a plot.
 
 ```julia
 f1 = function (p)
