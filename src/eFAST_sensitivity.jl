@@ -8,10 +8,10 @@ struct eFASTResult{T1}
     ST::T1
 end
 
-function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
+function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch=false, distributed::Val{SHARED_ARRAY} = Val(false), rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
     @unpack num_harmonics = method
     num_params = length(p_range)
-    omega = [ (n-1) ÷ (2*num_harmonics) ]
+    omega = [ (samples-1) ÷ (2*num_harmonics) ]
     m = omega[1] ÷ (2*num_harmonics)
 
     if m >= num_params-1
@@ -21,11 +21,11 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
     end
 
     omega_temp = similar(omega)
-    s = (2/n) * (0:n-1)
+    s = (2/samples) * (0:samples-1)
     if SHARED_ARRAY
-        ps = SharedMatrix{Float64}((num_params, n*num_params))
+        ps = SharedMatrix{Float64}((num_params, samples*num_params))
     else
-        ps = Matrix{Float64}(undef, num_params, n*num_params)
+        ps = Matrix{Float64}(undef, num_params, samples*num_params)
     end
     @inbounds for i in 1:num_params
         omega_temp[i] = omega[1]
@@ -35,7 +35,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
         for k ∈ i+1:num_params
             omega_temp[k] = omega[k]
         end
-        l = (i-1)*n+1:i*n
+        l = (i-1)*samples+1:i*samples
         phi = 2rand(rng)
         for j in 1:num_params
             ps[j,l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]), 0.5 .+ (1/pi) .* (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
@@ -46,7 +46,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
         all_y = f(ps)
         multioutput = all_y isa AbstractMatrix
         y_size = nothing
-        gsa_efast_all_y_analysis(method, all_y, num_params, y_size, n, omega, Val(multioutput))
+        gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega, Val(multioutput))
     else
         _y = [f(ps[:,j]) for j in 1:size(ps,2)]
         multioutput = !(eltype(_y) <: Number)
@@ -58,13 +58,13 @@ function gsa(f, method::eFAST, p_range::AbstractVector; n::Int=1000, batch=false
             __y = _y
         end
         if multioutput
-            gsa_efast_all_y_analysis(method, reduce(hcat,__y), num_params, y_size, n, omega, Val(true))
+            gsa_efast_all_y_analysis(method, reduce(hcat,__y), num_params, y_size, samples, omega, Val(true))
         else
-            gsa_efast_all_y_analysis(method, __y, num_params, y_size, n, omega, Val(false))
+            gsa_efast_all_y_analysis(method, __y, num_params, y_size, samples, omega, Val(false))
         end
     end
 end
-function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, n, omega, ::Val{multioutput}) where {multioutput}
+function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega, ::Val{multioutput}) where {multioutput}
     @unpack num_harmonics = method
     if multioutput
         size_ = size(all_y)
@@ -76,8 +76,8 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, n, omega, :
     end
     for i in 1:num_params
         if !multioutput
-            ft = (fft(all_y[(i-1)*n+1:i*n]))[2:(n ÷ 2)]
-            ys = abs2.(ft .* inv(n))
+            ft = (fft(all_y[(i-1)*samples+1:i*samples]))[2:(samples ÷ 2)]
+            ys = abs2.(ft .* inv(samples))
             varnce = 2*sum(ys)
             first_order[i] = 2*sum(ys[(1:num_harmonics)*Int(omega[1])])/varnce
             total_order[i] = 1 .- 2*sum(ys[1:(omega[1] ÷ 2)])/varnce
@@ -85,8 +85,8 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, n, omega, :
             ys = Vector{Vector{eltype(all_y)}}(undef, size(all_y,1))
             varnce = Vector{eltype(all_y)}(undef, size(all_y,1))
             for j ∈ eachindex(ys)
-                ff = fft(all_y[j,(i-1)*n+1:i*n])[2:(n ÷ 2)]
-                ys[j] = ysⱼ = abs2.(ff .* inv(n))
+                ff = fft(all_y[j,(i-1)*samples+1:i*samples])[2:(samples ÷ 2)]
+                ys[j] = ysⱼ = abs2.(ff .* inv(samples))
                 varnce[j] = 2*sum(ysⱼ)
             end
             first_order[i] = map((y,var) -> 2*sum(y[(1:num_harmonics)*(omega[1])])./var, ys, varnce)
@@ -105,4 +105,3 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, n, omega, :
     end
     return eFASTResult(_first_order, _total_order)
 end
-

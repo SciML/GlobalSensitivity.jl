@@ -1,4 +1,4 @@
-struct RBDFAST <: GSAMethod  
+struct RBDFAST <: GSAMethod
     num_harmonics::Int
 end
 RBDFAST(;num_harmonics = 6) = RBDFAST(num_harmonics)
@@ -15,20 +15,20 @@ and
 using FFTW, Random, Statistics, StatsBase, Distributions
 allsame(x) = all(y -> y == first(x), x)
 
-function gsa(f, method::RBDFAST; num_params, N, rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
+function gsa(f, method::RBDFAST; num_params, samples, rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
     # Initalize matrix containing range of values of the parametric variable
     # along each column (factor).
-    s0 = range(-π, stop = π, length = N)
+    s0 = range(-π, stop = π, length = samples)
 
     # Compute inputs
-    s = [s0[randperm(rng, N)] for i in 1:num_params]
+    s = [s0[randperm(rng, samples)] for i in 1:num_params]
     x = hcat([0.5.+asin.(sin.(s[i]))./pi for i in 1:num_params]...)
-    
+
     # Compute outputs
     if batch
         Y = f(x')
     else
-        Y = [f(@view x[i,:]) for i in axes(x, 1)] 
+        Y = [f(@view x[i,:]) for i in axes(x, 1)]
     end
     # Iterate over factors
 
@@ -43,13 +43,13 @@ function gsa(f, method::RBDFAST; num_params, N, rng::AbstractRNG = Random.defaul
 
 
         ft = fft(y_reordered)
-        ys = abs2.(ft) ./ N
-        V = sum(ys[2:N])
+        ys = abs2.(ft) ./ samples
+        V = sum(ys[2:samples])
         Vi = 2*sum(ys[2:method.num_harmonics+1])
         Si = Vi/V
         # println(ys)
         # unskew the sensitivies
-        # lambda = 2*method.num_harmonics/N
+        # lambda = 2*method.num_harmonics/samples
         # sensitivites[i] = Si - (lambda / (1 - lambda)) * (1-Si)
         sensitivites[i] = Si
     end

@@ -148,9 +148,9 @@ function run_model(sample_matrix::AbstractArray, model)
             sample_matrix through model.
       """
 
-      N = size(sample_matrix)[1]
-      y_out = zeros(N)
-      Threads.@threads for i in 1:N
+      samples = size(sample_matrix)[1]
+      y_out = zeros(samples)
+      Threads.@threads for i in 1:samples
           y_out[i] = model(@view sample_matrix[i,:])
       end
       return y_out

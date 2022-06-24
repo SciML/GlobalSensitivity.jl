@@ -1,9 +1,9 @@
 # Global Sensitivity Analysis
 
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
-output of a model w.r.t. the parameters. These methods allow practitioners to 
+output of a model w.r.t. the parameters. These methods allow practitioners to
 measure both parameter's individual contributions and the contribution of their interactions
-to the output uncertainity. 
+to the output uncertainity.
 
 ## Installation
 
@@ -18,10 +18,10 @@ Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl pack
 
 ## General Interface
 
-The general interface for calling a global sensitivity analysis is either:
+The general interface for calling a global sensitivity analysis is:
 
 ```julia
-effects = gsa(f, method, param_range; N, batch=false)
+res = gsa(f, method, param_range; samples, batch=false)
 ```
 
 where:
@@ -31,9 +31,23 @@ where:
   and returns a matrix where each row is a the output for the corresponding row of parameters.
 - `method` is one of the GSA methods below.
 - `param_range` is a vector of tuples for the upper and lower bound for the given parameter `i`.
-- `N` is a required keyword argument for the number of samples to take in the trajectories/design.
+- `samples` is a required keyword argument for the number of samples of parameters for the design matrix. Note that this is not relevant for [Fractional Factorial Method](@ref) and [Morris Method](@ref).
 
-Note that for some methods there is a second interface where one can directly pass the design matrices:
+Additionally,
+
+For [Delta Moment-Independent Method](@ref), [EASI Method](@ref) and [Regression Method](@ref) input and output matrix based method as follows is available:
+
+```julia
+res = gsa(X, Y, method)
+```
+
+where:
+
+- `X` is the number of parameters * samples matrix with parameter values.
+- `Y` is the output dimension * number of samples matrix with out evaluated at `X`'s columns.
+- `method` is one of the GSA methods below.
+
+For [Sobol Method](@ref) one can use the following design matrices based method instead of parameter range based method discussed earlier:
 
 ```julia
 effects = gsa(f, method, A, B; batch=false)
@@ -44,5 +58,5 @@ from [QuasiMonteCarlo.jl](https://github.com/JuliaDiffEq/QuasiMonteCarlo.jl) can
 matrices.
 
 The descriptions of the available methods can be found in the Methods section.
-The GSA interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel 
+The GSA interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel
 computation of GSA results.

@@ -31,23 +31,7 @@ struct RegressionGSAResult{T, TR}
     partial_rank_correlation::TR
 end
 
-function gsa(f, method::RegressionGSA, X::AbstractMatrix; batch::Bool = false, kwargs...)
-    desol = false
-
-    if batch
-        _y = f(X)
-        multioutput = _y isa AbstractMatrix
-        Y = multioutput ? _y : reshape(_y, 1, length(_y))
-    else
-        _y = [f(X[:, j]) for j in axes(X, 2)]
-        multioutput = !(eltype(_y) <: Number)
-        if eltype(_y) <: RecursiveArrayTools.AbstractVectorOfArray
-            y_size = size(_y[1])
-            _y = vec.(_y)
-            desol = true
-        end
-        Y = multioutput ? reduce(hcat,_y) : reshape(_y, 1, length(_y))
-    end
+function gsa(X, Y, method::RegressionGSA)
 
     srcs = _calculate_standard_regression_coefficients(X, Y)
     corr = _calculate_correlation_matrix(X, Y)
@@ -99,9 +83,26 @@ function _calculate_partial_correlation_coefficients(X, Y)
     return Matrix(transpose(pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]))
 end
 
-function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, kwargs...)
+function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
-    gsa(f, method, X; kwargs...)
+    desol = false
+
+    if batch
+        _y = f(X)
+        multioutput = _y isa AbstractMatrix
+        Y = multioutput ? _y : reshape(_y, 1, length(_y))
+    else
+        _y = [f(X[:, j]) for j in axes(X, 2)]
+        multioutput = !(eltype(_y) <: Number)
+        if eltype(_y) <: RecursiveArrayTools.AbstractVectorOfArray
+            y_size = size(_y[1])
+            _y = vec.(_y)
+            desol = true
+        end
+        Y = multioutput ? reduce(hcat, _y) : reshape(_y, 1, length(_y))
+    end
+
+    return gsa(X, Y, method)
 end
