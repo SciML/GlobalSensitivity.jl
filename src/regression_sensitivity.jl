@@ -20,7 +20,7 @@ struct RegressionGSA <: GSAMethod
     rank::Bool
 end
 
-RegressionGSA(;rank::Bool = false) = RegressionGSA(rank)
+RegressionGSA(; rank::Bool = false) = RegressionGSA(rank)
 
 struct RegressionGSAResult{T, TR}
     pearson::T
@@ -32,7 +32,6 @@ struct RegressionGSAResult{T, TR}
 end
 
 function gsa(X, Y, method::RegressionGSA)
-
     srcs = _calculate_standard_regression_coefficients(X, Y)
     corr = _calculate_correlation_matrix(X, Y)
     partials = _calculate_partial_correlation_coefficients(X, Y)
@@ -45,22 +44,18 @@ function gsa(X, Y, method::RegressionGSA)
         corr_rank = _calculate_correlation_matrix(X_rank, Y_rank)
         partials_rank = _calculate_partial_correlation_coefficients(X_rank, Y_rank)
 
-        return RegressionGSAResult(
-            corr,
-            srcs,
-            partials,
-            corr_rank,
-            srcs_rank,
-            partials_rank
-        )
+        return RegressionGSAResult(corr,
+                                   srcs,
+                                   partials,
+                                   corr_rank,
+                                   srcs_rank,
+                                   partials_rank)
     end
 
-    return RegressionGSAResult(
-        corr,
-        srcs,
-        partials,
-        nothing, nothing, nothing
-    )
+    return RegressionGSAResult(corr,
+                               srcs,
+                               partials,
+                               nothing, nothing, nothing)
 end
 
 function _calculate_standard_regression_coefficients(X, Y)
