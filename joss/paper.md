@@ -37,7 +37,7 @@ This package allows users to conveniently perform GSA on arbitrary functions and
 
 ## Examples
 
-The following examples cover a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation, popularly known as the predator-prey model. We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to perform Global Sensitivity analysis at scale.
+The following examples cover a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation, popularly known as the predator-prey model. We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to perform Global Sensitivity analysis at scale. The plots have been created using the wonderful Makie.jl package [@DanischKrumbiegel2021].
 
 The function of interest, for performing GSA, is defined to be the mean of the prey population and maximum of the predator population.
 
