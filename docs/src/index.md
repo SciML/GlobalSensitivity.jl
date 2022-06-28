@@ -1,7 +1,7 @@
 # Global Sensitivity Analysis
 
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
-output of a model w.r.t. the parameters. These methods allow practitioners to
+output of a model with respect to the parameters. These methods allow practitioners to
 measure both parameter's individual contributions and the contribution of their interactions
 to the output uncertainity.
 
@@ -18,7 +18,7 @@ Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl pack
 
 ## General Interface
 
-The general interface for calling a global sensitivity analysis is:
+The general interface for performing global sensitivity analysis using this package is:
 
 ```julia
 res = gsa(f, method, param_range; samples, batch=false)
