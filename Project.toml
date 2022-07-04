@@ -19,6 +19,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 
 [compat]
+CairoMakie = "0.8"
 Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 ForwardDiff = "0.10"
