@@ -86,11 +86,11 @@ ax, hm = CairoMakie.heatmap(fig[2,1], reg_sens.standard_regression,
                             xticklabelsvisible = false,
                             title = "Standard regression"))
 Colorbar(fig[2, 2], hm)
+Label(fig[3, :], "Regression based GSA for Lotka Volterra model")
 fig
 ```
 
-![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
-**Regression based GSA for Lotka Volterra model**
+![heatmapreg](https://user-images.githubusercontent.com/23134958/177251367-9c93a219-8871-4734-8e3f-b6e3f6b6d90a.png)
 
 Next, the Morris method is used and results are visualized as a scatter plot.
 
@@ -98,25 +98,25 @@ Next, the Morris method is used and results are visualized as a scatter plot.
 using StableRNGs
 _rng = StableRNG(1234)
 morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (400, 300))
 scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:],
         color = :green, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Prey (Morris)",))
 scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:],
         color = :red, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Predator (Morris)",))
+Label(fig[2, :], "Morris method GSA for Lotka Volterra model")
 fig
 ```
 
-![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
-**Morris method GSA for Lotka Volterra model**
+![morrisscat](https://user-images.githubusercontent.com/23134958/177251158-69a6e8b8-0a46-4998-b9f2-106886827176.png)
 
 Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
 ```julia
 sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
 efast_sens = gsa(f1, eFAST(), bounds, samples=5000)
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :],
         color = :green, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Prey (Sobol)",
@@ -130,9 +130,10 @@ barplot(fig[1,2], [1,2,3,4], efast_sens.S1[1, :],
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[1, :],
         color = :red, axis = (xticksvisible = false,
         xticklabelsvisible = false))
+Label(fig[3,:], "Sobol and eFAST methods GSA for mean of Prey population")
 fig
 
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[2, :],
         color = :green, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Predator (Sobol)",
@@ -146,12 +147,12 @@ barplot(fig[1,2], [1,2,3,4], efast_sens.S1[2, :],
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :],
         color = :red, axis = (xticksvisible = false,
         xticklabelsvisible = false))
+Label(fig[3,:], "Sobol and eFAST methods GSA for maximum of Predator population")
 fig
 ```
 
-![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
-![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
-**Sobol and eFAST methods GSA for Lotka Volterra model**
+![sobolefastprey](https://user-images.githubusercontent.com/23134958/177251170-95ddbee3-2108-40c8-9a15-2e9e78fe7248.png)
+![sobolefastpred](https://user-images.githubusercontent.com/23134958/177251174-ec6ba2b0-f1d2-4e83-b06f-6ed32a0e7804.png)
 
 Leveraging the batch interface it is possible to parallelize the Sobol indices calculation, this is showcased in the example below.
 
@@ -195,8 +196,8 @@ f1 = function (p)
            prob1 = remake(prob;p=p)
            sol = solve(prob1,Tsit5();saveat=t)
        end
-sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=5000)
-fig = Figure(resolution = (300, 200))
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=100)
+fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end],
                             label = "Prey", markersize = 4)
 CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end],
@@ -219,12 +220,13 @@ ax, hm = CairoMakie.scatter(fig[2,2], sobol_sens.S1[4][1,2:end],
 CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end],
                     label = "Predator", markersize = 4)
 
-title = Label(fig[0,:], "First order Sobol indices")
+title = Label(fig[3,:], "First order Sobol indices of Lotka Volterra model over time")
 legend = Legend(fig[2,3], ax)
+fig
 ```
 
-![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
-**Sobol method GSA on timeseries of Lotka Volterra model**
+![timeseriessobollv](https://user-images.githubusercontent.com/23134958/177251164-9b412728-d035-449d-ae7f-7968c465b443.png)
+
 
 # Acknowledgements
 
