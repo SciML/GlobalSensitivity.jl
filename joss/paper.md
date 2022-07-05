@@ -89,9 +89,8 @@ Colorbar(fig[2, 2], hm)
 fig
 ```
 
-#### Regression based GSA for Lotka Volterra model
-
 ![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
+**Regression based GSA for Lotka Volterra model**
 
 Next, the Morris method is used and results are visualized as a scatter plot.
 
@@ -109,9 +108,8 @@ scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:],
 fig
 ```
 
-#### Morris method GSA for Lotka Volterra model
-
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
+**Morris method GSA for Lotka Volterra model**
 
 Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
@@ -151,10 +149,9 @@ barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :],
 fig
 ```
 
-#### Sobol and eFAST methods GSA for Lotka Volterra model
-
 ![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
 ![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
+**Sobol and eFAST methods GSA for Lotka Volterra model**
 
 Leveraging the batch interface it is possible to parallelize the Sobol indices calculation, this is showcased in the example below.
 
@@ -226,9 +223,8 @@ title = Label(fig[0,:], "First order Sobol indices")
 legend = Legend(fig[2,3], ax)
 ```
 
-#### Sobol method GSA on timeseries of Lotka Volterra model
-
 ![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
+**Sobol method GSA on timeseries of Lotka Volterra model**
 
 # Acknowledgements
 
