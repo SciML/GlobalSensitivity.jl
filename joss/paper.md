@@ -90,7 +90,7 @@ Label(fig[3, :], "Regression based GSA for Lotka Volterra model")
 fig
 ```
 
-![heatmapreg](https://user-images.githubusercontent.com/23134958/177251367-9c93a219-8871-4734-8e3f-b6e3f6b6d90a.png)
+![Heatmap of partial correlation and standard regression coefficients for the maximum of the prey population and the mean of the predator population from the Lotka Volterra model. The first column in each of the heatmaps corresponds to the maximum of the predator population and the second column corresponds the mean of the prey population. The rows follow the order of the parameters in the vector, first row being `p[1]` second `p[2]` and so on.](https://user-images.githubusercontent.com/23134958/177251367-9c93a219-8871-4734-8e3f-b6e3f6b6d90a.png)
 
 Next, the Morris method is used and results are visualized as a scatter plot.
 
@@ -109,7 +109,7 @@ Label(fig[2, :], "Morris method GSA for Lotka Volterra model")
 fig
 ```
 
-![morrisscat](https://user-images.githubusercontent.com/23134958/177251158-69a6e8b8-0a46-4998-b9f2-106886827176.png)
+![Scatter plot of `μ*` for the mean of the prey population and maximum of the predator population from the Morris method. The first plot corresponds to the mean of the prey population and the second plot corresponds to the maximum of the predator population. Each of the four parameters occur in both plots as one scatter point with `μ*` on the y-axis and index of the parameter corresponding to its order on the x-axis.](https://user-images.githubusercontent.com/23134958/177251158-69a6e8b8-0a46-4998-b9f2-106886827176.png)
 
 Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
@@ -151,8 +151,8 @@ Label(fig[3,:], "Sobol and eFAST methods GSA for maximum of Predator population"
 fig
 ```
 
-![sobolefastprey](https://user-images.githubusercontent.com/23134958/177251170-95ddbee3-2108-40c8-9a15-2e9e78fe7248.png)
-![sobolefastpred](https://user-images.githubusercontent.com/23134958/177251174-ec6ba2b0-f1d2-4e83-b06f-6ed32a0e7804.png)
+![](https://user-images.githubusercontent.com/23134958/177251170-95ddbee3-2108-40c8-9a15-2e9e78fe7248.png)
+![Sobol and eFAST methods GSA for mean of prey population and maximum of predator population. The first plot corresponds to the mean of the prey population and the second plot corresponds to the maximum of the predator population. The left column in the plot shows the result obtained with the Sobol method and the right column shows the result obtained with the eFAST method, with each column having two rows corresponding to first and total order respectively. Each of the four parameters occur in both plots as one bar plot with Sobol and eFAST indices on the y-axis and index of the parameter corresponding to its order on the x-axis.](https://user-images.githubusercontent.com/23134958/177251174-ec6ba2b0-f1d2-4e83-b06f-6ed32a0e7804.png)
 
 Leveraging the batch interface it is possible to parallelize the Sobol indices calculation, this is showcased in the example below.
 
@@ -225,8 +225,7 @@ legend = Legend(fig[2,3], ax)
 fig
 ```
 
-![timeseriessobollv](https://user-images.githubusercontent.com/23134958/177251164-9b412728-d035-449d-ae7f-7968c465b443.png)
-
+![Scatter plot of first order Sobol indices of the solution over time span 0 to 10 for the Lotka Volterra model. The y-axis corresponding to the first order Sobol indices' values and the x-axis corresponding to time. The figure shows the variation of the sensitivity with respect to each parameter over time for the model. The plots are layed out in a 2x2 grid with top-left plot corresponding to the first parameter, top-right plot corresponding to the second parameter, bottom-left plot corresponding to the third and bottom-right plot corresponding to the fourth parameter.](https://user-images.githubusercontent.com/23134958/177251164-9b412728-d035-449d-ae7f-7968c465b443.png)
 
 # Acknowledgements
 
