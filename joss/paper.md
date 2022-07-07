@@ -86,12 +86,11 @@ ax, hm = CairoMakie.heatmap(fig[2,1], reg_sens.standard_regression,
                             xticklabelsvisible = false,
                             title = "Standard regression"))
 Colorbar(fig[2, 2], hm)
+Label(fig[3, :], "Regression based GSA for Lotka Volterra model")
 fig
 ```
 
-#### Regression based GSA for Lotka Volterra model
-
-![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
+![**Heatmap of partial correlation and standard regression coefficients for the maximum of the prey population and the mean of the predator population.** The first column in both the heatmaps corresponds to the maximum of the predator population and the second column corresponds the mean of the prey population from the Lotka-Volterra ODE solved on the time interval `(0.0,10.0)`. The rows follow the order of the parameters in the vector, first row being `p[1]` second `p[2]` and so on.](https://user-images.githubusercontent.com/23134958/177251367-9c93a219-8871-4734-8e3f-b6e3f6b6d90a.png)
 
 Next, the Morris method is used and results are visualized as a scatter plot.
 
@@ -99,26 +98,25 @@ Next, the Morris method is used and results are visualized as a scatter plot.
 using StableRNGs
 _rng = StableRNG(1234)
 morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (400, 300))
 scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:],
         color = :green, axis = (xticksvisible = false,
-        xticklabelsvisible = false, title = "Prey (Morris)",))
+        xticklabelsvisible = false, title = "(a) Prey",))
 scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:],
         color = :red, axis = (xticksvisible = false,
-        xticklabelsvisible = false, title = "Predator (Morris)",))
+        xticklabelsvisible = false, title = "(b) Predator",))
+Label(fig[2, :], "Morris method GSA for Lotka Volterra model")
 fig
 ```
 
-#### Morris method GSA for Lotka Volterra model
-
-![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
+![**Scatter plot of `μ*` for the mean of the prey population and maximum of the predator population from the Morris method.** Depicted are the Morris method's mean of the distribution of the absolute values of the elementary effects of the input factors for the mean of the time series solution for the first dependent variable (prey population) and maximum of the second dependent variable (predator population) for the Lotka-Volterra ODE solved on the time interval `(0.0,10.0)` with parameters as demonstrated in the code sample. Each of the four parameters occur in both plots as one scatter point with `μ*` on the y-axis and index of the parameter corresponding to its order on the x-axis. (a): the Morris indices for the mean of the prey population. (b): the Morris indices for the maximum of the predator population.](https://user-images.githubusercontent.com/23134958/177814529-9eda8dfb-b2ae-41da-94a9-d704a24f84d2.png)
 
 Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
 ```julia
 sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
 efast_sens = gsa(f1, eFAST(), bounds, samples=5000)
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :],
         color = :green, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Prey (Sobol)",
@@ -132,9 +130,10 @@ barplot(fig[1,2], [1,2,3,4], efast_sens.S1[1, :],
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[1, :],
         color = :red, axis = (xticksvisible = false,
         xticklabelsvisible = false))
+Label(fig[3,:], "Sobol and eFAST methods GSA for mean of Prey population")
 fig
 
-fig = Figure(resolution = (300, 200))
+fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[2, :],
         color = :green, axis = (xticksvisible = false,
         xticklabelsvisible = false, title = "Predator (Sobol)",
@@ -148,13 +147,12 @@ barplot(fig[1,2], [1,2,3,4], efast_sens.S1[2, :],
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :],
         color = :red, axis = (xticksvisible = false,
         xticklabelsvisible = false))
+Label(fig[3,:], "Sobol and eFAST methods GSA for maximum of Predator population")
 fig
 ```
 
-#### Sobol and eFAST methods GSA for Lotka Volterra model
-
-![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
-![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
+![**Sobol and eFAST methods GSA for mean of prey population.** The plot shows Sobol indices obtained through the Sobol and eFAST methods for the mean of first dependent variable (prey population) from Lotka-Volterra ODE solved on the time interval `(0.0,10.0)`. The left column in the plot shows the result obtained with the Sobol method and the right column shows the result obtained with the eFAST method, with each column having two rows corresponding to first and total order respectively. The four parameters occur as one bar with Sobol and eFAST indices on the y-axis and index of the parameter corresponding to its order on the x-axis.](https://user-images.githubusercontent.com/23134958/177251170-95ddbee3-2108-40c8-9a15-2e9e78fe7248.png)
+![**Sobol and eFAST methods GSA for maximum of predator population.** The plot shows Sobol indices obtained through the Sobol and eFAST methods for the mean of second dependent variable (predator population) from Lotka-Volterra ODE solved on the time interval `(0.0,10.0)`. The left column in the plot shows the result obtained with the Sobol method and the right column shows the result obtained with the eFAST method, with each column having two rows corresponding to first and total order respectively. The four parameters occur as one bar with Sobol and eFAST indices on the y-axis and index of the parameter corresponding to its order on the x-axis.](https://user-images.githubusercontent.com/23134958/177251174-ec6ba2b0-f1d2-4e83-b06f-6ed32a0e7804.png)
 
 Leveraging the batch interface it is possible to parallelize the Sobol indices calculation, this is showcased in the example below.
 
@@ -198,8 +196,8 @@ f1 = function (p)
            prob1 = remake(prob;p=p)
            sol = solve(prob1,Tsit5();saveat=t)
        end
-sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=5000)
-fig = Figure(resolution = (300, 200))
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=100)
+fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end],
                             label = "Prey", markersize = 4)
 CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end],
@@ -222,13 +220,12 @@ ax, hm = CairoMakie.scatter(fig[2,2], sobol_sens.S1[4][1,2:end],
 CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end],
                     label = "Predator", markersize = 4)
 
-title = Label(fig[0,:], "First order Sobol indices")
+title = Label(fig[3,:], "First order Sobol indices of Lotka Volterra model over time")
 legend = Legend(fig[2,3], ax)
+fig
 ```
 
-#### Sobol method GSA on timeseries of Lotka Volterra model
-
-![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
+![**Scatter plot of first order Sobol indices of the solution over time interval `(0.0,10.0)` for the Lotka Volterra model.** The y-axis corresponds to the first order Sobol indices' values and the x-axis corresponds to time. The figure shows the variation of the sensitivity with respect to each parameter over time for both dependent variables of the model, the first dependent variable (prey population) in blue and the second dependent variable (predator population) in yellow. The plots are layed out in a 2x2 grid with top-left plot corresponding to the first parameter, top-right plot corresponding to the second parameter, bottom-left plot corresponding to the third and bottom-right plot corresponding to the fourth parameter.](https://user-images.githubusercontent.com/23134958/177251164-9b412728-d035-449d-ae7f-7968c465b443.png)
 
 # Acknowledgements
 
