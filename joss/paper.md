@@ -109,7 +109,7 @@ Label(fig[2, :], "Morris method GSA for Lotka Volterra model")
 fig
 ```
 
-![Scatter plot of `μ*` for the mean of the prey population and maximum of the predator population from the Morris method. The first plot corresponds to the mean of the prey population and the second plot corresponds to the maximum of the predator population. Each of the four parameters occur in both plots as one scatter point with `μ*` on the y-axis and index of the parameter corresponding to its order on the x-axis.](https://user-images.githubusercontent.com/23134958/177251158-69a6e8b8-0a46-4998-b9f2-106886827176.png)
+![**Scatter plot of `μ*` for the mean of the prey population and maximum of the predator population from the Morris method.** Depicted are the Morris indices for the mean of the time series solutions for the Lotka-Volterra ODE solved on the time interval `(0.0,10.0)` with parameters as demonstrated in the code sample. Each of the four parameters occur in both plots as one scatter point with `μ*` on the y-axis and index of the parameter corresponding to its order on the x-axis. Left: the Morris indices for the mean of the prey population. Right: the Morris indices for the maximum of the predator population.](https://user-images.githubusercontent.com/23134958/177251158-69a6e8b8-0a46-4998-b9f2-106886827176.png)
 
 Here we show use of the Sobol and eFAST methods, the first order and total order indices are plotted for both the dependent variables for all four parameters.
 
