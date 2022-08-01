@@ -18,7 +18,6 @@ include("rbd-fast_sensitivity.jl")
 include("fractional_factorial_sensitivity.jl")
 
 """
-
     gsa(f, method, param_range; samples, batch=false)
 
 where:
@@ -58,6 +57,7 @@ gsa(f, method, param_range; samples, batch = false)
 
 export gsa
 
-export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial
+export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial,
+       RBDFAST
 
 end # module
