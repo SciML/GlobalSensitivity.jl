@@ -4,6 +4,16 @@ struct DeltaMoment{T} <: GSAMethod
     Ygrid_length::Int
     num_classes::T
 end
+
+"""
+    DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
+                     num_classes = nothing)
+
+- `nboot`: number of bootstrap repetions. Defaults to `500`.
+- `conf_level`: the level used for confidence interval calculation with bootstrap. Default value of `0.95`.
+- `Ygrid_length`: number of quadrature points to consider when performing the kernel density estimation and the integration steps. Should be a power of 2 for efficient FFT in kernel density estimates. Defaults to `2048`.
+- `num_classes`: Determine how many classes to split each factor into to when generating distributions of model output conditioned on class.
+"""
 function DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
                      num_classes = nothing)
     DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
@@ -103,6 +113,11 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
     return DeltaResult(deltas, adjusted_deltas, adjusted_deltas_low, adjusted_deltas_high)
 end
 
+"""
+    gsa(f, method::DeltaMoment, p_range; samples, batch = false,
+             rng::AbstractRNG = Random.default_rng())
+    gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
+"""
 function gsa(f, method::DeltaMoment, p_range; samples, batch = false,
              rng::AbstractRNG = Random.default_rng())
     lb = [i[1] for i in p_range]

@@ -2,6 +2,13 @@ struct EASI <: GSAMethod
     max_harmonic::Int
     dct_method::Bool
 end
+
+"""
+    EASI(; max_harmonic::Int = 10, dct_method::Bool = false)
+
+- max_harmonic: Maximum harmonic of the input frequency for which the output power spectrum is analyzed for. Defaults to 10.
+- dct_method: Use Discrete Cosine Transform method to compute the power spectrum. Defaults to false.
+"""
 EASI(; max_harmonic = 4, dct_method = false) = EASI(max_harmonic, dct_method)
 
 struct EASIResult{T}
@@ -90,6 +97,10 @@ function gsa(X, Y, method::EASI)
     return EASIResult(sensitivites, sensitivites_c)
 end
 
+"""
+    gsa(f, method::EASI, p_range; samples, batch = false)
+    gsa(X, Y, method::EASI)
+"""
 function gsa(f, method::EASI, p_range; samples, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]

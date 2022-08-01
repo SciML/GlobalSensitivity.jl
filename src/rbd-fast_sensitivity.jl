@@ -1,6 +1,12 @@
 struct RBDFAST <: GSAMethod
     num_harmonics::Int
 end
+
+"""
+    RBDFAST(; num_harmonics = 6)
+
+- num_harmonics: Number of harmonics to consider during power spectral density analysis.
+"""
 RBDFAST(; num_harmonics = 6) = RBDFAST(num_harmonics)
 
 """

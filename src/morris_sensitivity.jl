@@ -6,6 +6,16 @@ struct Morris <: GSAMethod
     len_design_mat::Int
 end
 
+"""
+    Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
+                num_trajectory::Int = 10,
+                total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
+
+- p_steps: Vector of Δ for the step sizes in each direction. Required.
+- relative_scale: The elementary effects are calculated with the assumption that the parameters lie in the range [0,1] but as this is not always the case scaling is used to get more informative, scaled effects. Defaults to false.
+- total_num_trajectory, num_trajectory: The total number of design matrices that are generated out of which num_trajectory matrices with the highest spread are used in calculation.
+- len_design_mat: The size of a design matrix.
+"""
 function Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
                 num_trajectory::Int = 10,
                 total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
@@ -73,6 +83,10 @@ function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
     reduce(hcat, matrices)
 end
 
+"""
+    gsa(f, method::Morris, p_range::AbstractVector; batch = false,
+             rng::AbstractRNG = Random.default_rng(), kwargs...)
+"""
 function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
              rng::AbstractRNG = Random.default_rng(), kwargs...)
     @unpack p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat = method

@@ -1,24 +1,10 @@
 # Morris Method
 
-```julia
-struct Morris <: GSAMethod
-    p_steps::Array{Int,1}
-    relative_scale::Bool
-    num_trajectory::Int
-    total_num_trajectory::Int
-    len_design_mat::Int
-end
+```@docs
+Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
+                num_trajectory::Int = 10,
+                total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
 ```
-
-`Morris` has the following keyword arguments:
-
-- `p_steps` - Vector of ``\Delta`` for the step sizes in each direction. Required.
-- `relative_scale` - The elementary effects are calculated with the assumption that
-  the parameters lie in the range `[0,1]` but as this is not always the case
-  scaling is used to get more informative, scaled effects. Defaults to `false`.
-- `total_num_trajectory`, `num_trajectory` - The total number of design matrices that are
-  generated out of which `num_trajectory` matrices with the highest spread are used in calculation.
-- `len_design_mat` - The size of a design matrix.
 
 ## Morris Method Details
 
@@ -44,11 +30,13 @@ individual contribution.
 
 ### API
 
-`function gsa(f, method::Morris, p_range::AbstractVector; batch=false, kwargs...)`
+```@docs
+gsa(f, method::Morris, p_range::AbstractVector; batch=false, kwargs...)
+```
 
 ### Example
 
-Morris method on Ishigami function 
+Morris method on Ishigami function
 
 ```julia
 using GlobalSensitivity

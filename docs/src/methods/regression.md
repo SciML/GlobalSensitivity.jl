@@ -1,22 +1,8 @@
 # Regression Method
 
-```julia
-struct RegressionGSA <: GSAMethod
-    rank::Bool = false
-end
+```@docs
+RegressionGSA(; rank::Bool = false)
 ```
-
-`RegressionGSA` has the following keyword arguments:
-
-- `rank`: flag which determines whether to calculate the rank coefficients. Defaults to `false`.
-
-It returns a `RegressionGSAResult`, which contains the `pearson`, `standard_regression`, and
-`partial_correlation` coefficients, described below. If `rank` is true, then it also contains the ranked
-versions of these coefficients. Note that the ranked version of the `pearson` coefficient is
-also known as the Spearman coefficient, which is returned here as the `pearson_rank` coefficient.
-
-For multi-variable models, the coefficient for the `` X_i `` input variable relating to the
-`` Y_j `` output variable is given as the `[i, j]` entry in the corresponding returned matrix.
 
 ## Regression Details
 
@@ -55,7 +41,9 @@ If `rank` is set to `true`, then the rank coefficients are also calculated.
 
 ### API
 
-`function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, batch::Bool = false, kwargs...)`
+```@docs
+gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int = 1000, batch::Bool = false, kwargs...)
+```
 
 ### Example
 

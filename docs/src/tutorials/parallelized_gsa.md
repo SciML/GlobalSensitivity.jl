@@ -62,7 +62,7 @@ scatter(m.means[2,:], m.variances[2,:],series_annotations=[:a,:b,:c,:d],color=:g
 For the Sobol method, we can similarly do:
 
 ```julia
-m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],N=1000)
+m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],samples=1000)
 ```
 
 ## Direct Use of Design Matrices
@@ -74,11 +74,11 @@ as follows:
 
 ```julia
 using GlobalSensitivity, QuasiMonteCarlo, Plots
-N = 10000
+samples = 10000
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
-A,B = QuasiMonteCarlo.generate_design_matrices(N,lb,ub,sampler)
+A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 ```
 
 and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka Volterra example:

@@ -1,16 +1,8 @@
 # EASI Method
 
-```julia
-struct EASI <: GSAMethod
-    max_harmonic::Int
-    dct_method::Bool
-end
+```@docs
+EASI(; max_harmonic::Int = 10, dct_method::Bool = false)
 ```
-
-`EASI` has the following keyword arguments:
-
-- `max_harmonic`: Maximum harmonic of the input frequency for which the output power spectrum is analyzed for. Defaults to `10`.
-- `dct_method`: Use Discrete Cosine Transform method to compute the power spectrum. Defaults to `false`.
 
 ## Method Details
 
@@ -26,8 +18,8 @@ available input samples.
 
 ### API
 
-```julia
-function gsa(f, method::EASI, p_range; N, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
+```@docs
+gsa(f, method::EASI, p_range; samples, batch = false, rng::AbstractRNG = Random.default_rng(), kwargs...)
 ```
 
 ### Example
@@ -49,7 +41,7 @@ end
 lb = -ones(4)*π
 ub = ones(4)*π
 
-res1 = gsa(ishi,EASI(),[[lb[i],ub[i]] for i in 1:4],N=15000)
-res2 = gsa(ishi_batch,EASI(),[[lb[i],ub[i]] for i in 1:4],N=15000,batch=true)
+res1 = gsa(ishi,EASI(),[[lb[i],ub[i]] for i in 1:4],samples=15000)
+res2 = gsa(ishi_batch,EASI(),[[lb[i],ub[i]] for i in 1:4],samples=15000,batch=true)
 
 ```

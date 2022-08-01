@@ -1,5 +1,9 @@
+struct RegressionGSA <: GSAMethod
+    rank::Bool
+end
+
 """
-    RegressionGSA(rank) <: GSAMethod
+    RegressionGSA(; rank::Bool = false)
 
 RegressionGSA methods for global sensitivity analysis. Providing this to `gsa` results
 in a calculation of the following statistics, provided as a `RegressionGSAResult`. If
@@ -16,10 +20,6 @@ and a measure of the correlation of linear models of the
 # Arguments
 - `rank::Bool = false`: Flag determining whether to also run a rank regression analysis
 """
-struct RegressionGSA <: GSAMethod
-    rank::Bool
-end
-
 RegressionGSA(; rank::Bool = false) = RegressionGSA(rank)
 
 struct RegressionGSAResult{T, TR}
@@ -78,6 +78,10 @@ function _calculate_partial_correlation_coefficients(X, Y)
     return Matrix(transpose(pcc_XY[axes(X, 1), lastindex(X, 1) .+ axes(Y, 1)]))
 end
 
+"""
+    gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
+    gsa(X, Y, method::RegressionGSA)
+"""
 function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]

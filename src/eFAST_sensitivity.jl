@@ -1,6 +1,13 @@
 struct eFAST <: GSAMethod
     num_harmonics::Int
 end
+
+"""
+    eFAST(; num_harmonics::Int = 4)
+
+The eFAST object has num_harmonics as the only field, which is the number of harmonics to sum in the Fourier series decomposition,
+this defaults to 4.
+"""
 eFAST(; num_harmonics::Int = 4) = eFAST(num_harmonics)
 
 struct eFASTResult{T1}
@@ -8,6 +15,11 @@ struct eFASTResult{T1}
     ST::T1
 end
 
+"""
+    gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
+             distributed::Val{SHARED_ARRAY} = Val(false),
+             rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
+"""
 function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
              distributed::Val{SHARED_ARRAY} = Val(false),
              rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
