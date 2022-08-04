@@ -1,8 +1,5 @@
-struct RBDFAST <: GSAMethod
-    num_harmonics::Int
-end
-
 """
+
     RBDFAST(; num_harmonics = 6)
 
 - `num_harmonics`: Number of harmonics to consider during power spectral density analysis.
@@ -19,22 +16,9 @@ points are in increasing order with respect to factor `Xi`. The Fourier
 spectrum is calculated on the model output at the frequency 1 and at
 its higher harmonics (2, 3, 4, 5, 6) and yields the estimate of the
 sensitivity index of factor `Xi`.
-"""
-RBDFAST(; num_harmonics = 6) = RBDFAST(num_harmonics)
 
-"""
-Code based on the theory presented in:
-    Saltelli, A. (2008). Global sensitivity analysis: The primer. Chichester: Wiley, pp. 167-169.
-and
-    S. Tarantola, D. Gatelli and T. Mara (2006)
-    "Random Balance Designs for the Estimation of First Order Global Sensitivity Indices",
-    Reliability Engineering and System Safety, 91:6, 717-727
-"""
+## API
 
-using FFTW, Random, Statistics, StatsBase, Distributions
-allsame(x) = all(y -> y == first(x), x)
-
-"""
     gsa(f, method::RBDFAST; num_params, samples,
              rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
 
@@ -60,6 +44,24 @@ res1 = gsa(linear,GlobalSensitivity.RBDFAST(),num_params = 4, samples=15000)
 res2 = gsa(linear_batch,GlobalSensitivity.RBDFAST(),num_params = 4, batch=true, samples=15000)
 ```
 """
+struct RBDFAST <: GSAMethod
+    num_harmonics::Int
+end
+
+RBDFAST(; num_harmonics = 6) = RBDFAST(num_harmonics)
+
+"""
+Code based on the theory presented in:
+    Saltelli, A. (2008). Global sensitivity analysis: The primer. Chichester: Wiley, pp. 167-169.
+and
+    S. Tarantola, D. Gatelli and T. Mara (2006)
+    "Random Balance Designs for the Estimation of First Order Global Sensitivity Indices",
+    Reliability Engineering and System Safety, 91:6, 717-727
+"""
+
+using FFTW, Random, Statistics, StatsBase, Distributions
+allsame(x) = all(y -> y == first(x), x)
+
 function gsa(f, method::RBDFAST; num_params, samples,
              rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
     # Initalize matrix containing range of values of the parametric variable

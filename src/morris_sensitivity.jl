@@ -1,12 +1,5 @@
-struct Morris <: GSAMethod
-    p_steps::Array{Int, 1}
-    relative_scale::Bool
-    num_trajectory::Int
-    total_num_trajectory::Int
-    len_design_mat::Int
-end
-
 @doc raw"""
+
     Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
                 num_trajectory::Int = 10,
                 total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
@@ -16,7 +9,7 @@ end
 - `total_num_trajectory`, `num_trajectory`: The total number of design matrices that are generated out of which num_trajectory matrices with the highest spread are used in calculation.
 - `len_design_mat`: The size of a design matrix.
 
-## Morris Method Details
+## Method Details
 
 The Morris method also known as Morris’s OAT method where OAT stands for
 One At a Time can be described in the following steps:
@@ -39,7 +32,39 @@ does not evaluate separately the contribution from the
 interaction and the contribution of the parameters individually and gives the
 effects for each parameter which takes into consideration all the interactions and its
 individual contribution.
+
+## API
+
+    gsa(f, method::Morris, p_range::AbstractVector; batch = false,
+             rng::AbstractRNG = Random.default_rng(), kwargs...)
+
+### Example
+
+Morris method on Ishigami function
+
+```julia
+using GlobalSensitivity
+
+function ishi(X)
+    A= 7
+    B= 0.1
+    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
+end
+
+lb = -ones(4)*π
+ub = ones(4)*π
+
+m = gsa(ishi, Morris(num_trajectory=500000), [[lb[i],ub[i]] for i in 1:4])
+```
 """
+struct Morris <: GSAMethod
+    p_steps::Array{Int, 1}
+    relative_scale::Bool
+    num_trajectory::Int
+    total_num_trajectory::Int
+    len_design_mat::Int
+end
+
 function Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
                 num_trajectory::Int = 10,
                 total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
@@ -107,29 +132,6 @@ function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
     reduce(hcat, matrices)
 end
 
-"""
-    gsa(f, method::Morris, p_range::AbstractVector; batch = false,
-             rng::AbstractRNG = Random.default_rng(), kwargs...)
-
-### Example
-
-Morris method on Ishigami function
-
-```julia
-using GlobalSensitivity
-
-function ishi(X)
-    A= 7
-    B= 0.1
-    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
-end
-
-lb = -ones(4)*π
-ub = ones(4)*π
-
-m = gsa(ishi, Morris(num_trajectory=500000), [[lb[i],ub[i]] for i in 1:4])
-```
-"""
 function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
              rng::AbstractRNG = Random.default_rng(), kwargs...)
     @unpack p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat = method

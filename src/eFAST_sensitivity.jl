@@ -1,14 +1,11 @@
-struct eFAST <: GSAMethod
-    num_harmonics::Int
-end
-
 """
+
     eFAST(; num_harmonics::Int = 4)
 
 The eFAST object has `num_harmonics` as the only field, which is the number of harmonics to sum in the Fourier series decomposition,
 this defaults to 4.
 
-## eFAST Method Details
+## Method Details
 
 eFAST offers a robust, especially at low sample size, and computationally efficient procedure to
 get the first and total order indices as discussed in Sobol. It utilizes monodimensional Fourier decomposition
@@ -19,15 +16,9 @@ x_{i}(s) = G_{i}(sin ω_{i}s), ∀ i=1,2 ,..., samples,
 where s is a scalar variable varying over the range ``-∞ < s < +∞``, ``G_{i}`` are transformation functions
 and ``{ω_{i}}, ∀ i=1,2,...,samples`` is a set of different (angular) frequencies, to be properly selected, associated with each factor.
 For more details on the transformation used and other implementation details you can go through [ A. Saltelli et al.](http://dx.doi.org/10.1080/00401706.1999.10485594).
-"""
-eFAST(; num_harmonics::Int = 4) = eFAST(num_harmonics)
 
-struct eFASTResult{T1}
-    S1::T1
-    ST::T1
-end
+## API
 
-"""
     gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
              distributed::Val{SHARED_ARRAY} = Val(false),
              rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
@@ -62,6 +53,17 @@ res2 = gsa(ishi_batch,eFAST(),[[lb[i],ub[i]] for i in 1:4],samples=15000,batch=t
 
 ```
 """
+struct eFAST <: GSAMethod
+    num_harmonics::Int
+end
+
+eFAST(; num_harmonics::Int = 4) = eFAST(num_harmonics)
+
+struct eFASTResult{T1}
+    S1::T1
+    ST::T1
+end
+
 function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
              distributed::Val{SHARED_ARRAY} = Val(false),
              rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}

@@ -1,11 +1,5 @@
-struct DeltaMoment{T} <: GSAMethod
-    nboot::Int
-    conf_level::Float64
-    Ygrid_length::Int
-    num_classes::T
-end
-
 """
+
     DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
                      num_classes = nothing)
 
@@ -25,7 +19,44 @@ parameters.
 
 !!! note
     `DeltaMoment` only works for scalar output.
+
+## API
+
+    gsa(f, method::DeltaMoment, p_range; samples, batch = false,
+             rng::AbstractRNG = Random.default_rng())
+    gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
+
+### Example
+
+```julia
+using GlobalSensitivity, Test
+
+function ishi(X)
+    A= 7
+    B= 0.1
+    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
+end
+
+lb = -ones(3)*π
+ub = ones(3)*π
+
+m = gsa(ishi,DeltaMoment(),fill([lb[1], ub[1]], 3), samples=1000)
+
+
+samples = 1000
+X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
+Y = ishi.(@view X[:, i] for i in 1:samples)
+
+m = gsa(X, Y, DeltaMoment())
+```
 """
+struct DeltaMoment{T} <: GSAMethod
+    nboot::Int
+    conf_level::Float64
+    Ygrid_length::Int
+    num_classes::T
+end
+
 function DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
                      num_classes = nothing)
     DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
@@ -125,35 +156,6 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
     return DeltaResult(deltas, adjusted_deltas, adjusted_deltas_low, adjusted_deltas_high)
 end
 
-"""
-    gsa(f, method::DeltaMoment, p_range; samples, batch = false,
-             rng::AbstractRNG = Random.default_rng())
-    gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
-
-### Example
-
-```julia
-using GlobalSensitivity, Test
-
-function ishi(X)
-    A= 7
-    B= 0.1
-    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
-end
-
-lb = -ones(3)*π
-ub = ones(3)*π
-
-m = gsa(ishi,DeltaMoment(),fill([lb[1], ub[1]], 3), samples=1000)
-
-
-samples = 1000
-X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
-Y = ishi.(@view X[:, i] for i in 1:samples)
-
-m = gsa(X, Y, DeltaMoment())
-```
-"""
 function gsa(f, method::DeltaMoment, p_range; samples, batch = false,
              rng::AbstractRNG = Random.default_rng())
     lb = [i[1] for i in p_range]

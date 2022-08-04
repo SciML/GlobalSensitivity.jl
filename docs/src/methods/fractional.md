@@ -5,9 +5,3 @@
 ```@docs
 FractionalFactorial
 ```
-
-## API
-
-```@docs
-gsa(f, method::FractionalFactorial; num_params, p_range = nothing, kwargs...)
-```
