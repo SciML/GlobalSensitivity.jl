@@ -18,7 +18,7 @@ include("rbd-fast_sensitivity.jl")
 include("fractional_factorial_sensitivity.jl")
 
 """
-    gsa(f, method, param_range; samples, batch=false)
+    gsa(f, method::GSAMethod, param_range; samples, batch=false)
 
 where:
 
@@ -53,7 +53,7 @@ where `A` and `B` are design matrices with each row being a set of parameters. N
 from [QuasiMonteCarlo.jl](https://github.com/JuliaDiffEq/QuasiMonteCarlo.jl) can be used to generate the design
 matrices.
 """
-gsa(f, method, param_range; samples, batch = false)
+function gsa(f, method::GSAMethod, param_range; samples, batch = false) end
 
 export gsa
 

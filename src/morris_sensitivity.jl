@@ -6,12 +6,12 @@ struct Morris <: GSAMethod
     len_design_mat::Int
 end
 
-"""
+@doc raw"""
     Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
                 num_trajectory::Int = 10,
                 total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
 
-- `p_steps`: Vector of Δ for the step sizes in each direction. Required.
+- `p_steps`: Vector of ``\Delta`` for the step sizes in each direction. Required.
 - `relative_scale`: The elementary effects are calculated with the assumption that the parameters lie in the range [0,1] but as this is not always the case scaling is used to get more informative, scaled effects. Defaults to false.
 - `total_num_trajectory`, `num_trajectory`: The total number of design matrices that are generated out of which num_trajectory matrices with the highest spread are used in calculation.
 - `len_design_mat`: The size of a design matrix.
@@ -25,7 +25,9 @@ We calculate local sensitivity measures known as “elementary effects”,
 which are calculated by measuring the perturbation in the output of the
 model on changing one parameter.
 
-``EE_i = \frac{f(x_1,x_2,..x_i+ \Delta,..x_k) - y}{\Delta}``
+```math
+EE_i = \frac{f(x_1,x_2,..x_i+ \Delta,..x_k) - y}{\Delta}
+```
 
 These are evaluated at various points in the input chosen such that a wide
 “spread” of the parameter space is explored and considered in the analysis,

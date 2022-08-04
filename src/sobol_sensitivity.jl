@@ -4,7 +4,7 @@ struct Sobol <: GSAMethod
     conf_level::Float64
 end
 
-"""
+@doc raw"""
     Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95)
 
 - `order`: The order of the indices to calculate. Defaults to [0,1], which means the Total
@@ -285,10 +285,9 @@ end
   Monte Carlo estimator is used for the `Ei` term. Defaults to `:Jansen1999`. Details for these can be found in the
   corresponding papers:
 
-    - `:Homma1996` - [Homma, T. and Saltelli, A., 1996. Importance measures in global sensitivity analysis of nonlinear models. Reliability Engineering & System Safety, 52(1), pp.1-17.](https://www.sciencedirect.com/science/article/abs/pii/0951832096000026)
-    - `:Sobol2007` - [I.M. Sobol, S. Tarantola, D. Gatelli, S.S. Kucherenko and W. Mauntz, 2007, Estimating the approx- imation errors when fixing unessential factors in global sensitivity analysis, Reliability Engineering and System Safety, 92, 957–960.](https://www.sciencedirect.com/science/article/abs/pii/S0951832006001499)
-    [A. Saltelli, P. Annoni, I. Azzini, F. Campolongo, M. Ratto and S. Tarantola, 2010, Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index, Computer Physics Communications 181, 259–270.](https://www.sciencedirect.com/science/article/abs/pii/S0010465509003087)
-    - `:Jansen1999` - [M.J.W. Jansen, 1999, Analysis of variance designs for model output, Computer Physics Communi- cation, 117, 35–43.](https://www.sciencedirect.com/science/article/abs/pii/S0010465598001544)
+- `:Homma1996` - [Homma, T. and Saltelli, A., 1996. Importance measures in global sensitivity analysis of nonlinear models. Reliability Engineering & System Safety, 52(1), pp.1-17.](https://www.sciencedirect.com/science/article/abs/pii/0951832096000026)
+- `:Sobol2007` - [I.M. Sobol, S. Tarantola, D. Gatelli, S.S. Kucherenko and W. Mauntz, 2007, Estimating the approx- imation errors when fixing unessential factors in global sensitivity analysis, Reliability Engineering and System Safety, 92, 957–960.](https://www.sciencedirect.com/science/article/abs/pii/S0951832006001499) and [A. Saltelli, P. Annoni, I. Azzini, F. Campolongo, M. Ratto and S. Tarantola, 2010, Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index, Computer Physics Communications 181, 259–270.](https://www.sciencedirect.com/science/article/abs/pii/S0010465509003087)
+- `:Jansen1999` - [M.J.W. Jansen, 1999, Analysis of variance designs for model output, Computer Physics Communi- cation, 117, 35–43.](https://www.sciencedirect.com/science/article/abs/pii/S0010465598001544)
 
 ### Example
 

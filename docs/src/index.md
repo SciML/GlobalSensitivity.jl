@@ -21,9 +21,9 @@ Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl pack
 The general interface for performing global sensitivity analysis using this package is:
 
 ```@docs
-gsa(f, method, param_range; samples, batch = false)
+gsa(f, method::GlobalSensitivity.GSAMethod, param_range; samples, batch = false)
 ```
 
 The descriptions of the available methods can be found in the Methods section.
-The GSA interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel
+The `gsa` interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel
 computation of GSA results.

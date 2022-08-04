@@ -2,7 +2,7 @@ struct RegressionGSA <: GSAMethod
     rank::Bool
 end
 
-"""
+@doc raw"""
     RegressionGSA(; rank::Bool = false)
 
 RegressionGSA methods for global sensitivity analysis. Providing this to `gsa` results
@@ -39,7 +39,7 @@ r = \frac{\sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_{i
 SRC_j = \beta_{j} \sqrt{\frac{Var(X_j)}{Var(Y)}}
 ```
 
-where ``\beta_j`` is the linear regression coefficient associated to $X_j$. This is also known
+where ``\beta_j`` is the linear regression coefficient associated to ``X\_j``. This is also known
 as a sigma-normalized derivative.
 
   c) Partial Correlation Coefficient (PCC):
