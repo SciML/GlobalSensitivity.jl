@@ -14,7 +14,7 @@ ub = ones(4) * π
 
 samples = 1000
 X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
-@time Y = ishi.(@view X[:, i] for i in 1:samples)
+@time Y = ishi.[@view X[:, i] for i in 1:samples]
 
 m = gsa(X[1:3, :], Y, DeltaMoment())
 @test m.deltas≈[0.191604, 0.253396, 0.148682] atol=3e-2
