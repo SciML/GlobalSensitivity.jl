@@ -1,3 +1,36 @@
+"""
+
+    DGSM(; crossed::Bool = false)
+
+- `crossed`: A Boolean which act as indicator for computation of DGSM crossed indices.
+
+## Method Details
+
+The DGSM method takes a probability distribution for each of the
+parameters and samples are obtained from the distributions to create
+random parameter sets. Derivatives of the function being analysed are
+then computed at the sampled parameters and specific statistics of those
+derivatives are used. The paper by [Sobol and Kucherenko](http://www.sciencedirect.com/science/article/pii/S0378475409000354)
+discusses the relationship between the DGSM results, `tao` and
+`sigma` and the Morris elementary effects and Sobol Indices.
+
+## API
+    gsa(f, method::DGSM, distr::AbstractArray; samples::Int, kwargs...)
+
+- `dist`: Array of distribution of respective variables. E.g. `dist = [Normal(5,6),Uniform(2,3)]` for two variables.
+
+### Example
+
+```julia
+using GlobalSensitivity, Test, Distributions
+
+samples = 2000000
+
+f1(x) = x[1] + 2*x[2] + 6.00*x[3]
+dist1 = [Uniform(4,10),Normal(4,23),Beta(2,3)]
+b =  gsa(f1,DGSM(),dist1,samples=samples)
+```
+"""
 struct DGSM <: GSAMethod
     crossed::Bool
 end
@@ -15,23 +48,6 @@ mutable struct DGSMResult{T}
     crossedsq::Union{Nothing, Array{T, 2}}
 end
 
-"""
-The inputs for DGSM are as follows:
-1.f:
-    This is the input function based on which the values of DGSM are to be evaluated
-    Eg- f(x) = x[1]+x[2]^2
-        This is function in 2 variables
-2.samples:
-    Depicts the number of sampling set of points to be used for evaluation of E(a), E(|a|) and E(a^2)
-    a = partial derivative of f wrt x_i
-3.distri:
-    Array of distribution of respective variables
-    Eg- dist = [Normal(5,6),Uniform(2,3)]
-    for two variables
-4.crossed:
-    A string(True/False) which act as indicator for computation of DGSM crossed indices
-    Eg- a True value over there will lead to evauation of crossed indices
-"""
 function gsa(f, method::DGSM, distr::AbstractArray; samples::Int, kwargs...)
     k = length(distr)
 

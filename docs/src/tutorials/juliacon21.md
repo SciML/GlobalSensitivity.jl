@@ -50,7 +50,7 @@ fig
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
 
 ```julia
-sobol_sens = gsa(f1, Sobol(), bounds, N=5000)
+sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
 efast_sens = gsa(f1, eFAST(), bounds)
 fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (Sobol)", ylabel = "First order"))
@@ -72,11 +72,11 @@ fig
 
 ```julia
 using QuasiMonteCarlo
-N = 5000
+samples = 5000
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
-A,B = QuasiMonteCarlo.generate_design_matrices(N,lb,ub,sampler)
+A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 sobol_sens_desmat = gsa(f1,Sobol(),A,B)
 
 
@@ -107,7 +107,7 @@ f1 = function (p)
            prob1 = remake(prob;p=p)
            sol = solve(prob1,Tsit5();saveat=t)
        end
-sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, N=5000)
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=5000)
 fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end], label = "Prey", markersize = 4)
 CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end], label = "Predator", markersize = 4)
