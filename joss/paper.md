@@ -41,6 +41,44 @@ This package allows users to conveniently perform GSA on arbitrary functions and
 
 The following tutorials in the documentation [1](https://gsa.sciml.ai/stable/tutorials/juliacon21/) and [2](https://gsa.sciml.ai/stable/tutorials/parallelized_gsa/) cover workflows of using GlobalSensitivity.jl on the Lotka-Volterra differential equation, popularly known as the predator-prey model. We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to perform global sensitivity analysis at scale. The plots have been created using the Makie.jl package [@DanischKrumbiegel2021], while many of the plots in the documentation use the Plots.jl package [@ChristPlots2022].
 
+The ability to use parallelism with GlobalSensitivity.jl by using the `batch` keyword argument is shown in the below code snippet. In the batch interface, each column `p[:,i]` is a set of parameters, and we output a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://diffeq.sciml.ai/stable/features/ensemble/) to use `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
+
+```julia
+using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq
+
+function f(du,u,p,t)
+  du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
+  du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
+end
+
+u0 = [1.0;1.0]
+tspan = (0.0,10.0)
+p = [1.5,1.0,3.0,1.0]
+prob = ODEProblem(f,u0,tspan,p)
+t = collect(range(0, stop=10, length=200))
+
+f1 = function (p)
+  prob_func(prob,i,repeat) = remake(prob;p=p[:,i])
+  ensemble_prob = EnsembleProblem(prob,prob_func=prob_func)
+  sol = solve(ensemble_prob,Tsit5(),EnsembleThreads();saveat=t,trajectories=size(p,2))
+  # Now sol[i] is the solution for the ith set of parameters
+  out = zeros(2,size(p,2))
+  for i in 1:size(p,2)
+    out[1,i] = mean(sol[i][1,:])
+    out[2,i] = maximum(sol[i][2,:])
+  end
+  out
+end
+
+samples = 10000
+lb = [1.0, 1.0, 1.0, 1.0]
+ub = [5.0, 5.0, 5.0, 5.0]
+sampler = SobolSample()
+A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
+
+sobol_result = gsa(f1,Sobol(),A,B,batch=true)
+```
+
 # Acknowledgements
 
 This material is based upon work supported by the National Science Foundation under grant no.  OAC-1835443, grant no. SII-2029670,
