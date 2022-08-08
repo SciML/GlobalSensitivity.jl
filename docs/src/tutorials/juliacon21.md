@@ -4,7 +4,7 @@ The tutorial covers a workflow of using GlobalSensitivity.jl on the Lotka-Volter
 We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to
 perform Global Sensitivity analysis at scale.
 
-```julia
+```@example lv
 using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
 
 function f(du,u,p,t)
@@ -37,7 +37,7 @@ fig
 
 ![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
 
-```julia
+```@example lv
 using StableRNGs
 _rng = StableRNG(1234)
 morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
@@ -49,7 +49,7 @@ fig
 
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
 
-```julia
+```@example lv
 sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
 efast_sens = gsa(f1, eFAST(), bounds)
 fig = Figure(resolution = (600, 400))
@@ -70,7 +70,7 @@ fig
 ![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
 ![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
 
-```julia
+```@example lv
 using QuasiMonteCarlo
 samples = 5000
 lb = [1.0, 1.0, 1.0, 1.0]
@@ -102,7 +102,7 @@ sobol_sens_batch = gsa(f_batch,Sobol(),A,B,batch=true)
 @time gsa(f_batch,Sobol(),A,B,batch=true)
 ```
 
-```julia
+```@example lv
 f1 = function (p)
            prob1 = remake(prob;p=p)
            sol = solve(prob1,Tsit5();saveat=t)
