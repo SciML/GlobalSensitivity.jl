@@ -1,4 +1,8 @@
 """
+    FractionalFactorial()
+
+`FractionalFactorial` does not have any keyword arguments.
+
 ## Method Details
 
 Fractional Factorial method creates a design matrix by utilising

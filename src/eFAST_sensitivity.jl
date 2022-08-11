@@ -2,8 +2,7 @@
 
     eFAST(; num_harmonics::Int = 4)
 
-The eFAST object has `num_harmonics` as the only field, which is the number of harmonics to sum in the Fourier series decomposition,
-this defaults to 4.
+- `num_harmonics`: the number of harmonics to sum in the Fourier series decomposition, this defaults to 4.
 
 ## Method Details
 
@@ -11,10 +10,10 @@ eFAST offers a robust, especially at low sample size, and computationally effici
 get the first and total order indices as discussed in Sobol. It utilizes monodimensional Fourier decomposition
 along a curve exploring the parameter space. The curve is defined by a set of parametric equations,
 ```math
-x_{i}(s) = G_{i}(sin ω_{i}s), ∀ i=1,2 ,..., samples,
+x_{i}(s) = G_{i}(sin ω_{i}s), ∀ i=1,2 ,..., N
 ```
 where s is a scalar variable varying over the range ``-∞ < s < +∞``, ``G_{i}`` are transformation functions
-and ``{ω_{i}}, ∀ i=1,2,...,samples`` is a set of different (angular) frequencies, to be properly selected, associated with each factor.
+and ``{ω_{i}}, ∀ i=1,2,...,N`` is a set of different (angular) frequencies, to be properly selected, associated with each factor for all ``N`` (`samples`) number of parameter sets.
 For more details on the transformation used and other implementation details you can go through [ A. Saltelli et al.](http://dx.doi.org/10.1080/00401706.1999.10485594).
 
 ## API
