@@ -38,6 +38,7 @@ Now, let's perform a Morris global sensitivity analysis on this model. We specif
 ```@example ode
 m = gsa(f1,Morris(total_num_trajectory=1000,num_trajectory=150),[[1,5],[1,5],[1,5],[1,5]])
 ```
+
 Let's get the means and variances from the `MorrisResult` struct.
 
 ```@example ode
