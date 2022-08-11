@@ -1,6 +1,6 @@
 # Parallelized Morris and Sobol Sensitivity Analysis of an ODE
 
-Let's run GSA on the Lotka-Volterra model to and study the sensitivity of the maximum of predator population and the average prey population.
+Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) to and study the sensitivity of the maximum of predator population and the average prey population.
 
 ```@example ode
 using GlobalSensitivity, Statistics, OrdinaryDiffEq #load packages

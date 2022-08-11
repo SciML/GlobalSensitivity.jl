@@ -1,7 +1,7 @@
 using Documenter, GlobalSensitivity
 
 ENV["GKSwstype"] = "100"
-using Plots
+using Plots, CairoMakie
 
 include("pages.jl")
 

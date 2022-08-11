@@ -1,6 +1,6 @@
 # Global Sensitivity Analysis of the Lotka-Volterra model
 
-The tutorial covers a workflow of using GlobalSensitivity.jl on the Lotka-Volterra differential equation.
+The tutorial covers a workflow of using GlobalSensitivity.jl on the [Lotka-Volterra differential equations](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations).
 We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to
 perform Global Sensitivity analysis at scale.
 
@@ -22,11 +22,12 @@ t = collect(range(0, stop=10, length=200))
 f1 = function (p)
     prob1 = remake(prob;p=p)
     sol = solve(prob1,Tsit5();saveat=t)
+    return [mean(sol[1,:]), maximum(sol[2,:])]
 end
 
 bounds = [[1,5],[1,5],[1,5],[1,5]]
 
-reg_sens = gsa(f1, RegressionGSA(true), bounds)
+reg_sens = gsa(f1, RegressionGSA(true), bounds, samples = 1000)
 fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.heatmap(fig[1,1], reg_sens.partial_correlation, figure = (resolution = (600, 400),), axis = (xticksvisible = false,yticksvisible = false, yticklabelsvisible = false, xticklabelsvisible = false, title = "Partial correlation"))
 Colorbar(fig[1, 2], hm)
