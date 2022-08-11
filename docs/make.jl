@@ -10,9 +10,9 @@ makedocs(sitename = "GlobalSensitivity.jl",
          clean = true,
          doctest = false,
          modules = [GlobalSensitivity],
-         strict=[
-             :doctest, 
-             :linkcheck, 
+         strict = [
+             :doctest,
+             :linkcheck,
              :parse_error,
              :example_block,
              # Other available options are
