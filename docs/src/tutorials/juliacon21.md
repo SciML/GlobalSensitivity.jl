@@ -73,7 +73,7 @@ fig
 
 ```@example lv
 using QuasiMonteCarlo
-samples = 5000
+samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
