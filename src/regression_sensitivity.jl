@@ -2,20 +2,15 @@
 
     RegressionGSA(; rank::Bool = false)
 
-RegressionGSA methods for global sensitivity analysis. Providing this to `gsa` results
-in a calculation of the following statistics, provided as a `RegressionGSAResult`. If
-the function f to be analyzed is of dimensionality f: R^n -> R^m, then these coefficients
-are returned as a matrix, with the corresponding statistic in the (i, j) entry.
-
-- `pearson`: This is equivalent to the correlation coefficient matrix between input and
-output. The rank version is known as the Spearman coefficient.
-- `standard_regression`: Standard regression coefficients, also known as sigma-normalized
-derivatives
-- `partial_correlation`: Partial correlation coefficients, related to the precision matrix
-and a measure of the correlation of linear models of the
-
-# Arguments
 - `rank::Bool = false`: Flag determining whether to also run a rank regression analysis
+
+Providing this to `gsa` results in a calculation of the following statistics, provided as a `RegressionGSAResult`. If
+the function `f` to be analyzed is of dimensionality ``f: R^n -> R^m``, then these coefficients
+are returned as a matrix, with the corresponding statistic in the `(i, j)`` entry.
+
+- `pearson`: This is equivalent to the correlation coefficient matrix between input and output. The rank version is known as the Spearman coefficient.
+- `standard_regression`: Standard regression coefficients, also known as sigma-normalized derivatives
+- `partial_correlation`: Partial correlation coefficients, related to the precision matrix and a measure of the correlation of linear models of the
 
 ## Method Details
 
@@ -56,7 +51,6 @@ If `rank` is set to `true`, then the rank coefficients are also calculated.
 
     gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
     gsa(X, Y, method::RegressionGSA)
-
 
 ### Example
 

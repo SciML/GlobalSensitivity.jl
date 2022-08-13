@@ -1,14 +1,14 @@
 # Parallelized Morris and Sobol Sensitivity Analysis of an ODE
 
-Let's run GSA on the Lotka-Volterra model to and study the sensitivity of the maximum of predator population and the average prey population.
+Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) to and study the sensitivity of the maximum of predator population and the average prey population.
 
-```julia
-using GlobalSensitivity, Statistics, OrdinaryDiffEq #load packages
+```@example ode
+using GlobalSensitivity, Statistics, OrdinaryDiffEq, QuasiMonteCarlo, Plots
 ```
 
 First, let's define our model:
 
-```julia
+```@example ode
 function f(du,u,p,t)
   du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
   du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
@@ -24,7 +24,7 @@ Now, let's create a function that takes in a parameter set and calculates the ma
 average of the prey population for those parameter values. To do this, we will make use of the `remake` function, which
 creates a new `ODEProblem`, and use the `p` keyword argument to set the new parameters:
 
-```julia
+```@example ode
 f1 = function (p)
   prob1 = remake(prob;p=p)
   sol = solve(prob1,Tsit5();saveat=t)
@@ -35,33 +35,33 @@ end
 Now, let's perform a Morris global sensitivity analysis on this model. We specify that the parameter range is
 `[1,5]` for each of the parameters, and thus call:
 
-```julia
+```@example ode
 m = gsa(f1,Morris(total_num_trajectory=1000,num_trajectory=150),[[1,5],[1,5],[1,5],[1,5]])
 ```
+
 Let's get the means and variances from the `MorrisResult` struct.
 
-```julia
+```@example ode
 m.means
-2×2 Array{Float64,2}:
- 0.474053  0.114922
- 1.38542   5.26094
+```
 
+```@example ode
 m.variances
-2×2 Array{Float64,2}:
- 0.208271    0.0317397
- 3.07475   118.103
 ```
 
 Let's plot the result
 
-```julia
+```@example ode
 scatter(m.means[1,:], m.variances[1,:],series_annotations=[:a,:b,:c,:d],color=:gray)
+```
+
+```@example ode
 scatter(m.means[2,:], m.variances[2,:],series_annotations=[:a,:b,:c,:d],color=:gray)
 ```
 
 For the Sobol method, we can similarly do:
 
-```julia
+```@example ode
 m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],samples=1000)
 ```
 
@@ -72,9 +72,8 @@ Doing it in this manner lets us directly specify a quasi-Monte Carlo sampling me
 we use [QuasiMonteCarlo.jl](https://github.com/SciML/QuasiMonteCarlo.jl) to generate the design matrices
 as follows:
 
-```julia
-using GlobalSensitivity, QuasiMonteCarlo, Plots
-samples = 10000
+```@example ode
+samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
@@ -83,14 +82,13 @@ A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 
 and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka Volterra example:
 
-```julia
+```@example ode
 sobol_result = gsa(f1,Sobol(),A,B)
 ```
 
 We plot the first order and total order Sobol Indices for the parameters (`a` and `b`).
 
-```julia
-
+```@example ode
 p1 = bar(["a","b","c","d"],sobol_result.ST[1,:],title="Total Order Indices prey",legend=false)
 p2 = bar(["a","b","c","d"],sobol_result.S1[1,:],title="First Order Indices prey",legend=false)
 p1_ = bar(["a","b","c","d"],sobol_result.ST[2,:],title="Total Order Indices predator",legend=false)
@@ -107,9 +105,7 @@ by using the batch interface. In the batch interface, each column `p[:,i]` is a 
 a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://diffeq.sciml.ai/stable/features/ensemble/) to use
 `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
 
-```julia
-using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq
-
+```@example ode
 function f(du,u,p,t)
   du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
   du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
@@ -137,7 +133,7 @@ end
 
 And now to do the parallelized calls we simply add the `batch=true` keyword argument:
 
-```julia
+```@example ode
 sobol_result = gsa(f1,Sobol(),A,B,batch=true)
 ```
 
