@@ -52,7 +52,7 @@ fig
 
 ```@example lv
 sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
-efast_sens = gsa(f1, eFAST(), bounds, samples=5000)
+efast_sens = gsa(f1, eFAST(), bounds, samples=500)
 fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (Sobol)", ylabel = "First order"))
 barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = "Total order"))
