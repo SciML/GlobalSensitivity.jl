@@ -74,7 +74,7 @@ as follows:
 
 ```@example designmat
 using GlobalSensitivity, QuasiMonteCarlo, Plots
-samples = 10000
+samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
