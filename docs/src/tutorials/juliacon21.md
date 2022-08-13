@@ -108,7 +108,7 @@ f1 = function (p)
            prob1 = remake(prob;p=p)
            sol = solve(prob1,Tsit5();saveat=t)
        end
-sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=5000)
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples=500)
 fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.scatter(fig[1,1], sobol_sens.S1[1][1,2:end], label = "Prey", markersize = 4)
 CairoMakie.scatter!(fig[1,1], sobol_sens.S1[1][2,2:end], label = "Predator", markersize = 4)
