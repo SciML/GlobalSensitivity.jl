@@ -3,7 +3,7 @@
 Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) to and study the sensitivity of the maximum of predator population and the average prey population.
 
 ```@example ode
-using GlobalSensitivity, Statistics, OrdinaryDiffEq, Plots
+using GlobalSensitivity, Statistics, OrdinaryDiffEq, QuasiMonteCarlo, Plots
 ```
 
 First, let's define our model:
@@ -72,8 +72,7 @@ Doing it in this manner lets us directly specify a quasi-Monte Carlo sampling me
 we use [QuasiMonteCarlo.jl](https://github.com/SciML/QuasiMonteCarlo.jl) to generate the design matrices
 as follows:
 
-```@example designmat
-using GlobalSensitivity, QuasiMonteCarlo, Plots
+```@example ode
 samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
@@ -83,13 +82,13 @@ A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 
 and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka Volterra example:
 
-```@example designmat
+```@example ode
 sobol_result = gsa(f1,Sobol(),A,B)
 ```
 
 We plot the first order and total order Sobol Indices for the parameters (`a` and `b`).
 
-```@example designmat
+```@example ode
 p1 = bar(["a","b","c","d"],sobol_result.ST[1,:],title="Total Order Indices prey",legend=false)
 p2 = bar(["a","b","c","d"],sobol_result.S1[1,:],title="First Order Indices prey",legend=false)
 p1_ = bar(["a","b","c","d"],sobol_result.ST[2,:],title="Total Order Indices predator",legend=false)
@@ -106,9 +105,7 @@ by using the batch interface. In the batch interface, each column `p[:,i]` is a 
 a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://diffeq.sciml.ai/stable/features/ensemble/) to use
 `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
 
-```@example parallelgsa
-using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq
-
+```@example ode
 function f(du,u,p,t)
   du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
   du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
@@ -136,7 +133,7 @@ end
 
 And now to do the parallelized calls we simply add the `batch=true` keyword argument:
 
-```@example parallelgsa
+```@example ode
 sobol_result = gsa(f1,Sobol(),A,B,batch=true)
 ```
 
