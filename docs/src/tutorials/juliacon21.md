@@ -51,7 +51,7 @@ fig
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
 
 ```@example lv
-sobol_sens = gsa(f1, Sobol(), bounds, samples=5000)
+sobol_sens = gsa(f1, Sobol(), bounds, samples=500)
 efast_sens = gsa(f1, eFAST(), bounds, samples=500)
 fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (Sobol)", ylabel = "First order"))
