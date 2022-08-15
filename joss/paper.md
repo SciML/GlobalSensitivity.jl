@@ -26,16 +26,16 @@ bibliography: paper.bib
 
 Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
 output of a model with respect to the parameters. These methods allow practitioners to
-measure both parameter's individual contributions and the contribution of their interactions
-to the output uncertainity. GlobalSensitivity.jl is a Julia [@Bezanson2017] package containing implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent [@Borgonovo2007;@Plischke2013], DGSM [@Sobol2009], EASI [@Plischke2010;@Plischke2012], eFAST [@Saltelli1999;@Saltelli1998], Morris [@Morris1991;@Campolongo2007], Fractional Factorial [@Saltelli2008b], RBD-FAST [@Tarantola2006], Sobol [@Saltelli2008b;@Sobol2001;@Saltelli2002a] and regression based sensitivity [@Guido2016] methods.
+measure both parameters' individual contributions and the contribution of their interactions
+to the output uncertainity. GlobalSensitivity.jl is a Julia [@Bezanson2017] package containing implementation of some of the most popular GSA methods. Currently it supports Delta Moment-Independent [@Borgonovo2007;@Plischke2013], DGSM [@Sobol2009], EASI [@Plischke2010;@Plischke2012], eFAST [@Saltelli1999;@Saltelli1998], Morris [@Morris1991;@Campolongo2007], Fractional Factorial [@Saltelli2008b], RBD-FAST [@Tarantola2006], Sobol [@Saltelli2008b;@Sobol2001;@Saltelli2002a] and regression based sensitivity [@Guido2016] methods.
 
 # Statement of need
 
 Global Sensitivity Analysis has become an essential part of modeling workflows for practitioners in various fields such as Quantitative Systems Pharmacology and Environmental Modeling [@saltelli2020five;@JAKEMAN2006602;@sher2022quantitative;@zhang2015sobol]. It can be used primarily in two stages, either before parameter estimation to simplify the fitting problem by fixing unimportant parameters or for analysis of the input parameters' influence on the output.
 
-There are already some popular packages in R and Python, such as [sensitivity](https://cran.r-project.org/web/packages/sensitivity/index.html) and SALib [@Herman2017] for global sensitivity analysis. GlobalSensitivity.jl provides implementation of some of the popular GSA methods mentioned earlier, in Julia. Thus it benefits from the performance advantage of Julia, provides a convenient unified API for different GSA methods by leveraging multiple dispatch and has a parallelized implementation for some of the methods.
+There are already some popular packages in R and Python, such as [sensitivity](https://cran.r-project.org/web/packages/sensitivity/index.html) and SALib [@Herman2017] for global sensitivity analysis. GlobalSensitivity.jl provides Julia implementations of some of the popular GSA methods mentioned in the previous section. Thus it benefits from the performance advantage of Julia, provides a convenient unified API for different GSA methods by leveraging multiple dispatch and has a parallelized implementation for some of the methods.
 
-This package allows users to conveniently perform GSA on arbitrary functions and get the sensitivity analysis results and at the same time provides out of the box support for differential equations based models defined using the SciML interface [@Rackauckas2017DifferentialEquationsjlA;@RackauckasUDE].
+This package allows users to conveniently perform GSA on arbitrary functions and get the sensitivity analysis results and provides out of the box support for differential equations based models defined using the SciML interface [@Rackauckas2017DifferentialEquationsjlA;@RackauckasUDE].
 
 ## Examples
 
