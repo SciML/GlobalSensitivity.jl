@@ -9,6 +9,7 @@ authors:
     corresponding: true
     affiliation: 1
   - name: Christopher Rackauckas
+    orcid: 0000-0001-5850-0663
     affiliation: "1, 2, 3"
 affiliations:
  - name: Julia Computing
