@@ -9,7 +9,8 @@
 
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
-
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04561/status.svg)](https://doi.org/10.21105/joss.04561)
+   
 GlobalSensitivity.jl package contains implementation of some the most popular GSA methods. Currently it supports Delta Moment-Independent, DGSM, EASI, eFAST, Morris, Fractional Factorial, RBD-FAST, Sobol and Regression based sensitivity methods.
 
 ## Tutorials and Documentation
