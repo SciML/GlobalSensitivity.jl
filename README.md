@@ -1,7 +1,7 @@
 # GlobalSensitivity.jl
 
 [![Join the chat at https://julialang.zulipchat.com #sciml-bridged](https://img.shields.io/static/v1?label=Zulip&message=chat&color=9558b2&labelColor=389826)](https://julialang.zulipchat.com/#narrow/stream/279055-sciml-bridged)
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)]([http://sensitivity.sciml.ai/stable/](https://gsa.sciml.ai/stable/))
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://gsa.sciml.ai/stable/)
 [![Global Docs](https://img.shields.io/badge/docs-SciML-blue.svg)](https://docs.sciml.ai/dev/modules/GlobalSensitivity/)
 
 [![codecov](https://codecov.io/gh/SciML/GlobalSensitivity.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SciML/GlobalSensitivity.jl)
