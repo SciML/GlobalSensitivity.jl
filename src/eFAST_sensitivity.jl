@@ -95,9 +95,14 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
         l = ((i - 1) * samples + 1):(i * samples)
         phi = 2rand(rng)
         for j in 1:num_params
-            ps[j, l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]),
-                                  0.5 .+
-                                  (1 / pi) .* (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+            if p_range[j][1] == p_range[j][2]
+                ps[j, l] .= p_range[j][1]
+            else
+                ps[j, l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]),
+                                      0.5 .+
+                                      (1 / pi) .*
+                                      (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+            end
         end
     end
 
