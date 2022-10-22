@@ -134,3 +134,19 @@ fig
 ```
 
 ![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
+
+## Citing
+
+If you use this software in your work, please cite:
+
+```bib
+@article{dixit2022globalsensitivity,
+  title={GlobalSensitivity. jl: Performant and Parallel Global Sensitivity Analysis with Julia},
+  author={Dixit, Vaibhav Kumar and Rackauckas, Christopher},
+  journal={Journal of Open Source Software},
+  volume={7},
+  number={76},
+  pages={4561},
+  year={2022}
+}
+```
