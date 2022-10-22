@@ -27,3 +27,19 @@ gsa(f, method::GlobalSensitivity.GSAMethod, param_range; samples, batch = false)
 The descriptions of the available methods can be found in the Methods section.
 The `gsa` interface allows for utilizing batched functions with the `batch` kwarg discussed above for parallel
 computation of GSA results.
+
+## Citing
+
+If you use this software in your work, please cite:
+
+```bib
+@article{dixit2022globalsensitivity,
+  title={GlobalSensitivity. jl: Performant and Parallel Global Sensitivity Analysis with Julia},
+  author={Dixit, Vaibhav Kumar and Rackauckas, Christopher},
+  journal={Journal of Open Source Software},
+  volume={7},
+  number={76},
+  pages={4561},
+  year={2022}
+}
+```
