@@ -69,7 +69,7 @@ m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],samples=1000)
 
 For the Sobol Method, we can have more control over the sampled points by generating design matrices.
 Doing it in this manner lets us directly specify a quasi-Monte Carlo sampling method for the parameter space. Here
-we use [QuasiMonteCarlo.jl](https://github.com/SciML/QuasiMonteCarlo.jl) to generate the design matrices
+we use [QuasiMonteCarlo.jl](https://docs.sciml.ai/QuasiMonteCarlo/stable/) to generate the design matrices
 as follows:
 
 ```@example ode
@@ -102,7 +102,7 @@ plot(p1,p2,p1_,p2_)
 
 In all of the previous examples, `f(p)` was calculated serially. However, we can parallelize our computations
 by using the batch interface. In the batch interface, each column `p[:,i]` is a set of parameters, and we output
-a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://diffeq.sciml.ai/stable/features/ensemble/) to use
+a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://docs.sciml.ai/DiffEqDocs/stable/features/ensemble/) to use
 `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
 
 ```@example ode

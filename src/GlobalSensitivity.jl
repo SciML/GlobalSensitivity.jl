@@ -50,7 +50,7 @@ effects = gsa(f, method, A, B; batch=false)
 ```
 
 where `A` and `B` are design matrices with each row being a set of parameters. Note that `generate_design_matrices`
-from [QuasiMonteCarlo.jl](https://github.com/JuliaDiffEq/QuasiMonteCarlo.jl) can be used to generate the design
+from [QuasiMonteCarlo.jl](https://docs.sciml.ai/QuasiMonteCarlo/stable/) can be used to generate the design
 matrices.
 """
 function gsa(f, method::GSAMethod, param_range; samples, batch = false) end

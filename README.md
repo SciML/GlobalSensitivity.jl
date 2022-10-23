@@ -16,7 +16,7 @@ GlobalSensitivity.jl package contains implementation of some the most popular GS
 
 For information on using the package,
 [see the stable documentation](https://docs.sciml.ai/GlobalSensitivity/stable/). Use the
-[in-development documentation](https://gsa.sciml.ai/dev/) for the version of
+[in-development documentation](https://docs.sciml.ai/GlobalSensitivity/dev/) for the version of
 the documentation, which contains the unreleased features.
 
 ## Installation
@@ -24,8 +24,8 @@ the documentation, which contains the unreleased features.
 The GlobalSensitivity.jl package can be installed with julia's package manager as shown below:
 
 ```julia
-]add GlobalSensitivity
-using GlobalSensitivity
+using Pkg
+Pkg.add("GlobalSensitivity")
 ```
 
 ## General Interface
