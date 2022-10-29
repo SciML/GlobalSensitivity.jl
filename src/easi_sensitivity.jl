@@ -82,7 +82,7 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
 end
 
 function _compute_first_order_fft(permuted_outputs, max_harmonic, samples)
-    ft = (fft(permuted_outputs))[2:(N ÷ 2)]
+    ft = (fft(permuted_outputs))[2:(samples ÷ 2)]
     ys = abs2.(ft) .* inv(samples)
     V = 2 * sum(ys)
     Vi = 2 * sum(ys[(1:max_harmonic)])
