@@ -28,8 +28,8 @@ ub = ones(4) * π
 res1 = gsa(ishi, EASI(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
 res2 = gsa(ishi_batch, EASI(), [[lb[i], ub[i]] for i in 1:4], samples = 15000, batch = true)
 
-res1efast = gsa(ishi, eFAST(), [[lb[i], ub[i]] for i in 1:4], n = 15000)
-res2efast = gsa(ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], n = 15000, batch = true)
+res1efast = gsa(ishi, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
+res2efast = gsa(ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000, batch = true)
 
 @test res1.S1≈res1efast.S1[1, :] atol=3e-2
 @test res2.S1≈res2efast.S1[1, :] atol=3e-2
