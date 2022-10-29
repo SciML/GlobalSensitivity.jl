@@ -40,7 +40,8 @@ res2 = gsa(linear_batch, GlobalSensitivity.RBDFAST(), num_params = 4, batch = tr
            samples = 15000)
 
 res1efast = gsa(linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
-res2efast = gsa(linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], batch = true, samples = 15000)
+res2efast = gsa(linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], batch = true,
+                samples = 15000)
 
 @test res1≈res1efast.S1[1, :] atol=3e-2
 @test res2≈res2efast.S1[1, :] atol=3e-2
