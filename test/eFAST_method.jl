@@ -25,8 +25,7 @@ end
 lb = -ones(4) * π
 ub = ones(4) * π
 
-res1 = gsa(ishi, eFAST(), vcat([[1.0, 1.0]], [[lb[i], ub[i]] for i in 2:4]),
-           samples = 15000)
+res1 = gsa(ishi, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
 res2 = gsa(ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
            batch = true)
 
