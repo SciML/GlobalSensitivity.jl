@@ -3,7 +3,7 @@
     DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
                      num_classes = nothing)
 
-- `nboot`: number of bootstrap repetions. Defaults to `500`.
+- `nboot`: number of bootstrap repetitions. Defaults to `500`.
 - `conf_level`: the level used for confidence interval calculation with bootstrap. Default value of `0.95`.
 - `Ygrid_length`: number of quadrature points to consider when performing the kernel density estimation and the integration steps. Should be a power of 2 for efficient FFT in kernel density estimates. Defaults to `2048`.
 - `num_classes`: Determine how many classes to split each factor into to when generating distributions of model output conditioned on class.

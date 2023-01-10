@@ -6,7 +6,7 @@
 
 - `p_steps`: Vector of ``\Delta`` for the step sizes in each direction. Required.
 - `relative_scale`: The elementary effects are calculated with the assumption that the parameters lie in the range [0,1] but as this is not always the case scaling is used to get more informative, scaled effects. Defaults to false.
-- `total_num_trajectory`, `num_trajectory`: The total number of design matrices that are generated out of which num_trajectory matrices with the highest spread are used in calculation.
+- `total_num_trajectory`, `num_trajectory`: The total number of design matrices that are generated, out of which num_trajectory matrices with the highest spread are used in calculation.
 - `len_design_mat`: The size of a design matrix.
 
 ## Method Details

@@ -11,7 +11,7 @@ points are selected over a curve in the input space. A fixed frequency
 equal to `1` is used for each factor. Then independent random
 permutations are applied to the coordinates of the samples points in order to
 generate the design points. The input model for analysis is evaluated
-at each design point and the outputs are reordered such that the design
+at each design point, and the outputs are reordered such that the design
 points are in increasing order with respect to factor `Xi`. The Fourier
 spectrum is calculated on the model output at the frequency 1 and at
 its higher harmonics (2, 3, 4, 5, 6) and yields the estimate of the

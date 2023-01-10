@@ -7,8 +7,8 @@
 ## Method Details
 
 The DGSM method takes a probability distribution for each of the
-parameters and samples are obtained from the distributions to create
-random parameter sets. Derivatives of the function being analysed are
+parameters, and samples are obtained from the distributions to create
+random parameter sets. Derivatives of the function being analyzed are
 then computed at the sampled parameters and specific statistics of those
 derivatives are used. The paper by [Sobol and Kucherenko](http://www.sciencedirect.com/science/article/pii/S0378475409000354)
 discusses the relationship between the DGSM results, `tao` and
