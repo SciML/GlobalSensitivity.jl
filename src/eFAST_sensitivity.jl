@@ -8,13 +8,13 @@
 
 eFAST offers a robust, especially at low sample size, and computationally efficient procedure to
 get the first and total order indices as discussed in Sobol. It utilizes monodimensional Fourier decomposition
-along a curve exploring the parameter space. The curve is defined by a set of parametric equations,
+along a curve, exploring the parameter space. The curve is defined by a set of parametric equations,
 ```math
 x_{i}(s) = G_{i}(sin ω_{i}s), ∀ i=1,2 ,..., N
 ```
 where s is a scalar variable varying over the range ``-∞ < s < +∞``, ``G_{i}`` are transformation functions
 and ``{ω_{i}}, ∀ i=1,2,...,N`` is a set of different (angular) frequencies, to be properly selected, associated with each factor for all ``N`` (`samples`) number of parameter sets.
-For more details on the transformation used and other implementation details you can go through [ A. Saltelli et al.](http://dx.doi.org/10.1080/00401706.1999.10485594).
+For more details, on the transformation used and other implementation details you can go through [ A. Saltelli et al.](http://dx.doi.org/10.1080/00401706.1999.10485594).
 
 ## API
 

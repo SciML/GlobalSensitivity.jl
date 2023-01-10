@@ -5,11 +5,11 @@
 
 ## Method Details
 
-Fractional Factorial method creates a design matrix by utilising
-Hadamard Matrix and uses it run simulations of the input model.
+Fractional Factorial method creates a design matrix by utilizing
+Hadamard Matrix and uses it to run simulations of the input model.
 The main effects are then evaluated by dot product between the contrast
 for the parameter and the vector of simulation results. The
-corresponding main effects and variance, i.e. square of the main effects
+corresponding main effects and variance, i.e. square of the main effects,
 are returned as results for Fractional Factorial method.
 
 ## API

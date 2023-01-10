@@ -1,6 +1,6 @@
 # Parallelized Morris and Sobol Sensitivity Analysis of an ODE
 
-Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) to and study the sensitivity of the maximum of predator population and the average prey population.
+Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) to study the sensitivity of the maximum of predator population and the average prey population.
 
 ```@example ode
 using GlobalSensitivity, Statistics, OrdinaryDiffEq, QuasiMonteCarlo, Plots
@@ -80,7 +80,7 @@ sampler = SobolSample()
 A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 ```
 
-and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka Volterra example:
+and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka-Volterra example:
 
 ```@example ode
 sobol_result = gsa(f1,Sobol(),A,B)
@@ -100,7 +100,7 @@ plot(p1,p2,p1_,p2_)
 
 ## Parallelizing the Global Sensitivity Analysis
 
-In all of the previous examples, `f(p)` was calculated serially. However, we can parallelize our computations
+In all the previous examples, `f(p)` was calculated serially. However, we can parallelize our computations
 by using the batch interface. In the batch interface, each column `p[:,i]` is a set of parameters, and we output
 a column for each set of parameters. Here we showcase using the [Ensemble Interface](https://docs.sciml.ai/DiffEqDocs/stable/features/ensemble/) to use
 `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
@@ -131,7 +131,7 @@ f1 = function (p)
 end
 ```
 
-And now to do the parallelized calls we simply add the `batch=true` keyword argument:
+And now to do the parallelized calls, we simply add the `batch=true` keyword argument:
 
 ```@example ode
 sobol_result = gsa(f1,Sobol(),A,B,batch=true)

@@ -8,9 +8,9 @@
 
 ## Method Details
 
-Sobol is a variance-based method and it decomposes the variance of the output of
+Sobol is a variance-based method, and it decomposes the variance of the output of
 the model or system into fractions which can be attributed to inputs or sets
-of inputs. This helps to get not just the individual parameter's sensitivities
+of inputs. This helps to get not just the individual parameter's sensitivities,
 but also gives a way to quantify the affect and sensitivity from
 the interaction between the parameters.
 
@@ -23,9 +23,9 @@ the interaction between the parameters.
 ```
 
 The Sobol Indices are "order"ed, the first order indices given by ``S_i = \frac{V_i}{Var(Y)}``
-the contribution to the output variance of the main effect of `` X_i ``, therefore it
+the contribution to the output variance of the main effect of `` X_i ``. Therefore, it
 measures the effect of varying `` X_i `` alone, but averaged over variations
-in other input parameters. It is standardised by the total variance to provide a fractional contribution.
+in other input parameters. It is standardized by the total variance to provide a fractional contribution.
 Higher-order interaction indices `` S_{i,j}, S_{i,j,k} `` and so on can be formed
 by dividing other terms in the variance decomposition by `` Var(Y) ``.
 
