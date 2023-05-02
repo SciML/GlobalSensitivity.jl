@@ -4,6 +4,7 @@ using Statistics, RecursiveArrayTools, LinearAlgebra, Random
 using QuasiMonteCarlo, ForwardDiff, KernelDensity, Trapz
 using Parameters: @unpack
 using FFTW, Distributions, StatsBase
+using Copulas, Combinatorics # Added for shapley_sensitivity
 
 abstract type GSAMethod end
 
@@ -16,6 +17,7 @@ include("delta_sensitivity.jl")
 include("easi_sensitivity.jl")
 include("rbd-fast_sensitivity.jl")
 include("fractional_factorial_sensitivity.jl")
+include("shapley_sensitivity.jl")  # Added for shapley_sensitivity
 
 """
     gsa(f, method::GSAMethod, param_range; samples, batch=false)
@@ -58,6 +60,7 @@ function gsa(f, method::GSAMethod, param_range; samples, batch = false) end
 export gsa
 
 export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial,
-       RBDFAST
+       RBDFAST, Shapley 
+        # Added for shapley_sensitivity
 
 end # module
