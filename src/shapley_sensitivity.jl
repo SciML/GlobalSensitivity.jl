@@ -1,40 +1,32 @@
 @doc raw"""
 
-    Shapley(dim::Int; nboot::Int=500, n_perms::Int=-1,n_var::Int=1000, n_outer::Int=100, n_inner::Int=3) 
+    Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim)
 
-- `dim`: number of features 
-- `nboot`: for confidence interval calculation `nboot` should be specified for the number (>0) of bootstrap runs.
-- `n_perms`: The number of permutations. If None, the exact permutations method is considerd.
-- `n_var`: The sample size for the output variance estimation.
-- `n_outer`: The number of conditionnal variance estimations.
-- `n_inner`: The sample size for the conditionnal output variance estimation.
-
+- `n_perms`: number of permutations to consider
+- `n_boot`: number of Bootstrap runs
+- `n_var`: size of each bootsrapped sample
+- `n_outer`: number of samples to be taken to estiamte conditional variance 
+- `n_inner`: size of each n_outer sample taken
+- `dim`: number of features in the function 
 
 ## Method Details
 
-Shapley values come from cooperative game theory and were introduced 1953. 
-They help determine the contribution of each player in the total payoff achieved by the coalition of the players. 
-The sum of Shapley effects over all individual variable is equal to the variance; this normalization property gives us a better interpretability in 
-determining the relative importance of variables [1, 2]. This also makes Shapley values more fair as they do not assign large importances to few inputs.
-Sobol indices assume that all the inputs are independent, which may be erroneous in many real-world scenarios like 
-physiology based pharmacokinetic models of the organs of the human body. 
-Shapley indices consider that parameters of a model can be correlated. 
-
-[1]:Owen, A. B., & Prieur, C. (2017). On Shapley value for measuring importance of dependent inputs. SIAM/ASA Journal on Uncertainty Quantification, 5(1), 986-1002.
-[2]:Song, E., Nelson, B. L., & Staum, J. (2016). Shapley effects for global sensitivity analysis: Theory and computation. SIAM/ASA Journal on Uncertainty Quantification, 4(1), 1060-1083.
-
+Shapely effects is a variance based method to assign attribution
+to each feature based on how sentitive the function to the feature. 
+Shapley effects take into account that features could be dependent, which 
+is not possible in previous methods like Sobol indices. In our implementation, we use Copulas.jl to define the joint
+input distirbution as a SklarDist. 
 
 ## API
 
-    gsa(f, method::Shapley, input_distribution::SklarDist; kwargs...)
+    gsa_parallel(f, method::Shapley, input_distribution::SklarDist;batch=false)
+    
 
-`input_distribution` is the joint distribution of the feature vectors.
-To create this, first define the marginal distirbutions (uniform distirbutions). Then define their 
-correlation using a copula (Copulas.jl can be used), Combine marginals and copula into a joint distirbution.
 ### Example
 
 ```julia
-using GlobalSensitivity, Copulas
+using Copulas, Distributions
+include("path/to/shapley_serial.jl")
 
 function ishi(X)
     A= 7
@@ -48,22 +40,48 @@ function ishi_batch(X)
     @. sin(X[:,1]) + A*sin(X[:,2])^2+ B*X[:,3]^4 *sin(X[:,1])
 end
 
-margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1];
-dim = 4;
+n_perms = -1; # -1 indicates that we want to consider all permutations. One can also use n_perms > 0
+n_var = 1000;
+n_outer = 100;
+n_inner = 3
+n_boot = 60_000;
+
+dim = 3;
+margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
+dependency_matrix = 1* Matrix(I, dim, dim)
+
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C,margins);
-method = Shapley(dim);
 
-res1 = gsa(ishi,method,input_distribution,batch=false)
+method = Shapley(dim=dim, n_perms=n_perms, n_var = n_var, n_outer = n_outer, n_inner = n_inner, n_boot=n_boot);
 
-res2 = gsa(ishi,method,input_distribution,batch=true)
+# non_batch
+result_non_batch = gsa(ishi,method,input_distribution,batch=false)
+shapley_indices = res1.Shapley_indices
+
+for i in range(1, dim)
+    println("Median Shapley effect for feature $i = ", median(shapley_indices[i, :]))
+end
+
+println("")
+
+# batch
+result_batch = gsa(ishi_batch,method,input_distribution,batch=true)
+shapley_indices = res1.Shapley_indices
+
+for i in range(1, dim)
+    println("Median Shapley effect for feature $i = ", median(shapley_indices[i, :]))
+end
+
 ```
 """
 
+
+using Copulas, Distributions, Combinatorics, LinearAlgebra, Random
+
 ## Data structures
-struct Shapley <: GSAMethod
-    nboot::Int
+struct Shapley
+    n_boot::Int
     n_perms::Int
     n_var::Int
     n_outer::Int
@@ -76,78 +94,89 @@ mutable struct ShapleyResult{T1,T2}
     output_variance::T2
 end
 
-Shapley(dim::Int; nboot::Int=500, n_perms::Int=-1,n_var::Int=1000, n_outer::Int=100, n_inner::Int=3) = Shapley(dim; nboot, n_perms, n_var, n_outer, n_inner)
-
-################# HELPER FUNCTIONS FOR SAMPLING ##############
-function sub_sampling(distribution, n_sample, idx)
-    # get the margins of the input distirbution 
-    margins_sub = [input_distribution.m[Int(j)] for j in idx];
-    # get the original correlation matrix
-    sigma = distribution.C.Σ;
-    # get a subset of the correlation matrix to define the new copula 
-    copula_sub = GaussianCopula(sigma[:, idx][idx, :]);
-    # create the subset distribution 
-    dist_sub = SklarDist(copula_sub,margins_sub);
-    # sample from the subset distirbution 
-    sample = copy(transpose(rand(dist_sub, n_sample)));
-
-    return sample
+function Shapley(;dim::Int=3, n_boot::Int=500, n_perms::Int=-1,n_var::Int=1000, n_outer::Int=100, n_inner::Int=3)
+    Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim)
 end
 
-function condMVN_new(cov, dependent_ind, given_ind, X_given)
+################# HELPER FUNCTIONS FOR SAMPLING ##############
+function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
+    """
+    Generate a subset of a joint distribution by selecting the given marginals and correlations. Sample n_sample from this subset distribution.
+    """
 
-    B = cov[:, dependent_ind];
-    B = B[dependent_ind, :];
+    # get the margins of the input distirbution 
+    margins_of_subset = [input_distribution.m[Int(j)] for j in idx];
 
-    C = cov[:, dependent_ind];
-    C = C[given_ind, :];
+    # get the original correlation matrix
+    sigma = distribution.C.Σ;
 
-    D = cov[:, given_ind];
-    D = D[given_ind, :];
+    # get a subset of the correlation matrix to define the new copula 
+    copula_subset = GaussianCopula(sigma[:, idx][idx, :]);
 
-    CDinv = transpose(C) * inv(D);
-    condMean = CDinv * X_given;
-    condVar = B - CDinv * C;
+    # create the subset distribution 
+    dist_subset = SklarDist(copula_subset, margins_of_subset);
 
-    return condMean, condVar
+    # sample from the subset distirbution 
+    sample_from_subset = copy(transpose(rand(dist_subset, n_sample)));
+
+    return sample_from_subset
+end
+
+function find_cond_mean_var(cov::Matrix, dependent_ind::Vector{Int}, given_ind::Vector{Int}, X_given::Vector{Float64})
+    """
+    Find the conditional mean and variance of the given distirbution 
+    """
+
+    mat_b = cov[:, dependent_ind];
+    mat_b = mat_b[dependent_ind, :];
+
+    mat_c = cov[:, dependent_ind];
+    mat_c = mat_c[given_ind, :];
+
+    mat_d = cov[:, given_ind];
+    mat_d = mat_d[given_ind, :];
+
+    mat_cdinv = transpose(mat_c) * inv(mat_d);
+    conditional_mean = mat_cdinv * X_given;
+    contional_var = mat_b - CDinmat_cdinvv * mat_c;
+
+    return conditional_mean, contional_var
 
 end 
 
-function cond_sampling_new(distribution, n_sample, idx, idx_c, x_cond)
+function cond_sampling(distribution::SklarDist, n_sample::Int, idx::Vector{Int}, idx_c::Vector{Int}, x_cond::Vector{Float64})
 
-    # select the correct marginal distributions 
-    margins_dep = [distribution.m[Int(i)] for i in idx];
-    margins_cond = [distribution.m[Int(i)] for i in idx_c];
+    # select the correct marginal distributions for the two subsets of features
+    margins_dependent = [distribution.m[Int(i)] for i in idx];
+    margins_conditional = [distribution.m[Int(i)] for i in idx_c];
 
     # create a conditioned variable that follows a normal distribution 
-    u_cond = zeros(size(x_cond));
-    for (i, marginal) in enumerate(margins_cond)
-        u_cond[i] = quantile.(Normal(), cdf(marginal, x_cond[i]));
+    cond_norm_var = zeros(size(x_cond));
+    for (i, marginal) in collect(enumerate(margins_conditional))
+        cond_norm_var[i] = quantile.(Normal(), cdf(marginal, x_cond[i]));
     end
 
-    sigma = distribution.C.Σ;
-    cond_mean, cond_var = condMVN_new(sigma, idx, idx_c, u_cond);
+    corr_mat = distribution.C.Σ;
+    cond_mean, cond_var = find_cond_mean_var(corr_mat, idx, idx_c, cond_norm_var);
     
     n_dep = length(idx);
 
+    # need to sample from univariate normal and multivariate normal using different functions
     if n_dep == 1
         dist_cond = Normal(cond_mean[1,1], cond_var[1,1]);
         sample_norm = rand(dist_cond, n_sample);
     else
         dist_cond = MvNormal(cond_mean, cond_var);
-        sample_norm = rand(dist_cond, n_sample);
-        sample_norm = copy(transpose(sample_norm));
+        sample_norm = transpose(rand(dist_cond, n_sample));
     end
     
-    sample_x = zeros((n_sample, n_dep));
+    final_sample = zeros((n_sample, n_dep));
     ϕ = x -> cdf(Normal(), x);
     for i in 1:n_dep
-        #@TODO
-        u_i = ϕ(sample_norm[:, i]);
-        sample_x[:, i] = quantile.(margins_dep[i], u_i)
+        final_sample[:, i] = quantile.(margins_dependent[i],  ϕ(sample_norm[:, i]))
     end
     
-    return sample_x
+    return final_sample
 
 end 
 ##############################################################################
@@ -159,169 +188,135 @@ function gsa(f, method::Shapley, input_distribution::SklarDist;batch=false)
 
     # Extract variables from shapley structure
     n_perms = method.n_perms
-    nboot = method.nboot
+    n_boot = method.n_boot
     n_var = method.n_var
     n_outer = method.n_outer
     n_inner = method.n_inner
     dim = method.dim
 
-    ### Generate sample ###
+    # determine if you are running rand_perm or exact_perm version of the algorithm
     if (n_perms==-1)
         estimation_method = "exact";
         perms = collect(permutations(range(1,dim), dim));
         n_perms = length(perms);
     else
         estimation_method = "random";
-        perms = collect(permutations(range(1,dim), n_perms));
+        perms = [randperm(dim) for i in range(1, n_perms)]
     end
 
     # Creation of the design matrix
-    input_sample_1 = copy(transpose(rand(input_distribution, n_var))); # number of samples x number of features 
-    input_sample_2 = zeros((n_perms * (dim - 1) * n_outer * n_inner, dim));
+    sample_A = copy(transpose(rand(input_distribution, n_var))); # number of samples x number of features 
+    sample_B = zeros((n_perms * (dim - 1) * n_outer * n_inner, dim));
 
     #---> iterate to create the sample 
-    for (i_p, perm) in enumerate(perms)
+    for (i_p, perm) ∈ collect(enumerate(perms))
         idx_perm_sorted = sortperm(perm) # Sort the variable ids
-        # println("For perm $i_p, perm = $perm")
+
         for j in 1:(dim-1)
+            
             # normal set
-            idx_j = perm[1:j];
+            idx_plus = perm[1:j];
             # Complementary set
-            idx_j_c = perm[j+1:end];
-            sample_j_c = sub_sampling(input_distribution, n_outer, idx_j_c);
-            # println("j = $j, idx_j $idx_j, idx_j_c $idx_j_c")
-        
-            for l in range(1,size(sample_j_c)[1])
-                xjc = sample_j_c[l, :];
+            idx_minus = perm[j+1:end];
+            sample_complement = sample_subset(input_distribution, n_outer, idx_minus);
+
+            for  l in range(1,size(sample_complement)[1])
+                curr_sample = sample_complement[l, :];
+
                 # Sampling of the set conditionally to the complementary element 
-                xj = cond_sampling_new(input_distribution, n_inner, idx_j, idx_j_c, xjc);
-                xx = hcat(xj, repeat(transpose(xjc), n_inner));
+                xj = cond_sampling(input_distribution, n_inner, idx_plus, idx_minus, curr_sample);
+                xx = reduce(hcat, (xj, repeat(transpose(curr_sample), n_inner)));
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner + (j-1) * n_outer * n_inner + (l-1) * n_inner; # subtract 1 from all indices
-                ind_inner = ind_inner + 1
-                input_sample_2[ind_inner:ind_inner + n_inner - 1, :] = xx[:, idx_perm_sorted]
+                ind_inner += 1;
+                sample_B[ind_inner:ind_inner + n_inner - 1, :] = @view xx[:, idx_perm_sorted]
             end 
         end
     end
 
-    X = cat(input_sample_1, input_sample_2, dims=1); 
+    # define the input sample
+    X = cat(sample_A, sample_B, dims=1); 
 
     if batch
         output_sample = f(X);
     else
-        f1 = X -> [f(X[j, :]) for j in axes(X, 1)];
-        output_sample = f1(X);
+        f_non_batch = X -> [f(X[j, :]) for j in axes(X, 1)];
+        output_sample = f_non_batch(X);
     end
 
-    output_sample_1 = output_sample[1:n_var]
-    output_sample_2 = permutedims(reshape(output_sample[n_var+1:end], (1,n_inner,n_outer,dim-1,n_perms)), (5,4,3,2,1))
-    self_output_sample_2 = copy(output_sample_2)
-
+    output_sample_A = output_sample[1:n_var]
+    output_sample_B = permutedims(reshape(output_sample[n_var+1:end], (1,n_inner,n_outer,dim-1,n_perms)), (5,4,3,2,1))
+    self_output_sample_B = copy(output_sample_B)
     # <----
 
     #---> compute indices now 
-    shapley_indices = zeros(dim, nboot, 1);
-    shapley_indices_2 = zeros(dim, 1);
-    c_hat = zeros(n_perms, dim, nboot, 1);
+    shapley_indices = zeros(dim, n_boot, 1);
+    ξ = zeros(n_perms, dim, n_boot, 1); # estimation of the cost function (Var[Y] - E[Var[Y|Xj]])
 
-    if estimation_method == "random"
-        boot_perms = zeros(Int, n_perms, nboot)
-    end
+    variance = zeros(n_boot, 1)
 
-    variance = zeros(nboot, 1)
+    # The first iteration is computed over the all sample.
+    idx_for_var = range(1, n_var);
+    idx_for_cond_var = range(1, n_outer);
+    var_y = var(output_sample_A[idx_for_var]);
+    variance[1] = var_y;
+    # Conditional variances
+    output_sample_B = self_output_sample_B[:, :, idx_for_cond_var, :, :];
+    conditional_variance = var(output_sample_B, dims=4);
+    conditional_variance = dropdims(conditional_variance; dims=4); # need to squeeze the dimension over which we applied the variance operator. Julia does not do it automatically
+    # conditional_variance is the same 
+    mean_conditional_variance = mean(conditional_variance, dims=3);
+    mean_conditional_variance = dropdims(mean_conditional_variance; dims=3); # need to squeeze the dimension over which we applied the mean operator. Julia does not do it automatically
+    # # Cost estimation
+    ξ[:, :, 1] .= dropdims(reduce(hcat, (mean_conditional_variance, repeat([var_y], n_perms))), dims=3) ;
 
-    for i in range(1, nboot)
+
+    # Allocations for remaining Bootstrap samples 
+    idx_for_var = similar(rand(1:n_var, n_var));
+    #range_of = 1:n_var;
+    idx_for_cond_var = similar(rand(1:n_outer, n_outer));
+
+
+    for i in range(2, n_boot)
+        
         # Bootstrap sample indexes
-        # The first iteration is computed over the all sample.
-        if i > 1
-            boot_var_idx = rand(1:n_var, n_var);
-            # boot_var_idx = range(1, n_var);
-            if estimation_method == "exact"
-                boot_No_idx = rand(1:n_outer, n_outer);
-                # boot_No_idx = [20, 43, 1, 66, 97, 12, 15, 33, 23, 12, 5, 38, 1, 10, 6, 6, 38, 75, 85, 50, 51, 2, 76, 29, 9, 72, 5, 53, 65, 43, 79, 62, 76, 47, 76, 21, 18, 89, 13, 94, 92, 85, 6, 48, 40, 26, 30, 5, 15, 63, 37, 59, 95, 96, 80, 32, 62, 10, 12, 93, 64, 29, 90, 22, 19, 5, 36, 83, 5, 92, 76, 26, 83, 12, 7, 52, 80, 29, 1, 87, 79, 74, 3, 61, 67, 16, 73, 84, 56, 62, 56, 48, 17, 57, 9, 62, 79, 78, 33, 4]
-            else
-                boot_n_perms_idx = rand(1:n_perms, n_perms)
-                boot_perms[:, i] = boot_n_perms_idx
-            end
-        else
-            boot_var_idx = range(1, n_var);
-            if estimation_method == "exact"
-                boot_No_idx = range(1, n_outer);
-            else
-                boot_n_perms_idx = range(1, n_perms);
-                boot_perms[:, i] = boot_n_perms_idx;
-            end
-        end
+        rand!(idx_for_var, 1:n_var );
+        rand!(idx_for_cond_var, 1:n_outer)
 
-        var_y = var(output_sample_1[boot_var_idx]);
+        var_y = var(output_sample_A[idx_for_var]);
         variance[i] = var_y;
-        # println("For i = $i, var_y is = $var_y")
-
         # Conditional variances
-        if estimation_method == "exact"
-            output_sample_2 = self_output_sample_2[:, :, boot_No_idx, :, :];
-        else
-            # @TODO this will probably throw some index error, but fix when debugging the random mode 
-            output_sample_2 = self_output_sample_2[boot_n_perms_idx]
-        end
-
-        c_var = var(output_sample_2, dims=4);
-        c_var = dropdims(c_var; dims=4); # need to squeeze the dimension over which we applied the variance operator. Julia does not do it automatically
-        # c_var is the same 
-
-        c_mean_var = mean(c_var, dims=3);
-        c_mean_var = dropdims(c_mean_var; dims=3); # need to squeeze the dimension over which we applied the mean operator. Julia does not do it automatically
-        # println("For i = $i, c_mean_var is = $c_mean_var")
-
+        output_sample_B = @view self_output_sample_B[:, :, idx_for_cond_var, :, :];
+        conditional_variance = var(output_sample_B, dims=4);
+        conditional_variance = dropdims(conditional_variance; dims=4); # need to squeeze the dimension over which we applied the variance operator. Julia does not do it automatically
+        mean_conditional_variance = mean(conditional_variance, dims=3);
+        mean_conditional_variance = dropdims(mean_conditional_variance; dims=3); # need to squeeze the dimension over which we applied the mean operator. Julia does not do it automatically
         # # Cost estimation
-        c_hat[:, :, i] = cat(c_mean_var, repeat([var_y], n_perms), dims = 2);
+        ξ[:, :, i] .= dropdims(reduce(hcat, (mean_conditional_variance, repeat([var_y], n_perms))), dims=3) ;
         
     end
+    
+
+    ξ[:, 2:end, :, :]  .= ξ[:, 2:end, :, :] - ξ[:, 1:end-1, :, :]; 
 
     # Cost variation
-    delta_c = copy(c_hat);
-    delta_c[:, 2:end, :, :] = c_hat[:, 2:end, :, :] - c_hat[:, 1:end-1, :, :]; # check on whether done correctly in julia
+    for i in range(1, n_boot)
 
-    # Cost variation
-    for i in range(1, nboot)
-
-        if estimation_method == "random"
-            boot_n_perms_idx = boot_perms[:, i];
-            tmp_perms = perms[boot_n_perms_idx, :];
-        else
-            tmp_perms = perms;
-        end
+        tmp_perms = perms;
         
         # estimate shapley 
         for i_p in range(1, length(tmp_perms))
             perm = perms[i_p];
-            shapley_indices[perm, i] += delta_c[i_p, :, i];
-            shapley_indices_2[perm] += delta_c[i_p, :, 1].^2;
+            @views shapley_indices[perm, i] .+=  ξ[i_p, :, i];
             
         end
     end
 
     output_variance = reshape(variance, (1, size(variance)[1], size(variance)[2]));
-    shapley_indices = shapley_indices ./ n_perms ./ output_variance;
-
-    if estimation_method == "random"
-        output_variance_2 = output_variance[:, 1, :];
-        shapley_indices_2 = shapley_indices_2 ./ n_perms ./ output_variance_2.^2;
-        shapley_indices_SE = sqrt((shapley_indices_2 - shapley_indices[:, 0].^2) ./ n_perms);
-
-    else
-        shapley_indices_SE = nothing;
-        total_indices_SE = nothing;
-        first_indices_SE = nothing;
-    end
+    shapley_indices .= shapley_indices ./ n_perms ./ output_variance;
 
     return ShapleyResult(shapley_indices, output_variance)
+
+    
 end
-###################
-
-
-
-
-
-
 
 
