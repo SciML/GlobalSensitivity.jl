@@ -79,6 +79,7 @@ end
 
 using Copulas, Distributions, Combinatorics, LinearAlgebra, Random
 
+Random.seed!(1234)
 ## Data structures
 struct Shapley
     n_boot::Int
@@ -138,7 +139,7 @@ function find_cond_mean_var(cov::Matrix, dependent_ind::Vector{Int}, given_ind::
 
     mat_cdinv = transpose(mat_c) * inv(mat_d);
     conditional_mean = mat_cdinv * X_given;
-    contional_var = mat_b - CDinmat_cdinvv * mat_c;
+    contional_var = mat_b - mat_cdinv * mat_c;
 
     return conditional_mean, contional_var
 
