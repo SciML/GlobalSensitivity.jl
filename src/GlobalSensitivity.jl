@@ -17,7 +17,7 @@ include("delta_sensitivity.jl")
 include("easi_sensitivity.jl")
 include("rbd-fast_sensitivity.jl")
 include("fractional_factorial_sensitivity.jl")
-include("shapley_sensitivity.jl")  # Added for shapley_sensitivity
+include("shapley_sensitivity.jl")  
 
 """
     gsa(f, method::GSAMethod, param_range; samples, batch=false)

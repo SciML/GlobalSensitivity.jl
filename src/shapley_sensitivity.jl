@@ -80,8 +80,7 @@ end
 using Copulas, Distributions, Combinatorics, LinearAlgebra, Random
 
 Random.seed!(1234)
-## Data structures
-struct Shapley
+struct Shapley <: GSAMethod
     n_boot::Int
     n_perms::Int
     n_var::Int
@@ -90,14 +89,13 @@ struct Shapley
     dim::Int
 end
 
+Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim) = Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim)
+
 mutable struct ShapleyResult{T1,T2}
     Shapley_indices::T1
     output_variance::T2
 end
 
-function Shapley(;dim::Int=3, n_boot::Int=500, n_perms::Int=-1,n_var::Int=1000, n_outer::Int=100, n_inner::Int=3)
-    Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim)
-end
 
 ################# HELPER FUNCTIONS FOR SAMPLING ##############
 function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
