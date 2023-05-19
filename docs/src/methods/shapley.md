@@ -1,4 +1,4 @@
 # Shapley Method
 
 ```@docs
-Shpaley
+Shapley
