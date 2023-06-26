@@ -17,4 +17,5 @@ if GROUP == "All" || GROUP == "GSA"
     @time @safetestset "Fractional factorial method" begin include("fractional_factorial_method.jl") end
     @time @safetestset "Rbd-fast method" begin include("rbd-fast_method.jl") end
     @time @safetestset "Easi Method" begin include("easi_method.jl") end
+    @time @safetestset "Shapley Method" begin include("shapley_method.jl") end
 end end
