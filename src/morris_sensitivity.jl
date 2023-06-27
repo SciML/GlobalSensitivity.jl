@@ -66,8 +66,8 @@ struct Morris <: GSAMethod
 end
 
 function Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
-                num_trajectory::Int = 10,
-                total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
+    num_trajectory::Int = 10,
+    total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
     Morris(p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat)
 end
 
@@ -117,7 +117,7 @@ function calculate_spread(matrix)
 end
 
 function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
-                         total_num_trajectory = 5 * num_trajectory, len_design_mat = 10)
+    total_num_trajectory = 5 * num_trajectory, len_design_mat = 10)
     matrix_array = []
     if total_num_trajectory < num_trajectory
         error("total_num_trajectory should be greater than num_trajectory preferably atleast 3-4 times higher")
@@ -133,7 +133,7 @@ function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
 end
 
 function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
-             rng::AbstractRNG = Random.default_rng(), kwargs...)
+    rng::AbstractRNG = Random.default_rng(), kwargs...)
     @unpack p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat = method
     if !(length(p_steps) == length(p_range))
         for i in 1:(length(p_range) - length(p_steps))
@@ -142,9 +142,9 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
     end
 
     design_matrices = sample_matrices(p_range, p_steps, rng;
-                                      num_trajectory = num_trajectory,
-                                      total_num_trajectory = total_num_trajectory,
-                                      len_design_mat = len_design_mat)
+        num_trajectory = num_trajectory,
+        total_num_trajectory = total_num_trajectory,
+        len_design_mat = len_design_mat)
 
     multioutput = false
     desol = false
@@ -222,5 +222,5 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
         variances = map(f_shape, variances)
     end
     MorrisResult(reduce(hcat, means), reduce(hcat, means_star), reduce(hcat, variances),
-                 effects)
+        effects)
 end

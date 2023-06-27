@@ -17,7 +17,7 @@ include("delta_sensitivity.jl")
 include("easi_sensitivity.jl")
 include("rbd-fast_sensitivity.jl")
 include("fractional_factorial_sensitivity.jl")
-include("shapley_sensitivity.jl")  
+include("shapley_sensitivity.jl")
 
 """
     gsa(f, method::GSAMethod, param_range; samples, batch=false)
@@ -60,7 +60,7 @@ function gsa(f, method::GSAMethod, param_range; samples, batch = false) end
 export gsa
 
 export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial,
-       RBDFAST, Shapley 
-        # Added for shapley_sensitivity
+    RBDFAST, Shapley
+# Added for shapley_sensitivity
 
 end # module
