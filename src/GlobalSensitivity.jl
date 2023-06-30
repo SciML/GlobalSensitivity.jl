@@ -4,7 +4,7 @@ using Statistics, RecursiveArrayTools, LinearAlgebra, Random
 using QuasiMonteCarlo, ForwardDiff, KernelDensity, Trapz
 using Parameters: @unpack
 using FFTW, Distributions, StatsBase
-using Copulas, Combinatorics # Added for shapley_sensitivity
+using Copulas, Combinatorics, ThreadsX
 
 abstract type GSAMethod end
 

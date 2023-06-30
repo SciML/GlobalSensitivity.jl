@@ -1,14 +1,11 @@
-using Copulas, Distributions, Combinatorics, LinearAlgebra, Random
-
 @doc raw"""
 
-    Shapley(n_boot, n_perms, n_var, n_outer, n_inner, dim)
+    Shapley(n_perms, n_var, n_outer, n_inner)
 
 - `n_perms`: number of permutations to consider. Defaults to -1, which means all permutations
             are considered hence the exact Shapley effects
             algorithm is used. If `n_perms` is set to a positive integer, then the random version
             of Shapley effects is used.
-- `n_boot`: number of Bootstrap runs. Defaults to 1.
 - `n_var`: size of each bootstrapped sample
 - `n_outer`: number of samples to be taken to estimate conditional variance
 - `n_inner`: size of each `n_outer` sample taken
@@ -23,7 +20,7 @@ we use Copulas.jl to define the joint input distirbution as a SklarDist.
 
 ## API
 
-    gsa_parallel(f, method::Shapley, input_distribution::SklarDist;batch=false)
+    gsa(f, method::Shapley, input_distribution::SklarDist; batch=false)
 
 
 ### Example
@@ -47,7 +44,6 @@ n_perms = -1; # -1 indicates that we want to consider all permutations. One can 
 n_var = 1000;
 n_outer = 100;
 n_inner = 3
-n_boot = 60_000;
 
 dim = 3;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
@@ -56,59 +52,66 @@ dependency_matrix = 1* Matrix(I, dim, dim)
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C,margins);
 
-method = Shapley(n_perms=n_perms, n_var = n_var, n_outer = n_outer, n_inner = n_inner, n_boot=n_boot);
+method = Shapley(n_perms=n_perms, n_var = n_var, n_outer = n_outer, n_inner = n_inner);
 
-# non_batch
+###### non-batch
 result_non_batch = gsa(ishi,method,input_distribution,batch=false)
-shapley_indices = res1.Shapley_indices
+shapley_effects = res1.shapley_effects
+println(shapley_effects)
 
-for i in range(1, dim)
-    println("Median Shapley effect for feature $i = ", median(shapley_indices[i, :]))
-end
-
-println("")
-
-# batch
+###### batch
 result_batch = gsa(ishi_batch,method,input_distribution,batch=true)
-shapley_indices = res1.Shapley_indices
+shapley_effects = res1.shapley_effects
+println(shapley_effects)
 
-for i in range(1, dim)
-    println("Median Shapley effect for feature $i = ", median(shapley_indices[i, :]))
-end
+#### Example with correlated inputs
+d = 3
+mu = zeros(d)
+sig = [1, 1, 2]
+ro = 0.9
+Cormat = [1 0 0; 0 1 ro; 0 ro 1]
+Covmat = (sig * transpose(sig)) .* Cormat
 
+margins = [Normal(mu[i], sig[i]) for i in 1:d]
+copula = GaussianCopula((sig * transpose(sig)) .* Cormat)
+input_distribution = SklarDist(copula, margins)
+
+result = gsa(ishi, method, input_distribution, batch = false)
 ```
 """
 struct Shapley <: GSAMethod
-    n_boot::Int
     n_perms::Int
     n_var::Int
     n_outer::Int
     n_inner::Int
 end
 
-function Shapley(; n_boot = 1, n_perms = -1, n_var, n_outer, n_inner)
-    Shapley(n_boot, n_perms, n_var, n_outer, n_inner)
+function Shapley(; n_perms = -1, n_var, n_outer, n_inner)
+    Shapley(n_perms, n_var, n_outer, n_inner)
 end
 
 mutable struct ShapleyResult{T1, T2}
-    Shapley_indices::T1
-    output_variance::T2
+    shapley_effects::T1
+    std_err::T2
+    CI_lower::T1
+    CI_upper::T1
 end
 
 ################# HELPER FUNCTIONS FOR SAMPLING ##############
 function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
     """
-    Generate a subset of a joint distribution by selecting the given marginals and correlations. Sample n_sample from this subset distribution.
+    Generate a subset of a joint distribution by selecting the given marginals
+    and correlations. Sample n_sample from this subset distribution.
     """
 
     # get the margins of the input distirbution
-    margins_of_subset = [input_distribution.m[Int(j)] for j in idx]
+    margins_of_subset = [distribution.m[Int(j)] for j in idx]
 
     # get the original correlation matrix
     sigma = distribution.C.Σ
 
     # get a subset of the correlation matrix to define the new copula
-    copula_subset = GaussianCopula(sigma[:, idx][idx, :])
+    copula_subset = GaussianCopula(sigma[idx, idx])
 
     # create the subset distribution
     dist_subset = SklarDist(copula_subset, margins_of_subset)
@@ -147,7 +150,7 @@ function cond_sampling(distribution::SklarDist,
     n_sample::Int,
     idx::Vector{Int},
     idx_c::Vector{Int},
-    x_cond::Vector{Float64})
+    x_cond::AbstractArray{Float64})
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -188,14 +191,13 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
 
     # Extract variables from shapley structure
     n_perms = method.n_perms
-    n_boot = method.n_boot
     n_var = method.n_var
     n_outer = method.n_outer
     n_inner = method.n_inner
     dim = length(input_distribution)
 
     # determine if you are running rand_perm or exact_perm version of the algorithm
-    if (n_perms === nothing)
+    if (n_perms == -1)
         @info "Since `n_perms` wasn't set the exact version of Shapley will be used"
         perms = collect(permutations(range(1, dim), dim))
         n_perms = length(perms)
@@ -206,7 +208,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
 
     # Creation of the design matrix
     sample_A = copy(transpose(rand(input_distribution, n_var))) # number of samples x number of features
-    sample_B = zeros((n_perms * (dim - 1) * n_outer * n_inner, dim))
+    sample_B = zeros(n_perms * (dim - 1) * n_outer * n_inner, dim)
 
     #---> iterate to create the sample
     for (i_p, perm) in collect(enumerate(perms))
@@ -220,8 +222,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             idx_minus = perm[(j + 1):end]
             sample_complement = sample_subset(input_distribution, n_outer, idx_minus)
 
-            for l in range(1, size(sample_complement)[1])
-                curr_sample = sample_complement[l, :]
+            for l in range(1, n_outer)
+                curr_sample = @view sample_complement[l, :]
 
                 # Sampling of the set conditionally to the complementary element
                 xj = cond_sampling(input_distribution,
@@ -244,79 +246,99 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
 
     if batch
         output_sample = f(X)
+        multioutput = all_y isa AbstractMatrix
+        y_size = nothing
     else
         f_non_batch = X -> [f(X[j, :]) for j in axes(X, 1)]
         output_sample = f_non_batch(X)
-    end
-
-    output_sample_A = output_sample[1:n_var]
-    output_sample_B = permutedims(reshape(output_sample[(n_var + 1):end],
-            (1, n_inner, n_outer, dim - 1, n_perms)),
-        (5, 4, 3, 2, 1))
-    self_output_sample_B = copy(output_sample_B)
-    # <----
-
-    #---> compute indices now
-    shapley_indices = zeros(dim, n_boot, 1)
-    ξ = zeros(n_perms, dim, n_boot, 1) # estimation of the cost function (Var[Y] - E[Var[Y|Xj]])
-
-    variance = zeros(n_boot, 1)
-
-    # The first iteration is computed over the all sample.
-    idx_for_var = range(1, n_var)
-    idx_for_cond_var = range(1, n_outer)
-    var_y = var(output_sample_A[idx_for_var])
-    variance[1] = var_y
-    # Conditional variances
-    output_sample_B = self_output_sample_B[:, :, idx_for_cond_var, :, :]
-    conditional_variance = var(output_sample_B, dims = 4)
-    conditional_variance = dropdims(conditional_variance; dims = 4) # need to squeeze the dimension over which we applied the variance operator. Julia does not do it automatically
-    # conditional_variance is the same
-    mean_conditional_variance = mean(conditional_variance, dims = 3)
-    mean_conditional_variance = dropdims(mean_conditional_variance; dims = 3) # need to squeeze the dimension over which we applied the mean operator. Julia does not do it automatically
-    # # Cost estimation
-    ξ[:, :, 1] .= dropdims(reduce(hcat,
-            (mean_conditional_variance, repeat([var_y], n_perms))),
-        dims = 3)
-
-    # Allocations for remaining Bootstrap samples
-    idx_for_var = similar(rand(1:n_var, n_var))
-    #range_of = 1:n_var;
-    idx_for_cond_var = similar(rand(1:n_outer, n_outer))
-
-    ThreadsX.map(range(2, n_boot)) do i
-        # Bootstrap sample indexes
-        idx_for_var = rand(1:n_var, n_var)
-        idx_for_cond_var = rand(1:n_outer, n_outer)
-        var_y = var(output_sample_1[idx_for_var])
-        variance[i] = var_y
-        # Conditional variances
-        output_sample_B = @view self_output_sample_B[:, :, idx_for_cond_var, :, :]
-        conditional_variance = var(output_sample_B, dims = 4)
-        conditional_variance = dropdims(conditional_variance; dims = 4) # need to squeeze the dimension over which we applied the variance operator. Julia does not do it automatically
-        mean_conditional_variance = mean(conditional_variance, dims = 3)
-        mean_conditional_variance = dropdims(mean_conditional_variance; dims = 3) # need to squeeze the dimension over which we applied the mean operator. Julia does not do it automatically
-        # # Cost estimation
-        ξ[:, :, i] .= dropdims(reduce(hcat,
-                (mean_conditional_variance, repeat([var_y], n_perms))),
-            dims = 3)
-    end
-
-    ξ[:, 2:end, :, :] .= ξ[:, 2:end, :, :] - ξ[:, 1:(end - 1), :, :]
-
-    # Cost variation
-    ThreadsX.map(range(1, n_boot)) do i
-        tmp_perms = perms
-
-        # estimate shapley
-        for i_p in range(1, length(tmp_perms))
-            perm = perms[i_p]
-            @views shapley_indices[perm, i] .+= ξ[i_p, :, i]
+        multioutput = !(eltype(output_sample) <: Number)
+        if eltype(output_sample) <: RecursiveArrayTools.AbstractVectorOfArray
+            y_size = size(output_sample[1])
+            output_sample = vec.(output_sample)
+        else
+            y_size = nothing
         end
     end
 
-    output_variance = reshape(variance, (1, size(variance)[1], size(variance)[2]))
-    shapley_indices .= shapley_indices ./ n_perms ./ output_variance
+    if !multioutput
+        Sh = zeros(dim)
+        Sh2 = zeros(dim)
 
-    return ShapleyResult(shapley_indices, output_variance)
+        m = size(perms, 1)
+        Y = output_sample[1:(n_var)]
+        y = output_sample[(n_var + 1):end]
+        VarY = var(Y)
+        for p in 1:m
+            perm = perms[p]
+            prevC = 0
+            for j in 1:dim
+                if j == dim
+                    Chat = VarY
+                    Δ = Chat - prevC
+                else
+                    cVar = map(1:n_outer) do l
+                        Y = @view y[1:(n_inner)]
+                        y = @view y[(n_inner + 1):end]
+                        var(Y)
+                    end
+                    Chat = mean(cVar)
+                    Δ = Chat - prevC
+                    Δ2 = mean((cVar .- prevC) .^ 2) - Δ^2
+                    Sh2[perm[j]] += Δ2
+                end
+                Sh[perm[j]] += Δ
+                prevC = Chat
+            end
+        end
+        Sh = Sh / m / VarY
+        Sh2 = Sh2 / m / VarY^2
+        ShSE = sqrt.(Sh2 / n_outer)
+        ShCI = [Sh - 1.96 * ShSE, Sh + 1.96 * ShSE]
+    else
+        output_dim = length(output_sample[1])
+        Sh = zeros(output_dim, dim)
+        Sh2 = zeros(output_dim, dim)
+
+        m = size(perms, 1)
+        Y = reduce(hcat, output_sample[1:(n_var)])
+        y = reduce(hcat, output_sample[(n_var + 1):end])
+        VarY = var(Y, dims = 2)
+
+        for p in 1:m
+            perm = perms[p]
+            prevC = zeros(output_dim)
+            for j in 1:dim
+                if j == dim
+                    Chat = VarY
+                    Δ = Chat - prevC
+                else
+                    cVar = mapreduce(hcat, 1:n_outer) do l
+                        Y = @view y[:, 1:(n_inner)]
+                        y = @view y[:, (n_inner + 1):end]
+                        var(Y, dims = 2)
+                    end
+                    Chat = mean(cVar, dims = 2)
+                    Δ = Chat - prevC
+                    Δ2 = mean((cVar .- prevC) .^ 2, dims = 2) - Δ.^2
+                    Sh2[:, perm[j]] += Δ2
+                end
+                Sh[:, perm[j]] += Δ
+                prevC = Chat
+            end
+        end
+        Sh = Sh ./ m ./ VarY
+        Sh2 = Sh2 ./ m ./ VarY.^2
+        ShSE = sqrt.(Sh2 ./ n_outer)
+        ShCI = [Sh - 1.96 .* ShSE, Sh + 1.96 .* ShSE]
+        if y_size !== nothing
+            f_shape = let y_size = y_size
+                x -> [reshape(x[:, i], y_size) for i in 1:size(x, 2)]
+            end
+            Sh = f_shape(Sh)
+            Sh2 = f_shape(Sh2)
+            ShSE = f_shape(ShSE)
+            ShCI = f_shape.(ShCI)
+        end
+    end
+    return ShapleyResult(Sh, ShSE, ShCI[1], ShCI[2])
 end
