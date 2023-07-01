@@ -177,7 +177,7 @@ function cond_sampling(distribution::SklarDist,
     end
 
     final_sample = zeros((n_sample, n_dep))
-    ϕ = x -> cdf(Normal(), x)
+    ϕ = x -> cdf.(Normal(), x)
     for i in 1:n_dep
         final_sample[:, i] = quantile.(margins_dependent[i], ϕ(sample_norm[:, i]))
     end
@@ -199,11 +199,11 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
     # determine if you are running rand_perm or exact_perm version of the algorithm
     if (n_perms == -1)
         @info "Since `n_perms` wasn't set the exact version of Shapley will be used"
-        perms = collect(permutations(range(1, dim), dim))
+        perms = collect(permutations(1:dim, dim))
         n_perms = length(perms)
     else
         @info "Since `n_perms` was set the random version of Shapley will be used"
-        perms = [randperm(dim) for i in range(1, n_perms)]
+        perms = [randperm(dim) for i in 1:n_perms]
     end
 
     # Creation of the design matrix
@@ -222,7 +222,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             idx_minus = perm[(j + 1):end]
             sample_complement = sample_subset(input_distribution, n_outer, idx_minus)
 
-            for l in range(1, n_outer)
+            for l in 1:n_outer
                 curr_sample = @view sample_complement[l, :]
 
                 # Sampling of the set conditionally to the complementary element
@@ -246,7 +246,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
 
     if batch
         output_sample = f(X)
-        multioutput = all_y isa AbstractMatrix
+        multioutput = output_sample isa AbstractMatrix
         y_size = nothing
     else
         f_non_batch = X -> [f(X[j, :]) for j in axes(X, 1)]
