@@ -1,7 +1,8 @@
 pages = [
     "GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)" => "index.md",
     "Tutorials" => Any["tutorials/parallelized_gsa.md",
-        "tutorials/juliacon21.md"],
+        "tutorials/juliacon21.md",
+        "tutorials/shapley.md"],
     "Methods" => Any["methods/morris.md",
         "methods/sobol.md",
         "methods/regression.md",

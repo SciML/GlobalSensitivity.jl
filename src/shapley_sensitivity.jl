@@ -86,7 +86,7 @@ struct Shapley <: GSAMethod
     n_inner::Int
 end
 
-function Shapley(; n_perms = -1, n_var, n_outer, n_inner)
+function Shapley(; n_perms = -1, n_var, n_outer, n_inner = 3)
     Shapley(n_perms, n_var, n_outer, n_inner)
 end
 
@@ -125,7 +125,7 @@ end
 function find_cond_mean_var(cov::Matrix,
     dependent_ind::Vector{Int},
     given_ind::Vector{Int},
-    X_given::Vector{Float64})
+    X_given::Vector)
     """
     Find the conditional mean and variance of the given distirbution
     """
@@ -141,25 +141,25 @@ function find_cond_mean_var(cov::Matrix,
 
     mat_cdinv = transpose(mat_c) * inv(mat_d)
     conditional_mean = mat_cdinv * X_given
-    contional_var = mat_b - mat_cdinv * mat_c
+    conditional_var = mat_b - mat_cdinv * mat_c
 
-    return conditional_mean, contional_var
+    return conditional_mean, conditional_var
 end
 
 function cond_sampling(distribution::SklarDist,
     n_sample::Int,
     idx::Vector{Int},
     idx_c::Vector{Int},
-    x_cond::AbstractArray{Float64})
+    x_cond::AbstractArray)
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
     margins_conditional = [distribution.m[Int(i)] for i in idx_c]
 
     # create a conditioned variable that follows a normal distribution
-    cond_norm_var = zeros(size(x_cond))
+    cond_norm_var = zeros(eltype(x_cond), size(x_cond))
     for (i, marginal) in collect(enumerate(margins_conditional))
-        cond_norm_var[i] = quantile.(Normal(), cdf(marginal, x_cond[i]))
+        cond_norm_var[i] = quantile.(Normal(zero(eltype(x_cond))), cdf(marginal, x_cond[i]))
     end
 
     corr_mat = distribution.C.Σ
@@ -176,8 +176,9 @@ function cond_sampling(distribution::SklarDist,
         sample_norm = transpose(rand(dist_cond, n_sample))
     end
 
-    final_sample = zeros((n_sample, n_dep))
-    ϕ = x -> cdf.(Normal(), x)
+    final_sample = zeros(eltype(cond_mean), (n_sample, n_dep))
+    std_norm = Normal(zero(eltype(cond_mean)))
+    ϕ = x -> cdf.(std_norm, x)
     for i in 1:n_dep
         final_sample[:, i] = quantile.(margins_dependent[i], ϕ(sample_norm[:, i]))
     end
@@ -208,7 +209,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
 
     # Creation of the design matrix
     sample_A = copy(transpose(rand(input_distribution, n_var))) # number of samples x number of features
-    sample_B = zeros(n_perms * (dim - 1) * n_outer * n_inner, dim)
+    sample_B = zeros(eltype(sample_A), n_perms * (dim - 1) * n_outer * n_inner, dim)
 
     #---> iterate to create the sample
     for (i_p, perm) in collect(enumerate(perms))
