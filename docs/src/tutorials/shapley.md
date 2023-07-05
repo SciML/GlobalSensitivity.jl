@@ -18,7 +18,7 @@ As the first step let's generate the dataset.
 
 ```@example shapley
 using GlobalSensitivity, OrdinaryDiffEq, Flux, SciMLSensitivity, LinearAlgebra
-using Optimization, OptimizationOptimisers, Distributions, Copulas
+using Optimization, OptimizationOptimisers, Distributions, Copulas, CairoMakie
 
 u0 = Float32[2.0; 0.0]
 datasize = 30
@@ -34,7 +34,7 @@ ode_data = Array(solve(prob, Tsit5(), saveat=t))
 ```
 
 Now we will define our Neural Network for the dynamics of the system. We will use
-a 2-layer neural network with 32 hidden units in the first layer and the second layer.
+a 2-layer neural network with 10 hidden units in the first layer and the second layer.
 We will use the `Chain` function from `Flux` to define our NN. A detailed tutorial on
 is available [here](https://docs.sciml.ai/SciMLSensitivity/stable/examples/neural_ode/neural_ode_flux/).
 
@@ -115,11 +115,11 @@ shapley_effects = gsa(batched_loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n
 
 ```@example shapley
 fig = Figure(resolution = (600, 400))
-scatter(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green, axis = (xticksvisible = false, xticklabelsvisible = false))
+barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 display(fig)
 ```
 
-Now let's assume some correlation between the parameters. We will use a correlation of 0.1 between
+Now let's assume some correlation between the parameters. We will use a correlation of 0.09 between
 all the parameters.
 
 ```@example shapley
@@ -137,6 +137,6 @@ shapley_effects = gsa(loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer =
 
 ```@example shapley
 fig = Figure(resolution = (600, 400))
-scatter(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green, axis = (xticksvisible = false, xticklabelsvisible = false))
+barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 display(fig)
 ```
