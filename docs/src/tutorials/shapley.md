@@ -90,32 +90,53 @@ is passed as the identity matrix.
 
 ```@example shapley
 d = length(θ)
-mu = zeros(d)
+mu = zeros(Float32, d)
 #covariance matrix for the copula
-Covmat = Matrix(1.0I, d, d)
+Covmat = Matrix(1.0f0*I, d, d)
 #the marginal distributions for each parameter
-marginals = [Normal() for i in 1:d]
+marginals = [Normal(mu[i]) for i in 1:d]
 
 copula = GaussianCopula(Covmat)
 input_distribution = SklarDist(copula, marginals)
 
-cost_func = (θ) -> loss_n_ode(θ)[1]
+function batched_loss_n_ode(θ)
+    prob_func(prob,i,repeat) = remake(prob;u0 =θ[1:2,i], p=θ[3:end,i])
+    ensemble_prob = EnsembleProblem(prob,prob_func=prob_func)
+    sol = solve(ensemble_prob,Tsit5(),EnsembleThreads();saveat=t,trajectories=size(θ,2))
+    out = zeros(size(θ,2))
+    for i in 1:size(θ,2)
+      out[i] = sum(abs2, ode_data .- sol[i])
+    end
+    return out
+end
 
-shapley_effects = gsa(cost_func, input_distribution, Shapley(;n_var = 100, n_outer = 100))
+shapley_effects = gsa(batched_loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 100), input_distribution, batch = true)
+```
+
+```@example shapley
+fig = Figure(resolution = (600, 400))
+scatter(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green, axis = (xticksvisible = false, xticklabelsvisible = false))
+display(fig)
 ```
 
 Now let's assume some correlation between the parameters. We will use a correlation of 0.1 between
 all the parameters.
 
 ```@example shapley
-Corrmat = fill(0.1, d, d)
+Corrmat = fill(0.09f0, d, d)
 for i in 1:d
-    Corrmat[i, i] = 1.0
+    Corrmat[i, i] = 1.0f0
 end
 
 #since the marginals are standard normal the covariance matrix and correlation matrix are the same
 
 copula = GaussianCopula(Corrmat)
 input_distribution = SklarDist(copula, marginals)
-shapley_effects = gsa(cost_func, input_distribution, Shapley(;n_var = 100, n_outer = 100))
+shapley_effects = gsa(loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 100), input_distribution)
+```
+
+```@example shapley
+fig = Figure(resolution = (600, 400))
+scatter(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green, axis = (xticksvisible = false, xticklabelsvisible = false))
+display(fig)
 ```

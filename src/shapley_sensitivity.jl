@@ -117,7 +117,7 @@ function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
     dist_subset = SklarDist(copula_subset, margins_of_subset)
 
     # sample from the subset distirbution
-    sample_from_subset = copy(transpose(rand(dist_subset, n_sample)))
+    sample_from_subset = rand(dist_subset, n_sample)
 
     return sample_from_subset
 end
@@ -172,15 +172,16 @@ function cond_sampling(distribution::SklarDist,
         dist_cond = Normal(cond_mean[1, 1], cond_var[1, 1])
         sample_norm = rand(dist_cond, n_sample)
     else
-        dist_cond = MvNormal(cond_mean, cond_var)
-        sample_norm = transpose(rand(dist_cond, n_sample))
+        dist_cond = MvNormal(cond_mean, Symmetric(cond_var))
+        sample_norm = rand(dist_cond, n_sample)
     end
 
     final_sample = zeros(eltype(cond_mean), (n_sample, n_dep))
     std_norm = Normal(zero(eltype(cond_mean)))
-    ϕ = x -> cdf.(std_norm, x)
+    ϕ(x::Vector, i) = cdf.(std_norm, x[i])
+    ϕ(x::Matrix, i) = cdf.(std_norm, x[i, :])
     for i in 1:n_dep
-        final_sample[:, i] = quantile.(margins_dependent[i], ϕ(sample_norm[:, i]))
+        final_sample[:, i] .= quantile.(margins_dependent[i], ϕ(sample_norm, i))
     end
 
     return final_sample
@@ -208,8 +209,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
     end
 
     # Creation of the design matrix
-    sample_A = copy(transpose(rand(input_distribution, n_var))) # number of samples x number of features
-    sample_B = zeros(eltype(sample_A), n_perms * (dim - 1) * n_outer * n_inner, dim)
+    sample_A = rand(input_distribution, n_var) # number of samples x number of features
+    sample_B = zeros(eltype(sample_A), dim, n_perms * (dim - 1) * n_outer * n_inner)
 
     #---> iterate to create the sample
     for (i_p, perm) in collect(enumerate(perms))
@@ -224,33 +225,31 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             sample_complement = sample_subset(input_distribution, n_outer, idx_minus)
 
             for l in 1:n_outer
-                curr_sample = @view sample_complement[l, :]
-
+                curr_sample = @view sample_complement[:, l]
                 # Sampling of the set conditionally to the complementary element
                 xj = cond_sampling(input_distribution,
                     n_inner,
                     idx_plus,
                     idx_minus,
                     curr_sample)
-                xx = reduce(hcat, (xj, repeat(transpose(curr_sample), n_inner)))
+                xx = reduce(vcat, (xj', repeat(curr_sample, 1, size(xj, 1))))
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
-                sample_B[ind_inner:(ind_inner + n_inner - 1), :] = @view xx[:,
-                    idx_perm_sorted]
+                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[idx_perm_sorted, :]
             end
         end
     end
 
     # define the input sample
-    X = cat(sample_A, sample_B, dims = 1)
+    X = cat(sample_A, sample_B, dims = 2)
 
     if batch
         output_sample = f(X)
         multioutput = output_sample isa AbstractMatrix
         y_size = nothing
     else
-        f_non_batch = X -> [f(X[j, :]) for j in axes(X, 1)]
+        f_non_batch = X -> [f(X[:, j]) for j in axes(X, 2)]
         output_sample = f_non_batch(X)
         multioutput = !(eltype(output_sample) <: Number)
         if eltype(output_sample) <: RecursiveArrayTools.AbstractVectorOfArray
