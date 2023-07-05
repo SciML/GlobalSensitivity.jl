@@ -1,7 +1,7 @@
 # Global Sensitivity Analysis of the Lotka-Volterra model
 
 The tutorial covers a workflow of using GlobalSensitivity.jl on the [Lotka-Volterra differential equations](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations).
-We showcase how to use multiple GSA methods, analyse their results and leverage Julia's parallelism capabilities to
+We showcase how to use multiple GSA methods, analyze their results and leverage Julia's parallelism capabilities to
 perform Global Sensitivity analysis at scale.
 
 ```@example lv

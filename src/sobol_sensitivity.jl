@@ -8,9 +8,9 @@
 
 ## Method Details
 
-Sobol is a variance-based method and it decomposes the variance of the output of
+Sobol is a variance-based method, and it decomposes the variance of the output of
 the model or system into fractions which can be attributed to inputs or sets
-of inputs. This helps to get not just the individual parameter's sensitivities
+of inputs. This helps to get not just the individual parameter's sensitivities,
 but also gives a way to quantify the affect and sensitivity from
 the interaction between the parameters.
 
@@ -23,9 +23,9 @@ the interaction between the parameters.
 ```
 
 The Sobol Indices are "order"ed, the first order indices given by ``S_i = \frac{V_i}{Var(Y)}``
-the contribution to the output variance of the main effect of `` X_i ``, therefore it
+the contribution to the output variance of the main effect of `` X_i ``. Therefore, it
 measures the effect of varying `` X_i `` alone, but averaged over variations
-in other input parameters. It is standardised by the total variance to provide a fractional contribution.
+in other input parameters. It is standardized by the total variance to provide a fractional contribution.
 Higher-order interaction indices `` S_{i,j}, S_{i,j,k} `` and so on can be formed
 by dividing other terms in the variance decomposition by `` Var(Y) ``.
 
@@ -107,9 +107,9 @@ function fuse_designs(A, B; second_order = false)
 end
 
 function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
-             batch = false, Ei_estimator = :Jansen1999,
-             distributed::Val{SHARED_ARRAY} = Val(false),
-             kwargs...) where {TA, SHARED_ARRAY}
+    batch = false, Ei_estimator = :Jansen1999,
+    distributed::Val{SHARED_ARRAY} = Val(false),
+    kwargs...) where {TA, SHARED_ARRAY}
     d, n = size(A)
     nboot = method.nboot # load to help alias analysis
     n = n ÷ nboot
@@ -123,8 +123,8 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
         Bnb[i] = B[:, (n * (i - 1) + 1):(n * (i))]
     end
     _all_points = mapreduce((args...) -> fuse_designs(args...;
-                                                      second_order = 2 in method.order),
-                            hcat, Anb, Bnb)
+            second_order = 2 in method.order),
+        hcat, Anb, Bnb)
     if SHARED_ARRAY && isbits(TA)
         all_points = SharedMatrix{TA}(size(_all_points))
         all_points .= _all_points
@@ -137,7 +137,7 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
         multioutput = all_y isa AbstractMatrix
         y_size = nothing
         gsa_sobol_all_y_analysis(method, all_y, d, n, Ei_estimator, y_size,
-                                 Val(multioutput))
+            Val(multioutput))
     else
         _y = [f(all_points[:, i]) for i in 1:size(all_points, 2)]
         multioutput = !(eltype(_y) <: Number)
@@ -149,14 +149,14 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
         end
         if multioutput
             gsa_sobol_all_y_analysis(method, reduce(hcat, _y), d, n, Ei_estimator, y_size,
-                                     Val(true))
+                Val(true))
         else
             gsa_sobol_all_y_analysis(method, _y, d, n, Ei_estimator, y_size, Val(false))
         end
     end
 end
 function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_estimator,
-                                  y_size, ::Val{multioutput}) where {T, multioutput}
+    y_size, ::Val{multioutput}) where {T, multioutput}
     nboot = method.nboot
     Eys = multioutput ? Matrix{T}[] : T[]
     Varys = multioutput ? Matrix{T}[] : T[]
@@ -188,11 +188,11 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
-                      [Varys[i] .- sum(fA .* fAⁱ[k]) ./ (n) + Eys[i] .^ 2 for k in 1:d])
+                    [Varys[i] .- sum(fA .* fAⁱ[k]) ./ (n) + Eys[i] .^ 2 for k in 1:d])
             elseif Ei_estimator === :Sobol2007
-                push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2n))
-            elseif Ei_estimator === :Jansen1999
                 push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (n))
+            elseif Ei_estimator === :Jansen1999
+                push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2n))
             end
         end
     else
@@ -208,7 +208,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
 
             push!(Vᵢs,
-                  reduce(hcat, [sum(fB .* (fAⁱ[k] .- fA), dims = 2) for k in 1:d] ./ n))
+                reduce(hcat, [sum(fB .* (fAⁱ[k] .- fA), dims = 2) for k in 1:d] ./ n))
 
             if 2 in method.order
                 M = zeros(T, d, d, length(Eys[1]))
@@ -224,16 +224,16 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
-                      reduce(hcat,
-                             [Varys[i] .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + Eys[i] .^ 2
-                              for k in 1:d]))
+                    reduce(hcat,
+                        [Varys[i] .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + Eys[i] .^ 2
+                         for k in 1:d]))
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs,
-                      reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2n)))
+                    reduce(hcat,
+                        [sum(fA .* (fA .- fAⁱ[k]), dims = 2) for k in 1:d] ./ (n)))
             elseif Ei_estimator === :Jansen1999
                 push!(Eᵢs,
-                      reduce(hcat,
-                             [sum(fA .* (fA .- fAⁱ[k]), dims = 2) for k in 1:d] ./ (n)))
+                    reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2n)))
             end
         end
     end
@@ -310,18 +310,18 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
         _Tᵢ = f_shape(Tᵢ)
     end
     return SobolResult(_Sᵢ,
-                       nboot > 1 ? reshape(S1_CI, size_...) : nothing,
-                       2 in method.order ? Sᵢⱼ : nothing,
-                       nboot > 1 && 2 in method.order ? S2_CI : nothing,
-                       _Tᵢ,
-                       nboot > 1 ? reshape(ST_CI, size_...) : nothing)
+        nboot > 1 ? reshape(S1_CI, size_...) : nothing,
+        2 in method.order ? Sᵢⱼ : nothing,
+        nboot > 1 && 2 in method.order ? S2_CI : nothing,
+        _Tᵢ,
+        nboot > 1 ? reshape(ST_CI, size_...) : nothing)
 end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples, kwargs...)
     AB = QuasiMonteCarlo.generate_design_matrices(samples, [i[1] for i in p_range],
-                                                  [i[2] for i in p_range],
-                                                  QuasiMonteCarlo.SobolSample(),
-                                                  2 * method.nboot)
+        [i[2] for i in p_range],
+        QuasiMonteCarlo.SobolSample(),
+        2 * method.nboot)
     A = reduce(hcat, @view(AB[1:(method.nboot)]))
     B = reduce(hcat, @view(AB[(method.nboot + 1):end]))
     gsa(f, method, A, B; kwargs...)

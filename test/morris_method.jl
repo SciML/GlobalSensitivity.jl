@@ -43,8 +43,8 @@ lb = -ones(4) * π
 ub = ones(4) * π
 
 m = gsa(f_morris,
-        Morris(p_steps = [10, 10], total_num_trajectory = 1000, num_trajectory = 150),
-        [[1, 5], [1, 5]])
+    Morris(p_steps = [10, 10], total_num_trajectory = 1000, num_trajectory = 150),
+    [[1, 5], [1, 5]])
 @test m.means[:, 1]≈A[:, 1] atol=1e-12
 @test m.means[:, 2]≈A[:, 2] atol=1e-12
 @test m.means_star[:, 1]≈A[:, 1] atol=1e-12
@@ -52,8 +52,8 @@ m = gsa(f_morris,
 @test m.variances≈reshape([0, 0, 0, 0], 2, 2) atol=1e-12
 
 m = gsa(f_morris,
-        Morris(p_steps = [10, 10], relative_scale = true, total_num_trajectory = 1000,
-               num_trajectory = 150), [[1, 5], [1, 5]])
+    Morris(p_steps = [10, 10], relative_scale = true, total_num_trajectory = 1000,
+        num_trajectory = 150), [[1, 5], [1, 5]])
 @test m.means[2, 1]≈0 atol=1e-12
 @test m.means_star[2, 1]≈0 atol=1e-12
 @test m.variances[2, 1]≈0 atol=1e-12
@@ -61,13 +61,13 @@ m = gsa(f_morris,
 @test m.means_star[1, 2] < m.means_star[2, 2]
 
 m = gsa(linear_batch, Morris(p_steps = [10, 10], num_trajectory = 50000), [[1, 5], [1, 5]],
-        batch = true)
+    batch = true)
 @test m.means≈[7.0 0.1] atol=1e-2
 @test m.means_star≈[7.0 0.1] atol=1e-2
 @test m.variances≈reshape([0, 0], 1, 2) atol=1e-12
 
 m = gsa(neg_linear_batch, Morris(p_steps = [10, 10], num_trajectory = 50000),
-        [[1, 5], [1, 5]], batch = true)
+    [[1, 5], [1, 5]], batch = true)
 @test m.means≈[-7.0 0.1] atol=1e-2
 @test m.means_star≈[7.0 0.1] atol=1e-2
 @test m.variances≈reshape([0, 0], 1, 2) atol=1e-12
@@ -82,7 +82,7 @@ m = gsa(ishi_linear, Morris(num_trajectory = 500000), [[lb[i], ub[i]] for i in 1
 @test m.means_star[2, :]≈[7.0, 0.1, 0.0, 0.0] rtol=1e-12
 
 m = gsa(ishi_linear_batch, Morris(num_trajectory = 500000), [[lb[i], ub[i]] for i in 1:4],
-        batch = true)
+    batch = true)
 @test m.means_star[1, :]≈[2.25341, 4.40246, 2.5049, 0.0] atol=5e-2
 @test m.means_star[2, :]≈[7.0, 0.1, 0.0, 0.0] rtol=1e-12
 
@@ -104,4 +104,4 @@ f1 = function (p)
 end
 
 m = gsa(f1, Morris(total_num_trajectory = 1000, num_trajectory = 150),
-        [[1, 5], [1, 5], [1, 5], [1, 5]])
+    [[1, 5], [1, 5], [1, 5], [1, 5]])
