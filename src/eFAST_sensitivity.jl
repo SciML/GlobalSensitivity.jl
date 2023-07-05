@@ -64,8 +64,8 @@ struct eFASTResult{T1}
 end
 
 function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
-             distributed::Val{SHARED_ARRAY} = Val(false),
-             rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
+    distributed::Val{SHARED_ARRAY} = Val(false),
+    rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
     @unpack num_harmonics = method
     num_params = length(p_range)
     omega = [(samples - 1) ÷ (2 * num_harmonics)]
@@ -99,9 +99,9 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
                 ps[j, l] .= p_range[j][1]
             else
                 ps[j, l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]),
-                                      0.5 .+
-                                      (1 / pi) .*
-                                      (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                    0.5 .+
+                    (1 / pi) .*
+                    (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
             end
         end
     end
@@ -111,7 +111,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
         multioutput = all_y isa AbstractMatrix
         y_size = nothing
         gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
-                                 Val(multioutput))
+            Val(multioutput))
     else
         _y = [f(ps[:, j]) for j in 1:size(ps, 2)]
         multioutput = !(eltype(_y) <: Number)
@@ -124,15 +124,15 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
         end
         if multioutput
             gsa_efast_all_y_analysis(method, reduce(hcat, __y), num_params, y_size, samples,
-                                     omega, Val(true))
+                omega, Val(true))
         else
             gsa_efast_all_y_analysis(method, __y, num_params, y_size, samples, omega,
-                                     Val(false))
+                Val(false))
         end
     end
 end
 function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
-                                  ::Val{multioutput}) where {multioutput}
+    ::Val{multioutput}) where {multioutput}
     @unpack num_harmonics = method
     if multioutput
         size_ = size(all_y)
@@ -160,7 +160,7 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, om
             first_order[i] = map((y, var) -> 2 * sum(y[(1:num_harmonics) * (omega[1])]) ./
                                              var, ys, varnce)
             total_order[i] = map((y, var) -> 1 .- 2 * sum(y[1:(omega[1] ÷ 2)]) ./ var, ys,
-                                 varnce)
+                varnce)
         end
     end
     if isnothing(y_size)

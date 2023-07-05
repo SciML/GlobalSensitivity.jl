@@ -58,7 +58,7 @@ struct DeltaMoment{T} <: GSAMethod
 end
 
 function DeltaMoment(; nboot = 500, conf_level = 0.95, Ygrid_length = 2048,
-                     num_classes = nothing)
+    num_classes = nothing)
     DeltaMoment(nboot, conf_level, Ygrid_length, num_classes)
 end
 
@@ -157,7 +157,7 @@ function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
 end
 
 function gsa(f, method::DeltaMoment, p_range; samples, batch = false,
-             rng::AbstractRNG = Random.default_rng())
+    rng::AbstractRNG = Random.default_rng())
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
