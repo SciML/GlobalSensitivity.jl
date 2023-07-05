@@ -9,7 +9,7 @@
 
 The EASI method is a Fourier-based technique for performing
 variance-based methods of global sensitivity analysis for the
-computation of first order effects (Sobol’ indices), hence belonging
+computation of first order effects (Sobol' indices), hence belonging
 into the same class of algorithms as FAST and RBD. It is a
 computationally cheap method for which existing data can be used.
 Unlike the FAST and RBD methods which use a specially generated sample

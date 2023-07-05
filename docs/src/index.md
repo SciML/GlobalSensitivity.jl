@@ -1,9 +1,9 @@
 # GlobalSensitivity.jl: Robust, Fast, and Parallel Global Sensitivity Analysis (GSA) in Julia
 
-Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in
+Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in the
 output of a model with respect to the parameters. These methods allow practitioners to
 measure both parameter's individual contributions and the contribution of their interactions
-to the output uncertainity.
+to the output uncertainty.
 
 ## Installation
 
