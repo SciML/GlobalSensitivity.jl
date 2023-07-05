@@ -21,6 +21,7 @@ ThreadsX = "ac1d9e8a-700a-412c-b207-f0111f4b6c0d"
 Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 
 [compat]
+Copulas = "0.1"
 Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 ForwardDiff = "0.10"
