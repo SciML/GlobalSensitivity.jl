@@ -236,7 +236,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
-                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[idx_perm_sorted, :]
+                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[idx_perm_sorted,
+                    :]
             end
         end
     end
@@ -319,7 +320,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                     end
                     Chat = mean(cVar, dims = 2)
                     Δ = Chat - prevC
-                    Δ2 = mean((cVar .- prevC) .^ 2, dims = 2) - Δ.^2
+                    Δ2 = mean((cVar .- prevC) .^ 2, dims = 2) - Δ .^ 2
                     Sh2[:, perm[j]] += Δ2
                 end
                 Sh[:, perm[j]] += Δ
@@ -327,7 +328,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             end
         end
         Sh = Sh ./ m ./ VarY
-        Sh2 = Sh2 ./ m ./ VarY.^2
+        Sh2 = Sh2 ./ m ./ VarY .^ 2
         ShSE = sqrt.(Sh2 ./ n_outer)
         ShCI = [Sh - 1.96 .* ShSE, Sh + 1.96 .* ShSE]
         if y_size !== nothing

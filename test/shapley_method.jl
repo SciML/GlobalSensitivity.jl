@@ -31,15 +31,13 @@ dependency_matrix = Matrix{Int}(I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
-method = Shapley(
-    n_perms = n_perms,
+method = Shapley(n_perms = n_perms,
     n_var = n_var,
     n_outer = n_outer,
     n_inner = n_inner);
 
 #---> non batch
 @time result = gsa(ishi, method, input_distribution, batch = false)
-
 
 @test result.shapley_effects[1]≈0.43813841765976547 atol=1e-1
 @test result.shapley_effects[2]≈0.44673952698721386 atol=1e-1
@@ -82,7 +80,10 @@ end
 function ishi_linear_batch(X)
     A = 7
     B = 0.1
-    @. [sin(X[1, :]) + A * sin(X[2, :])^2 + B * X[3, :]^4 * sin(X[1, :]), A * X[1, :] + B * X[1, :]]
+    @. [
+        sin(X[1, :]) + A * sin(X[2, :])^2 + B * X[3, :]^4 * sin(X[1, :]),
+        A * X[1, :] + B * X[1, :],
+    ]
 end
 
 n_perms = -1;
@@ -95,16 +96,16 @@ dependency_matrix = Matrix{Int}(I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
-
 method = Shapley(n_perms = n_perms,
-                 n_var = n_var,
-                 n_outer = n_outer,
-                 n_inner = n_inner);
+    n_var = n_var,
+    n_outer = n_outer,
+    n_inner = n_inner);
 result = gsa(ishi_linear, method, input_distribution, batch = false)
 
-@test result.shapley_effects[1, :]≈[0.3554934482470362, 0.4046395220687974, 0.14529873813161728, 0.09456829155254913] atol=1e-1
+@test result.shapley_effects[1,
+    :]≈[0.3554934482470362, 0.4046395220687974, 0.14529873813161728, 0.09456829155254913] atol=1e-1
 @test result.shapley_effects[2,
-                             :]≈[
+    :]≈[
     0.7494443217876992,
     0.08910342598154845,
     0.0836298215278766,
