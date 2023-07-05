@@ -132,7 +132,7 @@ end
 
 copula = GaussianCopula(Corrmat)
 input_distribution = SklarDist(copula, marginals)
-shapley_effects = gsa(loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 100), input_distribution)
+shapley_effects = gsa(batched_loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 100), input_distribution, batch = true)
 ```
 
 ```@example shapley
