@@ -122,10 +122,14 @@ GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.11597691741
 fig = Figure(resolution = (600, 400))
 ax = barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 ylims!(ax.axis, 0.0, 0.2)
+ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
+ax.axis.ylabel = "Shapley Indices"
+ax.axis.xlabel = "Parameters"
+ax.axis.xticklabelrotation = 1
 display(fig)
 ```
 
-![shapnocorr](https://github.com/SciML/GlobalSensitivity.jl/assets/23134958/f32319de-8e1e-4781-ae99-95c40b278a0b)
+![shapnocorr](https://github.com/SciML/GlobalSensitivity.jl/assets/23134958/d102a91a-a4ed-4850-ae0b-dea19acf38f7)
 
 Now let's assume some correlation between the parameters. We will use a correlation of 0.09 between
 all the parameters.
@@ -151,7 +155,11 @@ GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.05840668971
 fig = Figure(resolution = (600, 400))
 ax = barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 ylims!(ax.axis, 0.0, 0.2)
+ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
+ax.axis.ylabel = "Shapley Indices"
+ax.axis.xlabel = "Parameters"
+ax.axis.xticklabelrotation = 1
 display(fig)
 ```
 
-![shapcorr](https://github.com/SciML/GlobalSensitivity.jl/assets/23134958/3151d556-73a7-485a-8833-8626bb03f35c)
+![shapcorr](https://github.com/SciML/GlobalSensitivity.jl/assets/23134958/c48be7e3-811a-49de-8388-4af1e03d0663)
