@@ -188,7 +188,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
-                    [Varys[i] .- sum(fA .* fAⁱ[k]) ./ (n) + Eys[i] .^ 2 for k in 1:d])
+                    [sum((fA .- (sum(fA) ./ n)).^2) ./ (n-1) .- sum(fA .* fAⁱ[k]) ./ (n) + (sum(fA) ./ n) .^ 2 for k in 1:d])
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (n))
             elseif Ei_estimator === :Jansen1999
@@ -225,7 +225,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
                     reduce(hcat,
-                        [Varys[i] .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + Eys[i] .^ 2
+                        [sum((fA .- (sum(fA, dims = 2) ./ n)).^2, dims = 2) ./ (n-1) .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + (sum(fA, dims = 2) ./ n) .^ 2
                          for k in 1:d]))
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs,
