@@ -44,6 +44,7 @@ by dividing other terms in the variance decomposition by `` Var(Y) ``.
 - `:Homma1996` - [Homma, T. and Saltelli, A., 1996. Importance measures in global sensitivity analysis of nonlinear models. Reliability Engineering & System Safety, 52(1), pp.1-17.](https://www.sciencedirect.com/science/article/abs/pii/0951832096000026)
 - `:Sobol2007` - [I.M. Sobol, S. Tarantola, D. Gatelli, S.S. Kucherenko and W. Mauntz, 2007, Estimating the approx- imation errors when fixing unessential factors in global sensitivity analysis, Reliability Engineering and System Safety, 92, 957–960.](https://www.sciencedirect.com/science/article/abs/pii/S0951832006001499) and [A. Saltelli, P. Annoni, I. Azzini, F. Campolongo, M. Ratto and S. Tarantola, 2010, Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index, Computer Physics Communications 181, 259–270.](https://www.sciencedirect.com/science/article/abs/pii/S0010465509003087)
 - `:Jansen1999` - [M.J.W. Jansen, 1999, Analysis of variance designs for model output, Computer Physics Communi- cation, 117, 35–43.](https://www.sciencedirect.com/science/article/abs/pii/S0010465598001544)
+- `:Janon2014` - [Janon, A., Klein, T., Lagnoux, A., Nodet, M., & Prieur, C. (2014). Asymptotic normality and efficiency of two Sobol index estimators. ESAIM: Probability and Statistics, 18, 342-364.](https://arxiv.org/abs/1303.6451)
 
 ### Example
 
@@ -188,11 +189,15 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
-                    [Varys[i] .- sum(fA .* fAⁱ[k]) ./ (n) + Eys[i] .^ 2 for k in 1:d])
+                    [sum((fA .- (sum(fA) ./ n)).^2) ./ (n-1) .- sum(fA .* fAⁱ[k]) ./ (n) + (sum(fA) ./ n) .^ 2 for k in 1:d])
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (n))
             elseif Ei_estimator === :Jansen1999
                 push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2n))
+            elseif Ei_estimator === :Janon2014
+                push!(Eᵢs, [(sum(fA.^2 + fAⁱ[k].^2)./(2n)  .- (sum(fA + fAⁱ[k])./(2n)).^2) * (1.0 .- (1/n .* sum(fA .* fAⁱ[k]) 
+                                .- (1/n .* sum((fA .+ fAⁱ[k])./2)).^2) ./  (1/n .* sum((fA.^2 .+ fAⁱ[k].^2)./2) - (1/n .* sum((fA .+ fAⁱ[k])./2)).^2))  
+                        for k in 1:d]) 
             end
         end
     else
@@ -225,7 +230,7 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
                     reduce(hcat,
-                        [Varys[i] .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + Eys[i] .^ 2
+                        [sum((fA .- (sum(fA, dims = 2) ./ n)).^2, dims = 2) ./ (n-1) .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + (sum(fA, dims = 2) ./ n) .^ 2
                          for k in 1:d]))
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs,
@@ -234,6 +239,12 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             elseif Ei_estimator === :Jansen1999
                 push!(Eᵢs,
                     reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2n)))
+            elseif Ei_estimator === :Janon2014
+                push!(Eᵢs,
+                      reduce(hcat, [(sum(fA.^2 + fAⁱ[k].^2 , dims = 2)./(2n)  .- 
+                                (sum(fA + fAⁱ[k], dims = 2)./(2n)).^2) .*(1.0 .- (1/n .* sum(fA .* fAⁱ[k], dims = 2) .- 
+                                    (1/n * sum((fA .+ fAⁱ[k])./2, dims = 2)).^2) ./  (1/n .* sum((fA.^2 .+ fAⁱ[k].^2)./2, dims = 2) .- 
+                                    (1/n * sum((fA .+ fAⁱ[k])./2, dims = 2)).^2))  for k in 1:d]))
             end
         end
     end
