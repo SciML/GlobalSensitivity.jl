@@ -181,14 +181,14 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
             y1 = multioutput ? all_y[:, j + 1] : all_y[j + 1]
             if relative_scale == false
                 effect = @. (y1 - y2) / (del)
-                elem_effect = typeof(y1) <: Number ? effect : mean(effect, dims = 2)
+                elem_effect = y1 isa Number ? effect : mean(effect, dims = 2)
             else
                 if del > 0
                     effect = @. (y1 - y2) / (y2 * del)
-                    elem_effect = typeof(y1) <: Number ? effect : mean(effect, dims = 2)
+                    elem_effect = y1 isa Number ? effect : mean(effect, dims = 2)
                 else
                     effect = @. (y1 - y2) / (y1 * del)
-                    elem_effect = typeof(y1) <: Number ? effect : mean(effect, dims = 2)
+                    elem_effect = y1 isa Number ? effect : mean(effect, dims = 2)
                 end
             end
             if length(effects) >= change_index && change_index > 0
