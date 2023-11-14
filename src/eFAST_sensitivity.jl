@@ -71,6 +71,12 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
     omega = [(samples - 1) ÷ (2 * num_harmonics)]
     m = omega[1] ÷ (2 * num_harmonics)
 
+    if !(eltype(p_range) <: Distribution)
+        dists = [Uniform(p_range[j][1], p_range[j][2]) for j in eachindex(p_range)]
+    else
+        dists = p_range
+    end
+
     if m >= num_params - 1
         append!(omega, floor.(Int, collect(range(1, stop = m, length = num_params - 1))))
     else
@@ -95,13 +101,20 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
         l = ((i - 1) * samples + 1):(i * samples)
         phi = 2rand(rng)
         for j in 1:num_params
-            if p_range[j][1] == p_range[j][2]
+            if !(eltype(p_range) <: Distribution) && p_range[j][1] == p_range[j][2]
                 ps[j, l] .= p_range[j][1]
             else
-                ps[j, l] .= quantile.(Uniform(p_range[j][1], p_range[j][2]),
-                    0.5 .+
-                    (1 / pi) .*
-                    (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                if eltype(dists) <: UnivariateDistribution
+                    ps[j, l] .= quantile.(dists[j],
+                        0.5 .+
+                        (1 / pi) .*
+                        (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                else
+                    ps[j, l] .= quantile(dists[j],
+                        0.5 .+
+                        (1 / pi) .*
+                        (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                end
             end
         end
     end
