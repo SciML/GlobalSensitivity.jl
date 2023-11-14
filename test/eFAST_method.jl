@@ -35,6 +35,26 @@ res2 = gsa(ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
 @test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 @test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 
+res1 = gsa(ishi, eFAST(), [Uniform[lb[i], ub[i]] for i in 1:4], samples = 15000)
+res2 = gsa(ishi_batch, eFAST(), [Uniform[lb[i], ub[i]] for i in 1:4], samples = 15000,
+    batch = true)
+
+@test res1.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
+@test res2.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
+
+@test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
+@test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
+
+res1 = gsa(ishi, eFAST(), Product([Uniform[lb[i], ub[i]] for i in 1:4]), samples = 15000)
+res2 = gsa(ishi_batch, eFAST(), Product([Uniform[lb[i], ub[i]] for i in 1:4]), samples = 15000,
+    batch = true)
+
+@test res1.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
+@test res2.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
+
+@test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
+@test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
+
 res1 = gsa(linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
 res2 = gsa(linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], batch = true,
     samples = 15000)
