@@ -372,10 +372,10 @@ uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
 [[deps.Copulas]]
-deps = ["Combinatorics", "Cubature", "Distributions", "ForwardDiff", "GSL", "MvNormalCDF", "Random", "Roots", "SpecialFunctions", "StatsBase", "TaylorSeries", "WilliamsonTransforms"]
-git-tree-sha1 = "23e3477e3bc54fc612360c425de3f8def4276b09"
+deps = ["Cubature", "Distributions", "ForwardDiff", "GSL", "MvNormalCDF", "Random", "Roots", "SpecialFunctions", "StatsBase", "TaylorSeries"]
+git-tree-sha1 = "f2964e01ce7c1b12d1300e08b44997b1bba76fc7"
 uuid = "ae264745-0b69-425e-9d9d-cf662c5eec93"
-version = "0.1.17"
+version = "0.1.13"
 
 [[deps.CpuId]]
 deps = ["Markdown"]
@@ -2720,12 +2720,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "4528479aa01ee1b3b4cd0e6faef0e04cf16466da"
 uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
-
-[[deps.WilliamsonTransforms]]
-deps = ["Distributions", "Roots", "TaylorSeries"]
-git-tree-sha1 = "fb3d8309785fa242d5641eefff62763f580f597f"
-uuid = "48feb556-9bdd-43a2-8e10-96100ec25e22"
-version = "0.1.0"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
