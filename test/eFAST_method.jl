@@ -1,4 +1,4 @@
-using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq
+using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq, Distributions
 
 function ishi_batch(X)
     A = 7
@@ -35,8 +35,8 @@ res2 = gsa(ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
 @test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 @test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 
-res1 = gsa(ishi, eFAST(), [Uniform[lb[i], ub[i]] for i in 1:4], samples = 15000)
-res2 = gsa(ishi_batch, eFAST(), [Uniform[lb[i], ub[i]] for i in 1:4], samples = 15000,
+res1 = gsa(ishi, eFAST(), [Uniform(lb[i], ub[i]) for i in 1:4], samples = 15000)
+res2 = gsa(ishi_batch, eFAST(), [Uniform(lb[i], ub[i]) for i in 1:4], samples = 15000,
     batch = true)
 
 @test res1.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
@@ -45,15 +45,15 @@ res2 = gsa(ishi_batch, eFAST(), [Uniform[lb[i], ub[i]] for i in 1:4], samples = 
 @test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 @test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
 
-res1 = gsa(ishi, eFAST(), Product([Uniform[lb[i], ub[i]] for i in 1:4]), samples = 15000)
-res2 = gsa(ishi_batch, eFAST(), Product([Uniform[lb[i], ub[i]] for i in 1:4]), samples = 15000,
+res1 = gsa(ishi, eFAST(), [Normal() for i in 1:4], samples = 15000)
+res2 = gsa(ishi_batch, eFAST(), [Normal() for i in 1:4], samples = 15000,
     batch = true)
 
-@test res1.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
-@test res2.S1≈[0.307599 0.442412 3.0941e-25 3.42372e-28] atol=1e-4
+@test res1.S1≈[0.10140099594185588 0.7556923800497227 1.5688549609448593e-6 3.0948866309361236e-7] atol=1e-1
+@test res2.S1≈[0.09791555320248665 0.7489863459743518 1.2521202417363353e-7 1.8830074456723684e-6] atol=1e-1
 
-@test res1.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
-@test res2.ST≈[0.556244 0.446861 0.239259 0.027099] atol=1e-4
+@test res1.ST≈[0.1538586603409846 0.84687840567574 0.12089782535494331 0.101911083206915] atol=1e-1
+@test res2.ST≈[0.15130306101221003 0.8455036299750917 0.12229080086326627 0.15148183125412495] atol=1e-1
 
 res1 = gsa(linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
 res2 = gsa(linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], batch = true,
