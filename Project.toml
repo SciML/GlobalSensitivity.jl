@@ -22,7 +22,7 @@ Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 
 [compat]
 Combinatorics = "1"
-Copulas = "=0.1.13"
+Copulas = "=0.1.13, 0.1"
 Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 ForwardDiff = "0.10"
