@@ -89,7 +89,7 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     # Iterate over each class
     weighted_class_seps = zeros(length(class_cutoffs) - 1)
     for j in 1:(length(class_cutoffs) - 1)
-        # get X and Y indicies for samples that are in this class (where
+        # get X and Y indices for samples that are in this class (where
         # class designation is based on the X value)
         condition(x) = (x > class_cutoffs[j]) == (x <= class_cutoffs[j + 1])
         in_class_indices = findall(condition, x_rank)

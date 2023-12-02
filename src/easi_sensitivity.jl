@@ -69,7 +69,7 @@ Code based on the theory presented in
       sensitivity indices (EASI) Reliability Engineering & System Safety",
       95:4, 354-360. doi:10.1016/j.ress.2009.11.005
 
-and the python implementation of EASI in python's Sensitivty Analysis Library ("SALib")
+and the python implementation of EASI in python's Sensitivity Analysis Library ("SALib")
 """
 
 function _permute_outputs(X::AbstractArray, Y::AbstractArray)
@@ -108,7 +108,7 @@ end
 
 function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
     """
-    Unskew the sensivity index
+    Unskew the sensitivity index
     (Jean-Yves Tissot, Clémentine Prieur (2012) "Bias correction for the
     estimation of sensitivity indices based on random balance designs.",
     Reliability Engineering and System Safety, Elsevier, 107, 205-213.
@@ -123,8 +123,8 @@ function gsa(X, Y, method::EASI)
     # K is the number of variables, samples is the number of simulations
     K = size(X, 1)
     samples = size(X, 2)
-    sensitivites = zeros(K)
-    sensitivites_c = zeros(K)
+    sensitivities = zeros(K)
+    sensitivities_c = zeros(K)
 
     for i in 1:K
         Xi = @view X[i, :]
@@ -137,11 +137,11 @@ function gsa(X, Y, method::EASI)
         end
 
         S1_C = _unskew_S1(S1, method.max_harmonic, samples) # get bias-corrected version
-        sensitivites[i] = S1
-        sensitivites_c[i] = S1_C
+        sensitivities[i] = S1
+        sensitivities_c[i] = S1_C
     end
 
-    return EASIResult(sensitivites, sensitivites_c)
+    return EASIResult(sensitivities, sensitivities_c)
 end
 
 function gsa(f, method::EASI, p_range; samples, batch = false)
