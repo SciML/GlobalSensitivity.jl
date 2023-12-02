@@ -112,7 +112,7 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     return d_hat
 end
 
-function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
+function gsa(X::AbstractArray, Y::AbstractArray, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
     samples = size(X, 2)
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing

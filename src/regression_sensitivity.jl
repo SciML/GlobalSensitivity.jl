@@ -94,7 +94,7 @@ struct RegressionGSAResult{T, TR}
     partial_rank_correlation::TR
 end
 
-function gsa(X, Y, method::RegressionGSA)
+function gsa(X::AbstractArray, Y::AbstractArray, method::RegressionGSA)
     srcs = _calculate_standard_regression_coefficients(X, Y)
     corr = _calculate_correlation_matrix(X, Y)
     partials = _calculate_partial_correlation_coefficients(X, Y)

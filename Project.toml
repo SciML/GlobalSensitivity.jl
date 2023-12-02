@@ -21,26 +21,34 @@ ThreadsX = "ac1d9e8a-700a-412c-b207-f0111f4b6c0d"
 Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 
 [compat]
+Aqua = "0.8"
 Combinatorics = "1"
 Copulas = "=0.1.13"
 Distributions = "0.23, 0.24, 0.25"
 FFTW = "1.2"
 ForwardDiff = "0.10"
 KernelDensity = "0.6"
+LinearAlgebra = "1"
+OrdinaryDiffEq = "6"
 Parameters = "0.12"
 QuasiMonteCarlo = "0.2, 0.3"
+Random = "1"
 RecursiveArrayTools = "2.7"
+SafeTestsets = "0.1"
+StableRNGs = "1"
 Statistics = "1.4"
 StatsBase = "0.33, 0.34"
+Test = "1"
 ThreadsX = "0.1"
 Trapz = "2"
 julia = "1.6"
 
 [extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["OrdinaryDiffEq", "SafeTestsets", "Test", "StableRNGs"]
+test = ["Aqua", "OrdinaryDiffEq", "SafeTestsets", "Test", "StableRNGs"]

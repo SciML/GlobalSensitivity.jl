@@ -118,7 +118,7 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
     return S1 - (λ / (1 - λ)) * (1 - S1)
 end
 
-function gsa(X, Y, method::EASI)
+function gsa(X::AbstractArray, Y::AbstractArray, method::EASI)
 
     # K is the number of variables, samples is the number of simulations
     K = size(X, 1)
