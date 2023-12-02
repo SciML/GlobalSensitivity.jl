@@ -89,7 +89,7 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     # Iterate over each class
     weighted_class_seps = zeros(length(class_cutoffs) - 1)
     for j in 1:(length(class_cutoffs) - 1)
-        # get X and Y indicies for samples that are in this class (where
+        # get X and Y indices for samples that are in this class (where
         # class designation is based on the X value)
         condition(x) = (x > class_cutoffs[j]) == (x <= class_cutoffs[j + 1])
         in_class_indices = findall(condition, x_rank)
@@ -112,7 +112,7 @@ function _calc_delta(Xi, Y, Ygrid, class_cutoffs)
     return d_hat
 end
 
-function gsa(X, Y, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
+function gsa(X::AbstractArray, Y::AbstractArray, method::DeltaMoment; rng::AbstractRNG = Random.default_rng())
     samples = size(X, 2)
     # Create number of classes and class cutoffs.
     if method.num_classes === nothing

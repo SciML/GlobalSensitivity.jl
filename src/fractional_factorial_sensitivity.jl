@@ -55,7 +55,7 @@ function _expanding_window_hadamard(k::Integer)
     """
     @assert ispow2(k)
 
-    # intialize
+    # initialize
     h = ones(Int64, k, k)
     h[2, 2] = -1
 
@@ -115,7 +115,7 @@ end
 function generate_ff_sample_matrix(design_matrix::Array{Int64, 2}, levels_list = nothing)
     """
 
-    Convert the desgin matrix to a matrix whose rows can
+    Convert the design matrix to a matrix whose rows can
     be used as inputs to a model by replacing low and high values for each parameter
     with the the low and high end of each parameters range, as specified in levels_list.
 

@@ -7,6 +7,9 @@ const is_TRAVIS = haskey(ENV, "TRAVIS")
 
 @time begin
     if GROUP == "All" || GROUP == "GSA"
+        @time @safetestset "Quality Assurance" begin
+            include("qa.jl")
+        end
         @time @safetestset "Morris Method" begin
             include("morris_method.jl")
         end
