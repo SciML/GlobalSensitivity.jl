@@ -2,8 +2,6 @@ using GlobalSensitivity, SafeTestsets
 using Test
 
 const GROUP = get(ENV, "GROUP", "All")
-const is_APPVEYOR = Sys.iswindows() && haskey(ENV, "APPVEYOR")
-const is_TRAVIS = haskey(ENV, "TRAVIS")
 
 @time begin
     if GROUP == "All" || GROUP == "GSA"
