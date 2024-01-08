@@ -60,7 +60,7 @@ end
 
 loss_n_ode(θ)
 
-callback = function (θ, l) #callback function to observe training
+callback = function (state, l) #callback function to observe training
     display(l)
     return false
 end
