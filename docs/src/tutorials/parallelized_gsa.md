@@ -96,8 +96,6 @@ p2_ = bar(["a","b","c","d"],sobol_result.S1[2,:],title="First Order Indices pred
 plot(p1,p2,p1_,p2_)
 ```
 
-![sobolbars](https://user-images.githubusercontent.com/23134958/127019349-686f968d-7c8a-4dc4-abdc-c70f58b043dd.png)
-
 ## Parallelizing the Global Sensitivity Analysis
 
 In all the previous examples, `f(p)` was calculated serially. However, we can parallelize our computations

@@ -18,7 +18,6 @@ p = [1.5,1.0,3.0,1.0]
 prob = ODEProblem(f,u0,tspan,p)
 t = collect(range(0, stop=10, length=200))
 
-
 f1 = function (p)
     prob1 = remake(prob;p=p)
     sol = solve(prob1,Tsit5();saveat=t)
@@ -36,30 +35,30 @@ Colorbar(fig[2, 2], hm)
 fig
 ```
 
-![heatmapreg](https://user-images.githubusercontent.com/23134958/127019339-607b8d0b-6c38-4a18-b62e-e3ea0ae40941.png)
-
 ```@example lv
 using StableRNGs
 _rng = StableRNG(1234)
 morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
 fig = Figure(resolution = (600, 400))
-scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey",))
-scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator",))
+CairoMakie.scatter(fig[1,1], [1,2,3,4], morris_sens.means_star[1,:], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey",))
+CairoMakie.scatter(fig[1,2], [1,2,3,4], morris_sens.means_star[2,:], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator",))
 fig
 ```
-
-![morrisscat](https://user-images.githubusercontent.com/23134958/127019346-2b5548c5-f4ec-4547-9f8f-af3e4b4c317c.png)
 
 ```@example lv
 sobol_sens = gsa(f1, Sobol(), bounds, samples=500)
 efast_sens = gsa(f1, eFAST(), bounds, samples=500)
+
+```@example lv
 fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (Sobol)", ylabel = "First order"))
 barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[1, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = "Total order"))
 barplot(fig[1,2], [1,2,3,4], efast_sens.S1[1, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Prey (eFAST)"))
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[1, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false))
 fig
+```
 
+```@example lv
 fig = Figure(resolution = (600, 400))
 barplot(fig[1,1], [1,2,3,4], sobol_sens.S1[2, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, title = "Predator (Sobol)", ylabel = "First order"))
 barplot(fig[2,1], [1,2,3,4], sobol_sens.ST[2, :], color = :green, axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = "Total order"))
@@ -67,9 +66,6 @@ barplot(fig[1,2], [1,2,3,4], efast_sens.S1[2, :], color = :red, axis = (xticksvi
 barplot(fig[2,2], [1,2,3,4], efast_sens.ST[2, :], color = :red, axis = (xticksvisible = false, xticklabelsvisible = false))
 fig
 ```
-
-![sobolefastprey](https://user-images.githubusercontent.com/23134958/127019361-8d625107-7f9c-44b5-a0dc-489bd512b7dc.png)
-![sobolefastpred](https://user-images.githubusercontent.com/23134958/127019358-8bd0d918-e6fd-4929-96f1-d86330d91c69.png)
 
 ```@example lv
 using QuasiMonteCarlo
@@ -79,7 +75,6 @@ ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
 A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 sobol_sens_desmat = gsa(f1,Sobol(),A,B)
-
 
 f_batch = function (p)
   prob_func(prob,i,repeat) = remake(prob;p=p[:,i])
@@ -126,6 +121,5 @@ CairoMakie.scatter!(fig[2,2], sobol_sens.S1[4][2,2:end], label = "Predator", mar
 
 title = Label(fig[0,:], "First order Sobol indices")
 legend = Legend(fig[2,3], ax)
+fig
 ```
-
-![timeseriessobollv](https://user-images.githubusercontent.com/23134958/156987652-85958bde-ae73-4f71-8555-318f779257ad.png)
