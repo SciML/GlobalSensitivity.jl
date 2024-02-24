@@ -28,9 +28,9 @@ function trueODEfunc(du, u, p, t)
     true_A = [-0.1 2.0; -2.0 -0.1]
     du .= ((u .^ 3)'true_A)'
 end
-t = range(tspan[1], tspan[2], length=datasize)
+t = range(tspan[1], tspan[2], length = datasize)
 prob = ODEProblem(trueODEfunc, u0, tspan)
-ode_data = Array(solve(prob, Tsit5(), saveat=t))
+ode_data = Array(solve(prob, Tsit5(), saveat = t))
 ```
 
 Now we will define our Neural Network for the dynamics of the system. We will use
@@ -49,7 +49,7 @@ prob = ODEProblem(dudt, u0, tspan)
 θ = [u0; p] # the parameter vector to optimize
 
 function predict_n_ode(θ)
-    Array(solve(prob, Tsit5(), u0=θ[1:2], p=θ[3:end], saveat=t))
+    Array(solve(prob, Tsit5(), u0 = θ[1:2], p = θ[3:end], saveat = t))
 end
 
 function loss_n_ode(θ)
@@ -76,8 +76,8 @@ optprob = Optimization.OptimizationProblem(optf, θ)
 
 result_neuralode = Optimization.solve(optprob,
     OptimizationOptimisers.Adam(0.05),
-    callback=callback,
-    maxiters=300)
+    callback = callback,
+    maxiters = 300)
 ```
 
 Now we will use the Shapley method to understand the impact of each parameter on the
@@ -92,7 +92,7 @@ is passed as the identity matrix.
 d = length(θ)
 mu = zeros(Float32, d)
 #covariance matrix for the copula
-Covmat = Matrix(1.0f0*I, d, d)
+Covmat = Matrix(1.0f0 * I, d, d)
 #the marginal distributions for each parameter
 marginals = [Normal(mu[i]) for i in 1:d]
 
@@ -100,22 +100,25 @@ copula = GaussianCopula(Covmat)
 input_distribution = SklarDist(copula, marginals)
 
 function batched_loss_n_ode(θ)
-    prob_func(prob,i,repeat) = remake(prob;u0 =θ[1:2,i], p=θ[3:end,i])
-    ensemble_prob = EnsembleProblem(prob,prob_func=prob_func)
-    sol = solve(ensemble_prob,Tsit5(),EnsembleThreads();saveat=t,trajectories=size(θ,2))
-    out = zeros(size(θ,2))
-    for i in 1:size(θ,2)
-      out[i] = sum(abs2, ode_data .- sol[i])
+    prob_func(prob, i, repeat) = remake(prob; u0 = θ[1:2, i], p = θ[3:end, i])
+    ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
+    sol = solve(
+        ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(θ, 2))
+    out = zeros(size(θ, 2))
+    for i in 1:size(θ, 2)
+        out[i] = sum(abs2, ode_data .- sol[i])
     end
     return out
 end
 
-shapley_effects = gsa(batched_loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 10), input_distribution, batch = true)
+shapley_effects = gsa(
+    batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 10),
+    input_distribution, batch = true)
 ```
 
 ```@example shapley
 fig = Figure(resolution = (600, 400))
-ax = barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
+ax = barplot(fig[1, 1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 CairoMakie.ylims!(ax.axis, 0.0, 0.2)
 ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
 ax.axis.ylabel = "Shapley Indices"
@@ -136,12 +139,14 @@ end
 #since the marginals are standard normal the covariance matrix and correlation matrix are the same
 copula = GaussianCopula(Corrmat)
 input_distribution = SklarDist(copula, marginals)
-shapley_effects = gsa(batched_loss_n_ode, Shapley(;n_perms = 100, n_var = 100, n_outer = 100), input_distribution, batch = true)
+shapley_effects = gsa(
+    batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 100),
+    input_distribution, batch = true)
 ```
 
 ```@example shapley
 fig = Figure(resolution = (600, 400))
-ax = barplot(fig[1,1], collect(1:54), shapley_effects.shapley_effects, color = :green)
+ax = barplot(fig[1, 1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 CairoMakie.ylims!(ax.axis, 0.0, 0.2)
 ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
 ax.axis.ylabel = "Shapley Indices"
