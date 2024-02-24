@@ -108,9 +108,9 @@ function fuse_designs(A, B; second_order = false)
 end
 
 function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
-    batch = false, Ei_estimator = :Jansen1999,
-    distributed::Val{SHARED_ARRAY} = Val(false),
-    kwargs...) where {TA, SHARED_ARRAY}
+        batch = false, Ei_estimator = :Jansen1999,
+        distributed::Val{SHARED_ARRAY} = Val(false),
+        kwargs...) where {TA, SHARED_ARRAY}
     d, n = size(A)
     nboot = method.nboot # load to help alias analysis
     n = n ÷ nboot
@@ -123,7 +123,8 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
     for i in 1:nboot
         Bnb[i] = B[:, (n * (i - 1) + 1):(n * (i))]
     end
-    _all_points = mapreduce((args...) -> fuse_designs(args...;
+    _all_points = mapreduce(
+        (args...) -> fuse_designs(args...;
             second_order = 2 in method.order),
         hcat, Anb, Bnb)
     if SHARED_ARRAY && isbits(TA)
@@ -157,7 +158,7 @@ function gsa(f, method::Sobol, A::AbstractMatrix{TA}, B::AbstractMatrix;
     end
 end
 function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_estimator,
-    y_size, ::Val{multioutput}) where {T, multioutput}
+        y_size, ::Val{multioutput}) where {T, multioutput}
     nboot = method.nboot
     Eys = multioutput ? Matrix{T}[] : T[]
     Varys = multioutput ? Matrix{T}[] : T[]
@@ -189,15 +190,22 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             end
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
-                    [sum((fA .- (sum(fA) ./ n)).^2) ./ (n-1) .- sum(fA .* fAⁱ[k]) ./ (n) + (sum(fA) ./ n) .^ 2 for k in 1:d])
+                    [sum((fA .- (sum(fA) ./ n)) .^ 2) ./ (n - 1) .-
+                     sum(fA .* fAⁱ[k]) ./ (n) + (sum(fA) ./ n) .^ 2 for k in 1:d])
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (n))
             elseif Ei_estimator === :Jansen1999
                 push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2n))
             elseif Ei_estimator === :Janon2014
-                push!(Eᵢs, [(sum(fA.^2 + fAⁱ[k].^2)./(2n)  .- (sum(fA + fAⁱ[k])./(2n)).^2) * (1.0 .- (1/n .* sum(fA .* fAⁱ[k]) 
-                                .- (1/n .* sum((fA .+ fAⁱ[k])./2)).^2) ./  (1/n .* sum((fA.^2 .+ fAⁱ[k].^2)./2) - (1/n .* sum((fA .+ fAⁱ[k])./2)).^2))  
-                        for k in 1:d]) 
+                push!(Eᵢs,
+                    [(sum(fA .^ 2 + fAⁱ[k] .^ 2) ./ (2n) .-
+                      (sum(fA + fAⁱ[k]) ./ (2n)) .^ 2) * (1.0 .-
+                      (1 / n .* sum(fA .* fAⁱ[k])
+                       .-
+                       (1 / n .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2) ./
+                      (1 / n .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2) -
+                       (1 / n .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2))
+                     for k in 1:d])
             end
         end
     else
@@ -230,7 +238,8 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
             if Ei_estimator === :Homma1996
                 push!(Eᵢs,
                     reduce(hcat,
-                        [sum((fA .- (sum(fA, dims = 2) ./ n)).^2, dims = 2) ./ (n-1) .- sum(fA .* fAⁱ[k], dims = 2) ./ (n) + (sum(fA, dims = 2) ./ n) .^ 2
+                        [sum((fA .- (sum(fA, dims = 2) ./ n)) .^ 2, dims = 2) ./ (n - 1) .-
+                         sum(fA .* fAⁱ[k], dims = 2) ./ (n) + (sum(fA, dims = 2) ./ n) .^ 2
                          for k in 1:d]))
             elseif Ei_estimator === :Sobol2007
                 push!(Eᵢs,
@@ -241,10 +250,13 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
                     reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2n)))
             elseif Ei_estimator === :Janon2014
                 push!(Eᵢs,
-                      reduce(hcat, [(sum(fA.^2 + fAⁱ[k].^2 , dims = 2)./(2n)  .- 
-                                (sum(fA + fAⁱ[k], dims = 2)./(2n)).^2) .*(1.0 .- (1/n .* sum(fA .* fAⁱ[k], dims = 2) .- 
-                                    (1/n * sum((fA .+ fAⁱ[k])./2, dims = 2)).^2) ./  (1/n .* sum((fA.^2 .+ fAⁱ[k].^2)./2, dims = 2) .- 
-                                    (1/n * sum((fA .+ fAⁱ[k])./2, dims = 2)).^2))  for k in 1:d]))
+                    reduce(hcat,
+                        [(sum(fA .^ 2 + fAⁱ[k] .^ 2, dims = 2) ./ (2n) .-
+                          (sum(fA + fAⁱ[k], dims = 2) ./ (2n)) .^ 2) .* (1.0 .-
+                          (1 / n .* sum(fA .* fAⁱ[k], dims = 2) .-
+                           (1 / n * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2) ./
+                          (1 / n .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2, dims = 2) .-
+                           (1 / n * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2)) for k in 1:d]))
             end
         end
     end
@@ -268,8 +280,10 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
                         end
                     end
                 end
-                Sᵢⱼs[i] = cat([(Vᵢⱼs[i][:, :, l] - M[:, :, l]) ./ Varys[i][l]
-                               for l in 1:length(Eys[1])]...; dims = 3)
+                Sᵢⱼs[i] = cat(
+                    [(Vᵢⱼs[i][:, :, l] - M[:, :, l]) ./ Varys[i][l]
+                     for l in 1:length(Eys[1])]...;
+                    dims = 3)
             end
         end
     end

@@ -11,5 +11,5 @@ pages = [
         "methods/dgsm.md",
         "methods/easi.md",
         "methods/fractional.md",
-        "methods/rbdfast.md"],
+        "methods/rbdfast.md"]
 ]

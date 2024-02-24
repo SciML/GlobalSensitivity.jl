@@ -123,9 +123,9 @@ function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
 end
 
 function find_cond_mean_var(cov::Matrix,
-    dependent_ind::Vector{Int},
-    given_ind::Vector{Int},
-    X_given::Vector)
+        dependent_ind::Vector{Int},
+        given_ind::Vector{Int},
+        X_given::Vector)
     """
     Find the conditional mean and variance of the given distribution
     """
@@ -147,10 +147,10 @@ function find_cond_mean_var(cov::Matrix,
 end
 
 function cond_sampling(distribution::SklarDist,
-    n_sample::Int,
-    idx::Vector{Int},
-    idx_c::Vector{Int},
-    x_cond::AbstractArray)
+        n_sample::Int,
+        idx::Vector{Int},
+        idx_c::Vector{Int},
+        x_cond::AbstractArray)
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -236,7 +236,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
-                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[idx_perm_sorted,
+                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[
+                    idx_perm_sorted,
                     :]
             end
         end

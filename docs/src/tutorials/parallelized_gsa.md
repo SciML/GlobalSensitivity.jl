@@ -9,15 +9,15 @@ using GlobalSensitivity, Statistics, OrdinaryDiffEq, QuasiMonteCarlo, Plots
 First, let's define our model:
 
 ```@example ode
-function f(du,u,p,t)
-  du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
-  du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
+function f(du, u, p, t)
+    du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
+    du[2] = -p[3] * u[2] + p[4] * u[1] * u[2] #predator
 end
-u0 = [1.0;1.0]
-tspan = (0.0,10.0)
-p = [1.5,1.0,3.0,1.0]
-prob = ODEProblem(f,u0,tspan,p)
-t = collect(range(0, stop=10, length=200))
+u0 = [1.0; 1.0]
+tspan = (0.0, 10.0)
+p = [1.5, 1.0, 3.0, 1.0]
+prob = ODEProblem(f, u0, tspan, p)
+t = collect(range(0, stop = 10, length = 200))
 ```
 
 Now, let's create a function that takes in a parameter set and calculates the maximum of the predator population and the
@@ -26,9 +26,9 @@ creates a new `ODEProblem`, and use the `p` keyword argument to set the new para
 
 ```@example ode
 f1 = function (p)
-  prob1 = remake(prob;p=p)
-  sol = solve(prob1,Tsit5();saveat=t)
-  [mean(sol[1,:]), maximum(sol[2,:])]
+    prob1 = remake(prob; p = p)
+    sol = solve(prob1, Tsit5(); saveat = t)
+    [mean(sol[1, :]), maximum(sol[2, :])]
 end
 ```
 
@@ -36,7 +36,8 @@ Now, let's perform a Morris global sensitivity analysis on this model. We specif
 `[1,5]` for each of the parameters, and thus call:
 
 ```@example ode
-m = gsa(f1,Morris(total_num_trajectory=1000,num_trajectory=150),[[1,5],[1,5],[1,5],[1,5]])
+m = gsa(f1, Morris(total_num_trajectory = 1000, num_trajectory = 150),
+    [[1, 5], [1, 5], [1, 5], [1, 5]])
 ```
 
 Let's get the means and variances from the `MorrisResult` struct.
@@ -52,17 +53,19 @@ m.variances
 Let's plot the result
 
 ```@example ode
-scatter(m.means[1,:], m.variances[1,:],series_annotations=[:a,:b,:c,:d],color=:gray)
+scatter(
+    m.means[1, :], m.variances[1, :], series_annotations = [:a, :b, :c, :d], color = :gray)
 ```
 
 ```@example ode
-scatter(m.means[2,:], m.variances[2,:],series_annotations=[:a,:b,:c,:d],color=:gray)
+scatter(
+    m.means[2, :], m.variances[2, :], series_annotations = [:a, :b, :c, :d], color = :gray)
 ```
 
 For the Sobol method, we can similarly do:
 
 ```@example ode
-m = gsa(f1,Sobol(),[[1,5],[1,5],[1,5],[1,5]],samples=1000)
+m = gsa(f1, Sobol(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1000)
 ```
 
 ## Direct Use of Design Matrices
@@ -77,23 +80,27 @@ samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
 sampler = SobolSample()
-A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
+A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
 ```
 
 and now we tell it to calculate the Sobol indices on these designs for the function `f1` we defined in the Lotka-Volterra example:
 
 ```@example ode
-sobol_result = gsa(f1,Sobol(),A,B)
+sobol_result = gsa(f1, Sobol(), A, B)
 ```
 
 We plot the first order and total order Sobol Indices for the parameters (`a` and `b`).
 
 ```@example ode
-p1 = bar(["a","b","c","d"],sobol_result.ST[1,:],title="Total Order Indices prey",legend=false)
-p2 = bar(["a","b","c","d"],sobol_result.S1[1,:],title="First Order Indices prey",legend=false)
-p1_ = bar(["a","b","c","d"],sobol_result.ST[2,:],title="Total Order Indices predator",legend=false)
-p2_ = bar(["a","b","c","d"],sobol_result.S1[2,:],title="First Order Indices predator",legend=false)
-plot(p1,p2,p1_,p2_)
+p1 = bar(["a", "b", "c", "d"], sobol_result.ST[1, :],
+    title = "Total Order Indices prey", legend = false)
+p2 = bar(["a", "b", "c", "d"], sobol_result.S1[1, :],
+    title = "First Order Indices prey", legend = false)
+p1_ = bar(["a", "b", "c", "d"], sobol_result.ST[2, :],
+    title = "Total Order Indices predator", legend = false)
+p2_ = bar(["a", "b", "c", "d"], sobol_result.S1[2, :],
+    title = "First Order Indices predator", legend = false)
+plot(p1, p2, p1_, p2_)
 ```
 
 ## Parallelizing the Global Sensitivity Analysis
@@ -104,35 +111,36 @@ a column for each set of parameters. Here we showcase using the [Ensemble Interf
 `EnsembleGPUArray` to perform automatic multithreaded-parallelization of the ODE solves.
 
 ```@example ode
-function f(du,u,p,t)
-  du[1] = p[1]*u[1] - p[2]*u[1]*u[2] #prey
-  du[2] = -p[3]*u[2] + p[4]*u[1]*u[2] #predator
+function f(du, u, p, t)
+    du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
+    du[2] = -p[3] * u[2] + p[4] * u[1] * u[2] #predator
 end
 
-u0 = [1.0;1.0]
-tspan = (0.0,10.0)
-p = [1.5,1.0,3.0,1.0]
-prob = ODEProblem(f,u0,tspan,p)
-t = collect(range(0, stop=10, length=200))
+u0 = [1.0; 1.0]
+tspan = (0.0, 10.0)
+p = [1.5, 1.0, 3.0, 1.0]
+prob = ODEProblem(f, u0, tspan, p)
+t = collect(range(0, stop = 10, length = 200))
 
 f1 = function (p)
-  prob_func(prob,i,repeat) = remake(prob;p=p[:,i])
-  ensemble_prob = EnsembleProblem(prob,prob_func=prob_func)
-  sol = solve(ensemble_prob,Tsit5(),EnsembleThreads();saveat=t,trajectories=size(p,2))
-  # Now sol[i] is the solution for the ith set of parameters
-  out = zeros(2,size(p,2))
-  for i in 1:size(p,2)
-    out[1,i] = mean(sol[i][1,:])
-    out[2,i] = maximum(sol[i][2,:])
-  end
-  out
+    prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
+    ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
+    sol = solve(
+        ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(p, 2))
+    # Now sol[i] is the solution for the ith set of parameters
+    out = zeros(2, size(p, 2))
+    for i in 1:size(p, 2)
+        out[1, i] = mean(sol[i][1, :])
+        out[2, i] = maximum(sol[i][2, :])
+    end
+    out
 end
 ```
 
 And now to do the parallelized calls, we simply add the `batch=true` keyword argument:
 
 ```@example ode
-sobol_result = gsa(f1,Sobol(),A,B,batch=true)
+sobol_result = gsa(f1, Sobol(), A, B, batch = true)
 ```
 
 This user-side parallelism thus allows you to take control, and thus for example you can use
