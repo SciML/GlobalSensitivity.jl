@@ -10,7 +10,7 @@ The DGSM method takes a probability distribution for each of the
 parameters, and samples are obtained from the distributions to create
 random parameter sets. Derivatives of the function being analyzed are
 then computed at the sampled parameters and specific statistics of those
-derivatives are used. The paper by [Sobol and Kucherenko](http://www.sciencedirect.com/science/article/pii/S0378475409000354)
+derivatives are used. The paper by [Sobol and Kucherenko](https://www.sciencedirect.com/science/article/pii/S0378475409000354)
 discusses the relationship between the DGSM results, `tao` and
 `sigma` and the Morris elementary effects and Sobol Indices.
 
@@ -109,13 +109,13 @@ function gsa(f, method::DGSM, distr::AbstractArray; samples::Int, kwargs...)
         for a in 1:k
             for b in (a + 1):k
                 crossed[b + (a - 1) * k] = mean(dfdxdy[i][b + (a - 1) * k]
-                                                for i in 1:samples)
+                for i in 1:samples)
                 crossed[a + (b - 1) * k] = crossed[b + (a - 1) * k]
                 crossedsq[b + (a - 1) * k] = mean(dfdxdy[i][b + (a - 1) * k]^2
-                                                  for i in 1:samples)
+                for i in 1:samples)
                 crossedsq[a + (b - 1) * k] = crossedsq[b + (a - 1) * k]
                 abscrossed[b + (a - 1) * k] = mean(abs(dfdxdy[i][b + (a - 1) * k])
-                                                   for i in 1:samples)
+                for i in 1:samples)
                 abscrossed[a + (b - 1) * k] = abscrossed[b + (a - 1) * k]
             end
         end

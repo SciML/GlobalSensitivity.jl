@@ -82,7 +82,7 @@ function ishi_linear_batch(X)
     B = 0.1
     @. [
         sin(X[1, :]) + A * sin(X[2, :])^2 + B * X[3, :]^4 * sin(X[1, :]),
-        A * X[1, :] + B * X[1, :],
+        A * X[1, :] + B * X[1, :]
     ]
 end
 
@@ -109,7 +109,7 @@ result = gsa(ishi_linear, method, input_distribution, batch = false)
     0.7494443217876992,
     0.08910342598154845,
     0.0836298215278766,
-    0.0778224307028759,
+    0.0778224307028759
 ] atol=1e-1
 
 function f(du, u, p, t)

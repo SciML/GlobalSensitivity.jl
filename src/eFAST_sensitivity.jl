@@ -14,7 +14,7 @@ x_{i}(s) = G_{i}(sin ω_{i}s), ∀ i=1,2 ,..., N
 ```
 where s is a scalar variable varying over the range ``-∞ < s < +∞``, ``G_{i}`` are transformation functions
 and ``{ω_{i}}, ∀ i=1,2,...,N`` is a set of different (angular) frequencies, to be properly selected, associated with each factor for all ``N`` (`samples`) number of parameter sets.
-For more details, on the transformation used and other implementation details you can go through [ A. Saltelli et al.](http://dx.doi.org/10.1080/00401706.1999.10485594).
+For more details, on the transformation used and other implementation details you can go through [ A. Saltelli et al.](https://dx.doi.org/10.1080/00401706.1999.10485594).
 
 ## API
 
@@ -64,8 +64,8 @@ struct eFASTResult{T1}
 end
 
 function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
-    distributed::Val{SHARED_ARRAY} = Val(false),
-    rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
+        distributed::Val{SHARED_ARRAY} = Val(false),
+        rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
     @unpack num_harmonics = method
     num_params = length(p_range)
     omega = [(samples - 1) ÷ (2 * num_harmonics)]
@@ -136,7 +136,8 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
             __y = _y
         end
         if multioutput
-            gsa_efast_all_y_analysis(method, reduce(hcat, __y), num_params, y_size, samples,
+            gsa_efast_all_y_analysis(
+                method, reduce(hcat, __y), num_params, y_size, samples,
                 omega, Val(true))
         else
             gsa_efast_all_y_analysis(method, __y, num_params, y_size, samples, omega,
@@ -145,7 +146,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
     end
 end
 function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
-    ::Val{multioutput}) where {multioutput}
+        ::Val{multioutput}) where {multioutput}
     @unpack num_harmonics = method
     if multioutput
         size_ = size(all_y)
@@ -170,8 +171,9 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, om
                 ys[j] = ysⱼ = abs2.(ff .* inv(samples))
                 varnce[j] = 2 * sum(ysⱼ)
             end
-            first_order[i] = map((y, var) -> 2 * sum(y[(1:num_harmonics) * (omega[1])]) ./
-                                             var, ys, varnce)
+            first_order[i] = map(
+                (y, var) -> 2 * sum(y[(1:num_harmonics) * (omega[1])]) ./
+                            var, ys, varnce)
             total_order[i] = map((y, var) -> 1 .- 2 * sum(y[1:(omega[1] ÷ 2)]) ./ var, ys,
                 varnce)
         end

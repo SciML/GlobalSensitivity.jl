@@ -16,7 +16,7 @@ Shapely effects is a variance based method to assign attribution
 to each feature based on how sentitive the function to the feature.
 Shapley effects take into account that features could be dependent, which
 is not possible in previous methods like Sobol indices. In our implementation,
-we use Copulas.jl to define the joint input distirbution as a SklarDist.
+we use Copulas.jl to define the joint input distribution as a SklarDist.
 
 ## API
 
@@ -104,7 +104,7 @@ function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
     and correlations. Sample n_sample from this subset distribution.
     """
 
-    # get the margins of the input distirbution
+    # get the margins of the input distribution
     margins_of_subset = [distribution.m[Int(j)] for j in idx]
 
     # get the original correlation matrix
@@ -116,18 +116,18 @@ function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
     # create the subset distribution
     dist_subset = SklarDist(copula_subset, margins_of_subset)
 
-    # sample from the subset distirbution
+    # sample from the subset distribution
     sample_from_subset = rand(dist_subset, n_sample)
 
     return sample_from_subset
 end
 
 function find_cond_mean_var(cov::Matrix,
-    dependent_ind::Vector{Int},
-    given_ind::Vector{Int},
-    X_given::Vector)
+        dependent_ind::Vector{Int},
+        given_ind::Vector{Int},
+        X_given::Vector)
     """
-    Find the conditional mean and variance of the given distirbution
+    Find the conditional mean and variance of the given distribution
     """
 
     mat_b = cov[:, dependent_ind]
@@ -147,10 +147,10 @@ function find_cond_mean_var(cov::Matrix,
 end
 
 function cond_sampling(distribution::SklarDist,
-    n_sample::Int,
-    idx::Vector{Int},
-    idx_c::Vector{Int},
-    x_cond::AbstractArray)
+        n_sample::Int,
+        idx::Vector{Int},
+        idx_c::Vector{Int},
+        x_cond::AbstractArray)
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -236,7 +236,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
-                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[idx_perm_sorted,
+                sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[
+                    idx_perm_sorted,
                     :]
             end
         end

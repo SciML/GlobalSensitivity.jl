@@ -10,8 +10,8 @@ to the output uncertainty.
 To use this functionality, you must install GlobalSensitivity.jl:
 
 ```julia
-]add GlobalSensitivity
-using GlobalSensitivity
+using Pkg
+Pkg.add("GlobalSensitivity")
 ```
 
 Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl package.
@@ -45,36 +45,46 @@ If you use this software in your work, please cite:
 ```
 
 ## Reproducibility
+
 ```@raw html
 <details><summary>The documentation of this SciML package was built using these direct dependencies,</summary>
 ```
+
 ```@example
 using Pkg # hide
 Pkg.status() # hide
 ```
+
 ```@raw html
 </details>
 ```
+
 ```@raw html
 <details><summary>and using this machine and Julia version.</summary>
 ```
+
 ```@example
 using InteractiveUtils # hide
 versioninfo() # hide
 ```
+
 ```@raw html
 </details>
 ```
+
 ```@raw html
 <details><summary>A more complete overview of all dependencies and their versions is also provided.</summary>
 ```
+
 ```@example
 using Pkg # hide
-Pkg.status(;mode = PKGMODE_MANIFEST) # hide
+Pkg.status(; mode = PKGMODE_MANIFEST) # hide
 ```
+
 ```@raw html
 </details>
 ```
+
 ```@eval
 using TOML
 using Markdown

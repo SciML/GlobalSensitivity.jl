@@ -63,8 +63,8 @@ using FFTW, Random, Statistics, StatsBase, Distributions
 allsame(x) = all(y -> y == first(x), x)
 
 function gsa(f, method::RBDFAST; num_params, samples,
-    rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
-    # Initalize matrix containing range of values of the parametric variable
+        rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
+    # Initialize matrix containing range of values of the parametric variable
     # along each column (factor).
     s0 = range(-π, stop = π, length = samples)
 
@@ -80,7 +80,7 @@ function gsa(f, method::RBDFAST; num_params, samples,
     end
     # Iterate over factors
 
-    sensitivites = zeros(num_params)
+    sensitivities = zeros(num_params)
     for i in 1:num_params
         s_order = sortperm(s[i])
         # Order Ys by how they would occur if they were
@@ -96,9 +96,9 @@ function gsa(f, method::RBDFAST; num_params, samples,
         # println(ys)
         # unskew the sensitivies
         # lambda = 2*method.num_harmonics/samples
-        # sensitivites[i] = Si - (lambda / (1 - lambda)) * (1-Si)
-        sensitivites[i] = Si
+        # sensitivities[i] = Si - (lambda / (1 - lambda)) * (1-Si)
+        sensitivities[i] = Si
     end
 
-    return sensitivites
+    return sensitivities
 end
