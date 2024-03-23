@@ -97,31 +97,6 @@ mutable struct ShapleyResult{T1, T2}
     CI_upper::T1
 end
 
-################# HELPER FUNCTIONS FOR SAMPLING ##############
-function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
-    """
-    Generate a subset of a joint distribution by selecting the given marginals
-    and correlations. Sample n_sample from this subset distribution.
-    """
-
-    # get the margins of the input distribution
-    margins_of_subset = [distribution.m[Int(j)] for j in idx]
-
-    # get the original correlation matrix
-    sigma = distribution.C.Σ
-
-    # get a subset of the correlation matrix to define the new copula
-    copula_subset = GaussianCopula(sigma[idx, idx])
-
-    # create the subset distribution
-    dist_subset = SklarDist(copula_subset, margins_of_subset)
-
-    # sample from the subset distribution
-    sample_from_subset = rand(dist_subset, n_sample)
-
-    return sample_from_subset
-end
-
 function find_cond_mean_var(cov::Matrix,
         dependent_ind::Vector{Int},
         given_ind::Vector{Int},
@@ -222,7 +197,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             idx_plus = perm[1:j]
             # Complementary set
             idx_minus = perm[(j + 1):end]
-            sample_complement = sample_subset(input_distribution, n_outer, idx_minus)
+            sample_complement = rand(Copulas.subsetdims(input_distribution,idx_minus), n_outer)
 
             for l in 1:n_outer
                 curr_sample = @view sample_complement[:, l]
