@@ -97,31 +97,6 @@ mutable struct ShapleyResult{T1, T2}
     CI_upper::T1
 end
 
-################# HELPER FUNCTIONS FOR SAMPLING ##############
-function sample_subset(distribution::SklarDist, n_sample::Int, idx::Vector{Int})
-    """
-    Generate a subset of a joint distribution by selecting the given marginals
-    and correlations. Sample n_sample from this subset distribution.
-    """
-
-    # get the margins of the input distribution
-    margins_of_subset = [distribution.m[Int(j)] for j in idx]
-
-    # get the original correlation matrix
-    sigma = distribution.C.Σ
-
-    # get a subset of the correlation matrix to define the new copula
-    copula_subset = GaussianCopula(sigma[idx, idx])
-
-    # create the subset distribution
-    dist_subset = SklarDist(copula_subset, margins_of_subset)
-
-    # sample from the subset distribution
-    sample_from_subset = rand(dist_subset, n_sample)
-
-    return sample_from_subset
-end
-
 function find_cond_mean_var(cov::Matrix,
         dependent_ind::Vector{Int},
         given_ind::Vector{Int},
@@ -146,11 +121,20 @@ function find_cond_mean_var(cov::Matrix,
     return conditional_mean, conditional_var
 end
 
-function cond_sampling(distribution::SklarDist,
+function cond_sampling(distribution::SklarDist{IndependentCopula{d},Tm},
+    n_sample::Int,
+    idx::Vector{Int},
+    idx_c::Vector{Int},
+    x_cond::AbstractArray) where {d,Tm}
+	# conditional sampling in independent random vector is just subset sampling.
+    rand(Copulas.subsetdims(distribution, idx), n_sample) # this might need to be transposed. 
+end
+
+function cond_sampling(distribution::SklarDist{GaussianCopula{d,TΣ},Tm},
         n_sample::Int,
         idx::Vector{Int},
         idx_c::Vector{Int},
-        x_cond::AbstractArray)
+        x_cond::AbstractArray) where {d,TΣ,Tm}
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -222,7 +206,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             idx_plus = perm[1:j]
             # Complementary set
             idx_minus = perm[(j + 1):end]
-            sample_complement = sample_subset(input_distribution, n_outer, idx_minus)
+            sample_complement = rand(Copulas.subsetdims(input_distribution,idx_minus), n_outer)
 
             for l in 1:n_outer
                 curr_sample = @view sample_complement[:, l]

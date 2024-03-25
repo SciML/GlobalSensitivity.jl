@@ -27,7 +27,7 @@ n_outer = 1000;
 n_inner = 3;
 dim = 3;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix{Int}(I, dim, dim) .* 4;
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
@@ -92,7 +92,7 @@ n_outer = 1000;
 n_inner = 3;
 dim = 4;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix{Int}(I, dim, dim) .* 9;
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
@@ -137,7 +137,7 @@ n_outer = 5;
 n_inner = 3;
 dim = 4;
 margins = (Uniform(1, 5), Uniform(1, 5), Uniform(1, 5), Uniform(1, 5));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix{Int}(I, dim, dim) .* 4;
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 @time m = gsa(f1, method, input_distribution)
