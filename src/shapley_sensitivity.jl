@@ -127,7 +127,7 @@ function cond_sampling(distribution::SklarDist{IndependentCopula{d},Tm},
     idx_c::Vector{Int},
     x_cond::AbstractArray) where {d,Tm}
 	# conditional sampling in independent random vector is just subset sampling.
-    rand(Copulas.subsetdims(distribution, idx, n_sample)) # this might need to be transposed. 
+    rand(Copulas.subsetdims(distribution, idx), n_sample) # this might need to be transposed. 
 end
 
 function cond_sampling(distribution::SklarDist{GaussianCopula{d,TΣ},Tm},
