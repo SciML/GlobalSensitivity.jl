@@ -121,7 +121,7 @@ function find_cond_mean_var(cov::Matrix,
     return conditional_mean, conditional_var
 end
 
-function cond_sampling(distribution::SklarDist{Independentcopula{d},Tm},
+function cond_sampling(distribution::SklarDist{IndependentCopula{d},Tm},
     n_sample::Int,
     idx::Vector{Int},
     idx_c::Vector{Int},
