@@ -20,12 +20,12 @@ As the first step let's generate the dataset.
 using GlobalSensitivity, OrdinaryDiffEq, Flux, SciMLSensitivity, LinearAlgebra
 using Optimization, OptimizationOptimisers, Distributions, Copulas, CairoMakie
 
-u0 = Float32[2.0; 0.0]
+u0 = [2.0f0; 0.0f0]
 datasize = 30
 tspan = (0.0f0, 1.5f0)
 
 function trueODEfunc(du, u, p, t)
-    true_A = [-0.1 2.0; -2.0 -0.1]
+    true_A = [-0.1f0 2.0f0; -2.0f0 -0.1f0]
     du .= ((u .^ 3)'true_A)'
 end
 t = range(tspan[1], tspan[2], length = datasize)
@@ -100,6 +100,8 @@ copula = GaussianCopula(Covmat)
 input_distribution = SklarDist(copula, marginals)
 
 function batched_loss_n_ode(θ)
+    # The copula returns samples of `Float64`s
+    θ = convert(AbstractArray{Float32}, θ)
     prob_func(prob, i, repeat) = remake(prob; u0 = θ[1:2, i], p = θ[3:end, i])
     ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
     sol = solve(

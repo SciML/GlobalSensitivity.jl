@@ -27,7 +27,7 @@ n_outer = 1000;
 n_inner = 3;
 dim = 3;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix(4 * I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
@@ -92,7 +92,7 @@ n_outer = 1000;
 n_inner = 3;
 dim = 4;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix(9 * I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 
@@ -103,14 +103,11 @@ method = Shapley(n_perms = n_perms,
 result = gsa(ishi_linear, method, input_distribution, batch = false)
 
 @test result.shapley_effects[1,
-    :]≈[0.3554934482470362, 0.4046395220687974, 0.14529873813161728, 0.09456829155254913] atol=1e-1
+    :]≈[
+    0.4265888856500133, 0.44797478173391414, 0.12788161630894987, -0.0024452836928771176] atol=1e-1
 @test result.shapley_effects[2,
     :]≈[
-    0.7494443217876992,
-    0.08910342598154845,
-    0.0836298215278766,
-    0.0778224307028759
-] atol=1e-1
+    1.0106412338292299, -0.00018959684887089436, 0.0012281187472155649, -0.0116797557275744] atol=1e-1
 
 function f(du, u, p, t)
     du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
@@ -137,7 +134,7 @@ n_outer = 5;
 n_inner = 3;
 dim = 4;
 margins = (Uniform(1, 5), Uniform(1, 5), Uniform(1, 5), Uniform(1, 5));
-dependency_matrix = Matrix{Int}(I, dim, dim);
+dependency_matrix = Matrix(4 * I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
 @time m = gsa(f1, method, input_distribution)
