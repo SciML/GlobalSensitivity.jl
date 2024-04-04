@@ -29,15 +29,15 @@ we use Copulas.jl to define the joint input distribution as a SklarDist.
 using Copulas, Distributions, GlobalSensitivity
 
 function ishi(X)
-    A= 7
-    B= 0.1
+    A = 7
+    B = 0.1
     sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
 end
 
 function ishi_batch(X)
-    A= 7
-    B= 0.1
-    @. sin(X[:,1]) + A*sin(X[:,2])^2+ B*X[:,3]^4 *sin(X[:,1])
+    A = 7
+    B = 0.1
+    @. sin(X[1, :]) + A*sin(X[2, :])^2+ B*X[3, :]^4 *sin(X[1, :])
 end
 
 n_perms = -1; # -1 indicates that we want to consider all permutations. One can also use n_perms > 0
@@ -47,7 +47,7 @@ n_inner = 3
 
 dim = 3;
 margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
-dependency_matrix = 1* Matrix(I, dim, dim)
+dependency_matrix = Matrix(I, dim, dim)
 
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C,margins);
@@ -56,12 +56,12 @@ method = Shapley(n_perms=n_perms, n_var = n_var, n_outer = n_outer, n_inner = n_
 
 ###### non-batch
 result_non_batch = gsa(ishi,method,input_distribution,batch=false)
-shapley_effects = res1.shapley_effects
+shapley_effects = result_non_batch.shapley_effects
 println(shapley_effects)
 
 ###### batch
 result_batch = gsa(ishi_batch,method,input_distribution,batch=true)
-shapley_effects = res1.shapley_effects
+shapley_effects = result_batch.shapley_effects
 println(shapley_effects)
 
 #### Example with correlated inputs
@@ -105,36 +105,35 @@ function find_cond_mean_var(cov::Matrix,
     Find the conditional mean and variance of the given distribution
     """
 
-    mat_b = cov[:, dependent_ind]
-    mat_b = mat_b[dependent_ind, :]
+    mat_b = cov[dependent_ind, dependent_ind]
 
-    mat_c = cov[:, dependent_ind]
-    mat_c = mat_c[given_ind, :]
+    mat_c = cov[given_ind, dependent_ind]
 
-    mat_d = cov[:, given_ind]
-    mat_d = mat_d[given_ind, :]
+    mat_d = cov[given_ind, given_ind]
 
-    mat_cdinv = transpose(mat_c) * inv(mat_d)
+    mat_cdinv = transpose(mat_c) / mat_d
     conditional_mean = mat_cdinv * X_given
     conditional_var = mat_b - mat_cdinv * mat_c
 
     return conditional_mean, conditional_var
 end
 
-function cond_sampling(distribution::SklarDist{IndependentCopula{d},Tm},
+function cond_sampling(distribution::SklarDist{<:IndependentCopula},
     n_sample::Int,
     idx::Vector{Int},
     idx_c::Vector{Int},
-    x_cond::AbstractArray) where {d,Tm}
+    x_cond::AbstractArray)
 	# conditional sampling in independent random vector is just subset sampling.
-    Array(rand(Copulas.subsetdims(distribution, idx), n_sample)') # this might need to be transposed. 
+    samples = zeros(eltype(x_cond), length(idx), n_sample)
+    rand!(Copulas.subsetdims(distribution, idx), samples)
+    return samples
 end
 
-function cond_sampling(distribution::SklarDist{GaussianCopula{d,TΣ},Tm},
+function cond_sampling(distribution::SklarDist{<:GaussianCopula},
         n_sample::Int,
         idx::Vector{Int},
         idx_c::Vector{Int},
-        x_cond::AbstractArray) where {d,TΣ,Tm}
+        x_cond::AbstractArray)
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -152,23 +151,18 @@ function cond_sampling(distribution::SklarDist{GaussianCopula{d,TΣ},Tm},
     n_dep = length(idx)
 
     # need to sample from univariate normal and multivariate normal using different functions
+    samples = zeros(eltype(cond_mean), n_dep, n_sample)
     if n_dep == 1
-        dist_cond = Normal(cond_mean[1, 1], cond_var[1, 1])
-        sample_norm = rand(dist_cond, n_sample)
+        dist_cond = Normal(cond_mean[1, 1], sqrt(cond_var[1, 1]))
     else
         dist_cond = MvNormal(cond_mean, Symmetric(cond_var))
-        sample_norm = rand(dist_cond, n_sample)
     end
+    Random.rand!(dist_cond, samples)
 
-    final_sample = zeros(eltype(cond_mean), (n_sample, n_dep))
     std_norm = Normal(zero(eltype(cond_mean)))
-    ϕ(x::Vector, i) = cdf.(std_norm, x[i])
-    ϕ(x::Matrix, i) = cdf.(std_norm, x[i, :])
-    for i in 1:n_dep
-        final_sample[:, i] .= quantile.(margins_dependent[i], ϕ(sample_norm, i))
-    end
+    samples .= quantile.(margins_dependent, cdf.(std_norm, samples))
 
-    return final_sample
+    return samples
 end
 ##############################################################################
 
@@ -216,7 +210,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                     idx_plus,
                     idx_minus,
                     curr_sample)
-                xx = reduce(vcat, (xj', repeat(curr_sample, 1, size(xj, 1))))
+                xx = [xj; repeat(curr_sample, 1, size(xj, 2))]
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
@@ -228,7 +222,7 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
     end
 
     # define the input sample
-    X = cat(sample_A, sample_B, dims = 2)
+    X = [sample_A sample_B]
 
     if batch
         output_sample = f(X)
