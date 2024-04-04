@@ -119,11 +119,11 @@ function find_cond_mean_var(cov::Matrix,
 end
 
 function cond_sampling(distribution::SklarDist{<:IndependentCopula},
-    n_sample::Int,
-    idx::Vector{Int},
-    idx_c::Vector{Int},
-    x_cond::AbstractArray)
-	# conditional sampling in independent random vector is just subset sampling.
+        n_sample::Int,
+        idx::Vector{Int},
+        idx_c::Vector{Int},
+        x_cond::AbstractArray)
+    # conditional sampling in independent random vector is just subset sampling.
     samples = zeros(eltype(x_cond), length(idx), n_sample)
     rand!(Copulas.subsetdims(distribution, idx), samples)
     return samples
@@ -200,7 +200,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             idx_plus = perm[1:j]
             # Complementary set
             idx_minus = perm[(j + 1):end]
-            sample_complement = rand(Copulas.subsetdims(input_distribution,idx_minus), n_outer)
+            sample_complement = rand(
+                Copulas.subsetdims(input_distribution, idx_minus), n_outer)
 
             for l in 1:n_outer
                 curr_sample = @view sample_complement[:, l]
