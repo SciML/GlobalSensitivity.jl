@@ -147,12 +147,13 @@ shapley_effects = gsa(
 ```
 
 ```@example shapley
-fig = Figure(resolution = (600, 400))
+CairoMakie.activate!(type = "png")
+fig = Figure(size = (600, 400))
 ax = barplot(fig[1, 1], collect(1:54), shapley_effects.shapley_effects, color = :green)
 CairoMakie.ylims!(ax.axis, 0.0, 0.2)
 ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
 ax.axis.ylabel = "Shapley Indices"
 ax.axis.xlabel = "Parameters"
 ax.axis.xticklabelrotation = 1
-display(fig)
+fig
 ```
