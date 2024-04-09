@@ -119,14 +119,18 @@ shapley_effects = gsa(
 ```
 
 ```@example shapley
-fig = Figure(resolution = (600, 400))
-ax = barplot(fig[1, 1], collect(1:54), shapley_effects.shapley_effects, color = :green)
-CairoMakie.ylims!(ax.axis, 0.0, 0.2)
-ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
-ax.axis.ylabel = "Shapley Indices"
-ax.axis.xlabel = "Parameters"
-ax.axis.xticklabelrotation = 1
-display(fig)
+barplot(
+    1:54, shapley_effects.shapley_effects;
+    color = :green
+    figure = (; size = (600, 400)),
+    axis = (;
+        xlabel = "parameters",
+        xticklabelrotation = 1,
+        xticks = (1:54, ["θ$i" for i in 1:54]),
+        ylabel = "Shapley Indices",
+        ylims = (0.0, 0.2),
+    ),
+)
 ```
 
 Now let's assume some correlation between the parameters. We will use a correlation of 0.09 between
@@ -147,12 +151,16 @@ shapley_effects = gsa(
 ```
 
 ```@example shapley
-fig = Figure(resolution = (600, 400))
-ax = barplot(fig[1, 1], collect(1:54), shapley_effects.shapley_effects, color = :green)
-CairoMakie.ylims!(ax.axis, 0.0, 0.2)
-ax.axis.xticks = (1:54, ["θ$i" for i in 1:54])
-ax.axis.ylabel = "Shapley Indices"
-ax.axis.xlabel = "Parameters"
-ax.axis.xticklabelrotation = 1
-display(fig)
+barplot(
+    1:54, shapley_effects.shapley_effects;
+    color = :green
+    figure = (; size = (600, 400)),
+    axis = (;
+        xlabel = "parameters",
+        xticklabelrotation = 1,
+        xticks = (1:54, ["θ$i" for i in 1:54]),
+        ylabel = "Shapley Indices",
+        ylims = (0.0, 0.2),
+    ),
+)
 ```
