@@ -121,7 +121,7 @@ shapley_effects = gsa(
 ```@example shapley
 barplot(
     1:54, shapley_effects.shapley_effects;
-    color = :green
+    color = :green,
     figure = (; size = (600, 400)),
     axis = (;
         xlabel = "parameters",
@@ -153,7 +153,7 @@ shapley_effects = gsa(
 ```@example shapley
 barplot(
     1:54, shapley_effects.shapley_effects;
-    color = :green
+    color = :green,
     figure = (; size = (600, 400)),
     axis = (;
         xlabel = "parameters",
