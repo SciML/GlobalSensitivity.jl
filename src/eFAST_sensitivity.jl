@@ -22,13 +22,14 @@ For more details, on the transformation used and other implementation details yo
              distributed::Val{SHARED_ARRAY} = Val(false),
              rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
 
+Note, `p_range` is either a vector of tuples for the upper and lower bound or a vector of `Distribution`s. 
 
 ### Example
 
 Below we show use of `eFAST` on the Ishigami function.
 
 ```julia
-using GlobalSensitivity, QuasiMonteCarlo
+using GlobalSensitivity, QuasiMonteCarlo, Distributions
 
 function ishi(X)
     A= 7
@@ -36,20 +37,28 @@ function ishi(X)
     sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
 end
 
+## define upper and lower limits, a.k.a uniform distributions
 lb = -ones(4)*π
 ub = ones(4)*π
 
-res1 = gsa(ishi,eFAST(),[[lb[i],ub[i]] for i in 1:4],samples=15000)
+res1 = gsa(ishi, eFAST(), [[lb[i],ub[i]] for i in 1:4], samples=15000)
 
-##with batching
+# define distributions for the inputs
+input_ranges = [Normal(0, 1),
+                Uniform(-π, π),
+                Uniform(-π, π),
+                Uniform(-π, π)]
+
+res2 = gsa(ishi, eFAST(), input_ranges, samples=15000)
+
+## with batching
 function ishi_batch(X)
     A= 7
     B= 0.1
     @. sin(X[1,:]) + A*sin(X[2,:])^2+ B*X[3,:]^4 *sin(X[1,:])
 end
 
-res2 = gsa(ishi_batch,eFAST(),[[lb[i],ub[i]] for i in 1:4],samples=15000,batch=true)
-
+res3 = gsa(ishi_batch, eFAST(), [[lb[i],ub[i]] for i in 1:4], samples=15000, batch=true)
 ```
 """
 struct eFAST <: GSAMethod
