@@ -343,9 +343,15 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
 end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples, rng::AbstractRNG = Random.default_rng(), kwargs...)
+    log2num = ceil(Int, log2(samples))
+    samples2n = 2^log2num
+    if samples2n != samples
+        samples = samples2n
+        @warn "Passed samples is not a power of 2, number of sample points changed to $samples"
+    end
     AB = QuasiMonteCarlo.generate_design_matrices(samples, [i[1] for i in p_range],
         [i[2] for i in p_range],
-        QuasiMonteCarlo.SobolSample(; R=QuasiMonteCarlo.OwenScramble(; base=2, pad=ceil(Int, log2(samples)), rng)),
+        QuasiMonteCarlo.SobolSample(; R=QuasiMonteCarlo.OwenScramble(; base=2, pad=log2num, rng)),
         2 * method.nboot)
     A = reduce(hcat, @view(AB[1:(method.nboot)]))
     B = reduce(hcat, @view(AB[(method.nboot + 1):end]))

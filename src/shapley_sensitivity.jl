@@ -203,6 +203,10 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             sample_complement = rand(
                 Copulas.subsetdims(input_distribution, idx_minus), n_outer)
 
+            if size(sample_complement, 2) == 1
+                sample_complement = reshape(sample_complement, (1, length(sample_complement)))
+            end
+
             for l in 1:n_outer
                 curr_sample = @view sample_complement[:, l]
                 # Sampling of the set conditionally to the complementary element
