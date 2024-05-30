@@ -25,24 +25,22 @@ n_perms = -1;
 n_var = 10_000;
 n_outer = 1000;
 n_inner = 3;
-dim = 3;
-margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
+dim = 4;
+margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi));
 dependency_matrix = Matrix(4 * I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
-
 method = Shapley(n_perms = n_perms,
     n_var = n_var,
     n_outer = n_outer,
     n_inner = n_inner);
-
 #---> non batch
 @time result = gsa(ishi, method, input_distribution, batch = false)
 
 @test result.shapley_effects[1]≈0.43813841765976547 atol=1e-1
 @test result.shapley_effects[2]≈0.44673952698721386 atol=1e-1
-@test result.shapley_effects[3]≈0.23144736934254417 atol=1e-1
-# @test result.shapley_effects[4]≈0.0 atol=1e-1
+@test result.shapley_effects[3]≈0.11855122481995543 atol=1e-1
+@test result.shapley_effects[4]≈0.0 atol=1e-1
 #<---- non batch
 
 #---> batch
@@ -50,8 +48,8 @@ result = gsa(ishi_batch, method, input_distribution, batch = true);
 
 @test result.shapley_effects[1]≈0.44080027198796035 atol=1e-1
 @test result.shapley_effects[2]≈0.43029987176805085 atol=1e-1
-@test result.shapley_effects[3]≈0.23144736934254417 atol=1e-1
-# @test result.shapley_effects[4]≈0.0 atol=1e-1
+@test result.shapley_effects[3]≈0.11855122481995543 atol=1e-1
+@test result.shapley_effects[4]≈0.0 atol=1e-1
 #<--- batch
 
 d = 3
