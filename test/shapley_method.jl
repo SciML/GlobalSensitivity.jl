@@ -30,12 +30,10 @@ margins = (Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi
 dependency_matrix = Matrix(4 * I, dim, dim);
 C = GaussianCopula(dependency_matrix);
 input_distribution = SklarDist(C, margins);
-
 method = Shapley(n_perms = n_perms,
     n_var = n_var,
     n_outer = n_outer,
     n_inner = n_inner);
-
 #---> non batch
 @time result = gsa(ishi, method, input_distribution, batch = false)
 
