@@ -344,12 +344,12 @@ end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples,
         rng::AbstractRNG = Random.default_rng(), kwargs...)
-    log2num = ceil(Int, log2(samples))
-    samples2n = 2^log2num
+    samples2n = nextpow(2, samples)
     if samples2n != samples
         samples = samples2n
         @warn "Passed samples is not a power of 2, number of sample points changed to $samples"
     end
+    log2num = round(Int, log2(samples))
     AB = QuasiMonteCarlo.generate_design_matrices(samples, [i[1] for i in p_range],
         [i[2] for i in p_range],
         QuasiMonteCarlo.SobolSample(;
