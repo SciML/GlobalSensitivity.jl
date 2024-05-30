@@ -128,8 +128,8 @@ barplot(
         xticklabelrotation = 1,
         xticks = (1:54, ["θ$i" for i in 1:54]),
         ylabel = "Shapley Indices",
-        limits = (nothing, (0.0, 0.2)),
-    ),
+        limits = (nothing, (0.0, 0.2))
+    )
 )
 ```
 
@@ -160,7 +160,7 @@ barplot(
         xticklabelrotation = 1,
         xticks = (1:54, ["θ$i" for i in 1:54]),
         ylabel = "Shapley Indices",
-        limits = (nothing, (0.0, 0.2)),
-    ),
+        limits = (nothing, (0.0, 0.2))
+    )
 )
 ```
