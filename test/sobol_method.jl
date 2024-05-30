@@ -22,7 +22,7 @@ function linear(X)
     A * X[1] + B * X[2]
 end
 
-n = 600000
+n = 524288
 lb = -ones(4) * π
 ub = ones(4) * π
 sampler = SobolSample()
@@ -94,7 +94,7 @@ ishigami.fun <- function(X) {
   B <- 0.1
   A * X[, 1] + B * X[, 2]
 }
-n <- 6000000
+n <- 524288
 X1 <- data.frame(matrix(runif(4 * n,-pi,pi), nrow = n))
 X2 <- data.frame(matrix(runif(4 * n,-pi,pi), nrow = n))
 sobol2007(ishigami.fun, X1, X2)
