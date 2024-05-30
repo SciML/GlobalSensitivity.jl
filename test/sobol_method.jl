@@ -1,4 +1,4 @@
-using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq
+using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq, Random
 
 function ishi_batch(X)
     A = 7
@@ -25,7 +25,7 @@ end
 n = 524288
 lb = -ones(4) * π
 ub = ones(4) * π
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 19, rng = Random.default_rng()))
 A, B = QuasiMonteCarlo.generate_design_matrices(n, lb, ub, sampler)
 
 res1 = gsa(ishi, Sobol(order = [0, 1, 2]), A, B)

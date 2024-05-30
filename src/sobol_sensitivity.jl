@@ -47,13 +47,13 @@ by dividing other terms in the variance decomposition by `` Var(Y) ``.
 - `:Janon2014` - [Janon, A., Klein, T., Lagnoux, A., Nodet, M., & Prieur, C. (2014). Asymptotic normality and efficiency of two Sobol index estimators. ESAIM: Probability and Statistics, 18, 342-364.](https://arxiv.org/abs/1303.6451)
 
 !!! note
-    
+
     Sobol sampling should be done with $2^k$ points and randomization, take a look at the docs for [QuasiMonteCarlo](https://docs.sciml.ai/QuasiMonteCarlo/stable/randomization/). If the number of samples is not a power of 2, the number of sample points will be changed to the next power of 2.
 
 ### Example
 
 ```julia
-using GlobalSensitivity, QuasiMonteCarlo
+using GlobalSensitivity, QuasiMonteCarlo, Random
 
 function ishi(X)
     A= 7
@@ -64,7 +64,7 @@ end
 samples = 524288
 lb = -ones(4)*π
 ub = ones(4)*π
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 19, rng = Random.default_rng()))
 A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 
 res1 = gsa(ishi,Sobol(order=[0,1,2]),A,B)
