@@ -15,12 +15,12 @@ Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl
   [e30172f5] Documenter v1.5.0
   [587475ba] Flux v0.14.16
   [af5da776] GlobalSensitivity v2.6.2 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
-  [7f7a1694] Optimization v3.26.3
+  [7f7a1694] Optimization v3.27.0
   [42dfb2eb] OptimizationOptimisers v0.2.1
   [1dea7af3] OrdinaryDiffEq v6.85.0
-  [91a5bcdd] Plots v1.40.4
+  [91a5bcdd] Plots v1.40.5
   [8a4e6c94] QuasiMonteCarlo v0.3.3
-  [1ed8b502] SciMLSensitivity v7.62.0
+  [1ed8b502] SciMLSensitivity v7.63.0
   [860ef19b] StableRNGs v1.0.2
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.4
@@ -36,7 +36,7 @@ Platform Info:
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
   JULIA_DEBUG = Documenter</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Manifest.toml`
-  [47edcb42] ADTypes v1.5.2
+  [47edcb42] ADTypes v1.5.3
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -46,14 +46,15 @@ Environment:
   [27a7e980] Animations v0.4.1
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.11.0
-  [4c555306] ArrayLayouts v1.10.0
+  [4fba245c] ArrayInterface v7.12.0
+  [4c555306] ArrayLayouts v1.10.1
   [a9b6321e] Atomix v0.1.0
-  [67c07d97] Automa v1.0.3
+  [67c07d97] Automa v1.0.4
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
 ⌅ [198e06fe] BangBang v0.3.40
   [9718e550] Baselet v0.1.1
+  [e2ed5e7c] Bijections v0.1.7
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [fa961155] CEnum v0.5.0
@@ -66,7 +67,7 @@ Environment:
   [082447d4] ChainRules v1.69.0
   [d360d2e6] ChainRulesCore v1.24.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
-  [944b1d66] CodecZlib v0.7.4
+  [944b1d66] CodecZlib v0.7.5
   [a2cac450] ColorBrewer v0.4.0
   [35d6a980] ColorSchemes v3.25.0
   [3da002f7] ColorTypes v0.11.5
@@ -77,9 +78,10 @@ Environment:
   [bbf7d656] CommonSubexpressions v0.3.0
   [f70d9fcc] CommonWorldInvalidations v1.0.0
   [34da2185] Compat v4.15.0
+  [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.3
-  [f0e56b4a] ConcurrentUtilities v2.4.1
+  [f0e56b4a] ConcurrentUtilities v2.4.2
   [88cd18e8] ConsoleProgressMonitor v0.1.2
   [187b0558] ConstructionBase v1.5.5
   [6add18c4] ContextVariablesX v0.1.3
@@ -87,12 +89,14 @@ Environment:
   [ae264745] Copulas v0.1.23
   [adafc99b] CpuId v0.3.1
   [667455a9] Cubature v1.5.1
+  [717857b8] DSP v0.7.9
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
-  [927a84f5] DelaunayTriangulation v1.0.3
+  [927a84f5] DelaunayTriangulation v1.0.4
   [8bb1440f] DelimitedFiles v1.9.1
+  [85a47980] Dictionaries v0.4.2
   [2b5f629d] DiffEqBase v6.151.5
   [459566f4] DiffEqCallbacks v3.6.2
   [77a26b50] DiffEqNoiseProcess v5.21.0
@@ -103,10 +107,13 @@ Environment:
   [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.5.0
+  [5b8099bc] DomainSets v0.7.14
   [fa6b7ba4] DualNumbers v0.6.8
+⌅ [7c1d4256] DynamicPolynomials v0.5.7
+  [b7d42ee7] Einsum v0.4.1
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
-  [7da242da] Enzyme v0.12.20
+  [7da242da] Enzyme v0.12.21
   [f151be2c] EnzymeCore v0.7.6
   [90fa49ef] ErrorfreeArithmetic v0.5.2
 ⌃ [429591f6] ExactPredicates v2.2.5
@@ -137,9 +144,9 @@ Environment:
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [d9f16b24] Functors v0.4.11
-  [0c68f7d7] GPUArrays v10.2.2
+  [0c68f7d7] GPUArrays v10.2.3
   [46192b85] GPUArraysCore v0.1.6
-⌃ [61eb1bfa] GPUCompiler v0.26.5
+  [61eb1bfa] GPUCompiler v0.26.7
   [28b8d3ca] GR v0.73.6
   [c145ed77] GenericSchur v0.5.4
   [cf35fbd7] GeoInterface v1.3.5
@@ -147,11 +154,12 @@ Environment:
   [d7ba0133] Git v1.3.1
   [af5da776] GlobalSensitivity v2.6.2 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
   [a2bd30eb] Graphics v1.1.2
-  [86223c79] Graphs v1.11.1
+  [86223c79] Graphs v1.11.2
 ⌅ [3955a311] GridLayoutBase v0.10.2
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v1.10.8
   [3e5b6fbb] HostCPUFeatures v0.1.17
+  [1baab800] HybridArrays v0.4.16
   [34004b35] HypergeometricFunctions v0.3.23
   [b5f81e59] IOCapture v0.2.5
   [7869d1d1] IRTools v0.4.14
@@ -161,6 +169,7 @@ Environment:
   [a09fc81d] ImageCore v0.10.2
   [82e4d734] ImageIO v0.6.8
   [bc367c6b] ImageMetadata v0.9.9
+  [313cdc1a] Indexing v1.1.1
   [9b13fd28] IndirectArrays v1.0.0
   [d25df0c9] Inflate v0.1.5
   [22cec73e] InitialValues v0.3.1
@@ -182,19 +191,23 @@ Environment:
   [ef3ab10e] KLU v0.6.0
   [63c18a36] KernelAbstractions v0.9.22
   [5ab0869b] KernelDensity v0.6.9
+  [2c470bb0] Kronecker v0.5.5
   [ba0b0d4f] Krylov v0.9.6
   [5be7bae1] LBFGSB v0.4.1
-⌅ [929cbde3] LLVM v7.2.1
+  [929cbde3] LLVM v8.0.0
   [b964fa9f] LaTeXStrings v1.3.1
-  [23fbe1c1] Latexify v0.16.3
+  [2ee39098] LabelledArrays v1.16.0
+  [984bce1d] LambertW v0.4.6
+  [23fbe1c1] Latexify v0.16.4
   [73f95e8e] LatticeRules v0.0.1
   [10f19ff3] LayoutPointers v0.1.17
   [0e77f7df] LazilyInitializedFields v1.2.2
-  [5078a376] LazyArrays v2.1.0
+  [5078a376] LazyArrays v2.1.4
   [8cdb02fc] LazyModules v0.3.1
   [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
   [2d8b4e74] LevyArea v1.0.0
   [d3d80556] LineSearches v7.2.0
+  [7a12625a] LinearMaps v3.11.3
   [7ed4a6bd] LinearSolve v2.30.2
   [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.0.3
@@ -204,10 +217,14 @@ Environment:
   [1914dd2f] MacroTools v0.5.13
 ⌅ [ee78f7c6] Makie v0.20.10
 ⌅ [20f20a25] MakieCore v0.7.3
+  [af67fdf4] ManifoldDiff v0.3.10
+  [1cead3c2] Manifolds v0.9.20
+  [3362f125] ManifoldsBase v0.15.10
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
 ⌅ [0a4f8689] MathTeXEngine v0.5.7
+  [99c1a7ee] MatrixEquations v2.4.2
   [bb5d69b7] MaybeInplace v0.1.3
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
@@ -215,24 +232,27 @@ Environment:
   [e1d29d7a] Missings v1.2.0
   [e94cdb99] MosaicViews v0.3.4
   [46d2c3a1] MuladdMacro v0.2.4
+  [102ac46a] MultivariatePolynomials v0.5.6
+  [d8a4904e] MutableArithmetics v1.4.5
   [37188c8d] MvNormalCDF v0.3.2
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
-  [872c559c] NNlib v0.9.18
+  [872c559c] NNlib v0.9.19
   [77ba4419] NaNMath v1.0.2
   [71a1bf82] NameResolution v0.1.5
+  [356022a1] NamedDims v1.2.2
   [f09324ee] Netpbm v1.1.1
   [8913a72c] NonlinearSolve v3.13.1
   [d8793406] ObjectFile v0.4.1
   [510215fc] Observables v0.5.5
-  [6fe1bfb0] OffsetArrays v1.14.0
+  [6fe1bfb0] OffsetArrays v1.14.1
   [0b1bfda6] OneHotArrays v0.2.5
   [52e1d378] OpenEXR v0.3.2
   [4d8831e6] OpenSSL v1.4.3
   [429524aa] Optim v1.9.4
   [3bd65402] Optimisers v0.3.3
-  [7f7a1694] Optimization v3.26.3
-  [bca83a33] OptimizationBase v1.2.0
+  [7f7a1694] Optimization v3.27.0
+  [bca83a33] OptimizationBase v1.3.3
   [42dfb2eb] OptimizationOptimisers v0.2.1
   [bac558e1] OrderedCollections v1.6.3
   [1dea7af3] OrdinaryDiffEq v6.85.0
@@ -247,11 +267,12 @@ Environment:
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.2.0
   [995b91a9] PlotUtils v1.4.1
-  [91a5bcdd] Plots v1.40.4
+  [91a5bcdd] Plots v1.40.5
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.15
   [1d0040c9] PolyesterWeave v0.2.2
   [647866c9] PolygonOps v0.1.2
+  [f27b6e38] Polynomials v4.0.11
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.22
   [aea7be01] PrecompileTools v1.2.1
@@ -264,6 +285,7 @@ Environment:
   [4b34888f] QOI v1.0.0
   [1fd47b50] QuadGK v2.9.4
   [8a4e6c94] QuasiMonteCarlo v0.3.3
+  [94ee1d12] Quaternions v0.7.6
   [74087812] Random123 v1.7.0
   [e6cf234a] RandomNumbers v1.5.3
   [b3c3ace0] RangeArrays v0.3.2
@@ -271,7 +293,7 @@ Environment:
   [c1ae055f] RealDot v0.1.0
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.23.1
+  [731186ca] RecursiveArrayTools v3.26.0
   [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.3
@@ -287,9 +309,9 @@ Environment:
   [fdea26ae] SIMD v3.5.0
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-  [0bca4576] SciMLBase v2.41.3
+  [0bca4576] SciMLBase v2.42.0
   [c0aeaf25] SciMLOperators v0.3.8
-  [1ed8b502] SciMLSensitivity v7.62.0
+  [1ed8b502] SciMLSensitivity v7.63.0
   [53ae85a6] SciMLStructures v1.4.1
   [6c6a2e73] Scratch v1.2.1
   [3cc68bcd] SetRounding v0.2.1
@@ -302,6 +324,7 @@ Environment:
   [727e6d20] SimpleNonlinearSolve v1.10.1
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
+  [47aef6b3] SimpleWeightedGraphs v1.4.0
   [45858cf5] Sixel v0.1.3
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.1
@@ -315,27 +338,32 @@ Environment:
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v1.1.0
   [0d7ed370] StaticArrayInterface v1.5.1
-  [90137ffa] StaticArrays v1.9.6
+  [90137ffa] StaticArrays v1.9.7
   [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
-  [789caeaf] StochasticDiffEq v6.65.1
+  [789caeaf] StochasticDiffEq v6.66.0
   [7792a7ef] StrideArraysCore v0.5.7
   [09ab397b] StructArrays v0.6.18
   [53d494c1] StructIO v0.3.0
-  [2efcf032] SymbolicIndexingInterface v0.3.22
+  [4297ee4d] SymbolicAnalysis v0.1.0
+  [2efcf032] SymbolicIndexingInterface v0.3.26
+  [19f23fe9] SymbolicLimits v0.2.1
+  [d1185830] SymbolicUtils v2.1.0
+  [0c5d862f] Symbolics v5.33.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [6aa5eb33] TaylorSeries v0.17.8
   [62fd8b95] TensorCore v0.1.1
+⌅ [8ea1fca8] TermInterface v0.4.1
   [5d786b92] TerminalLoggers v0.1.7
   [8290d209] ThreadingUtilities v0.5.2
   [ac1d9e8a] ThreadsX v0.1.12
   [731e570b] TiffImages v0.10.0
   [a759f4b9] TimerOutputs v0.5.24
   [9f7883ad] Tracker v0.2.34
-  [3bb67fe8] TranscodingStreams v0.10.10
+  [3bb67fe8] TranscodingStreams v0.11.0
 ⌃ [28d57a85] Transducers v0.4.80
   [592b5752] Trapz v2.0.3
   [d5829a12] TriangularSolve v0.2.1
@@ -346,7 +374,8 @@ Environment:
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.20.0
-  [45397f5d] UnitfulLatexify v1.6.3
+  [45397f5d] UnitfulLatexify v1.6.4
+  [a7c27f48] Unityper v0.1.6
   [013be700] UnsafeAtomics v0.2.1
   [d80eeb9a] UnsafeAtomicsLLVM v0.1.5
   [41fe7b60] Unzip v0.2.0
@@ -361,7 +390,7 @@ Environment:
   [83423d85] Cairo_jll v1.18.0+2
   [7bc98958] Cubature_jll v1.0.5+0
   [5ae413db] EarCut_jll v2.2.4+0
-  [7cc45869] Enzyme_jll v0.0.127+0
+⌅ [7cc45869] Enzyme_jll v0.0.128+0
   [2702e6a9] EpollShim_jll v0.0.20230411+0
   [2e619515] Expat_jll v2.6.2+0
 ⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
@@ -369,7 +398,7 @@ Environment:
   [a3f928ae] Fontconfig_jll v2.13.96+0
   [d7e528f0] FreeType2_jll v2.13.2+0
   [559328eb] FriBidi_jll v1.0.14+0
-  [0656b61e] GLFW_jll v3.3.9+0
+  [0656b61e] GLFW_jll v3.4.0+0
   [d2c73de3] GR_jll v0.73.6+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.44.0+2
@@ -381,7 +410,7 @@ Environment:
   [aacddb02] JpegTurbo_jll v3.0.3+0
   [c1c5ebd0] LAME_jll v3.100.2+0
 ⌅ [88015f11] LERC_jll v3.0.0+1
-⌅ [dad2f222] LLVMExtra_jll v0.0.29+0
+  [dad2f222] LLVMExtra_jll v0.0.30+0
   [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [dd4b983a] LZO_jll v2.10.2+0
   [81d17ec3] L_BFGS_B_jll v3.0.1+0
@@ -500,4 +529,4 @@ Environment:
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.6.2/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.6.2/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Saturday 29 June 2024 09:12">Saturday 29 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.6.2/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.6.2/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Saturday 6 July 2024 09:12">Saturday 6 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
