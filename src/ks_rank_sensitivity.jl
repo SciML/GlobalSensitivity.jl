@@ -1,4 +1,4 @@
-"""
+raw"""
 
     KSRank(; n_dummy_parameters::Int = 50, acceptance_threshold::Union{Function, Real} = mean)
 
