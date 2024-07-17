@@ -54,11 +54,13 @@ struct KSRank <: GSAMethod
     acceptance_threshold::Union{Function, Real}
 end
 
-KSRank(;n_dummy_parameters = 50, acceptance_threshold=mean) = KSRank(n_dummy_parameters, acceptance_threshold)
+function KSRank(; n_dummy_parameters = 50, acceptance_threshold = mean)
+    KSRank(n_dummy_parameters, acceptance_threshold)
+end
 
 struct KSRankResult{T}
     S::AbstractVector{T}
-    Sd::Tuple{T, T} 
+    Sd::Tuple{T, T}
 end
 
 function ks_rank_sensitivity(Xi, flag)
@@ -79,16 +81,16 @@ function _compute_ksrank(X::AbstractArray, Y::AbstractArray, method::KSRank)
     K = size(X, 1)
     #samples = size(X, 2)
     sensitivities = zeros(K)
-    
+
     if method.acceptance_threshold isa Function
         acceptance_threshold = method.acceptance_threshold(Y)
     else
         acceptance_threshold = method.acceptance_threshold
-    end 
+    end
     flag = Int.(Y .> acceptance_threshold)
-    
+
     # Cumulative distributions (for model parameters and dummies)
-    @inbounds for i = 1:K
+    @inbounds for i in 1:K
         Xi = @view X[i, :]
 
         # calculate KS score
@@ -96,9 +98,11 @@ function _compute_ksrank(X::AbstractArray, Y::AbstractArray, method::KSRank)
     end
 
     # collect dummy sensitivities (mean and std)
-    dummy_sensitivities = (mean(sensitivities[K-method.n_dummy_parameters+1:end]), std(sensitivities[K-method.n_dummy_parameters+1+1:end]))
+    dummy_sensitivities = (mean(sensitivities[(K - method.n_dummy_parameters + 1):end]),
+        std(sensitivities[(K - method.n_dummy_parameters + 1 + 1):end]))
 
-    return KSRankResult(sensitivities[1:K-method.n_dummy_parameters], dummy_sensitivities)
+    return KSRankResult(
+        sensitivities[1:(K - method.n_dummy_parameters)], dummy_sensitivities)
 end
 
 function gsa(f, method::KSRank, p_range; samples, batch = false)
