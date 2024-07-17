@@ -18,7 +18,7 @@ S_{i} = \sup_{j} |F_i - (1 - F_i)|
 
 where F_i is the cumulative acceptance distribution of the sensitivity output for parameter i.
 
-Dummy parameters are added to the model to check the amount of samples and to perform sensitivity hypothesis testing. 
+Dummy parameters are added to the model to check the amount of samples and to perform sensitivity hypothesis testing. Note that because of random sampling the results may vary between runs. 
 
 See also [Hornberger & Spear (1981)](https://www.researchgate.net/profile/Robert-Spear/publication/236357160_An_Approach_to_the_Preliminary_Analysis_of_Environmental_Systems/links/57a36cfa08aefe6167a599af/An-Approach-to-the-Preliminary-Analysis-of-Environmental-Systems.pdf)
 
