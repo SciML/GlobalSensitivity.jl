@@ -26,6 +26,8 @@ See also [Hornberger & Spear (1981)](https://www.researchgate.net/profile/Robert
 
     gsa(f, method::KSRank, p_range; samples, batch = false)
 
+Returns a `KSRankResult` object containing the sensitivity indices for the parameters as `S`, and mean and standard deviation of the dummy parameters as a tuple `Sd = (<mean>, <std>)`.
+
 ### Example
 
 ```julia
