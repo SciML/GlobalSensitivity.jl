@@ -10,13 +10,13 @@
 
 The KSRank method is a monte-carlo based technique for performing nonparametric global sensitivity analysis. The method is based on the Kolmogorov-Smirnov (KS) test, which is a nonparametric test of the equality of continuous, 
 one-dimensional probability distributions that can be used to compare a sample with a reference probability distribution. The method is used to compare the acceptance and rejection distributions of the sensitivity outputs, which are
-calculated by comparing the sensitivity outputs with a threshold value. The sensitivity for each parameter i is then given by
+calculated by comparing the sensitivity outputs with a threshold value. The sensitivity for each parameter ``i`` is then given by
 
 ```math
 S_{i} = \sup_{j} |F_{i,j} - (1 - F_{i,j})|
 ```
 
-where $F_{i,j}$ is sample $j$ of the cumulative acceptance distribution of the sensitivity output for parameter i.
+where ``F_{i,j}`` is sample ``j`` of the cumulative acceptance distribution of the sensitivity output for parameter ``i``.
 
 Dummy parameters are added to the model to check the amount of samples and to perform sensitivity hypothesis testing. Note that because of random sampling the results may vary between runs. 
 
