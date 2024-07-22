@@ -1,6 +1,6 @@
 @doc raw"""
 
-    KSRank(; n_dummy_parameters::Int = 50, acceptance_threshold::Union{Function, Real} = mean)
+    RSA(; n_dummy_parameters::Int = 50, acceptance_threshold::Union{Function, Real} = mean)
 
 - `n_dummy_parameters`: Number of dummy parameters to add to the model, used for sensitivity hypothesis testing and to check the amount of samples. Defaults to 50.
 - `acceptance_threshold`: Threshold or function to compute the threshold for defining the acceptance distribution of the sensitivity outputs. The function must be of signature f(Y) 
@@ -8,25 +8,23 @@
 
 ## Method Details
 
-The KSRank method is a monte-carlo based technique for performing nonparametric global sensitivity analysis. The method is based on the Kolmogorov-Smirnov (KS) test, which is a nonparametric test of the equality of continuous, 
-one-dimensional probability distributions that can be used to compare a sample with a reference probability distribution. The method is used to compare the acceptance and rejection distributions of the sensitivity outputs, which are
-calculated by comparing the sensitivity outputs with a threshold value. The sensitivity for each parameter ``i`` is then given by
+The RSA (Regional Sensitivity Analysis) method[^1] is a monte-carlo based technique for performing nonparametric global sensitivity analysis. The method is based on the Kolmogorov-Smirnov (KS) test, which is a nonparametric test of the equality of continuous, 
+one-dimensional probability distributions. Each result of a monte-carlo simulation is either classified as behavior (``B``) or non-behavior (``\bar{B}``). For each parameter ``i``, 
+the cumulative distributions of the behavior and non-behavior outputs are determined as ``F_{i}`` and ``\bar{F}_{i}``, respectively. The sensitivity for each parameter ``i`` is then given by:
 
 ```math
 S_{i} = \sup_{j} |F_{i,j} - (1 - F_{i,j})|
 ```
 
-where ``F_{i,j}`` is sample ``j`` of the cumulative acceptance distribution of the sensitivity output for parameter ``i``.
+where ``F_{i,j}`` is sample ``j`` of the cumulative distribution of the sensitivity output for parameter ``i``.
 
 Dummy parameters are added to the model to check the amount of samples and to perform sensitivity hypothesis testing. Note that because of random sampling the results may vary between runs. 
 
-See also [Hornberger & Spear (1981)](https://www.researchgate.net/publication/236357160_An_Approach_to_the_Preliminary_Analysis_of_Environmental_Systems)
-
 ## API
 
-    gsa(f, method::KSRank, p_range; samples, batch = false)
+    gsa(f, method::RSA, p_range; samples, batch = false)
 
-Returns a `KSRankResult` object containing the sensitivity indices for the parameters as `S`, and mean and standard deviation of the dummy parameters as a tuple `Sd = (<mean>, <std>)`.
+Returns a `RSAResult` object containing the sensitivity indices for the parameters as `S`, and mean and standard deviation of the dummy parameters as a tuple `Sd = (<mean>, <std>)`.
 
 ### Example
 
@@ -47,25 +45,28 @@ end
 lb = -ones(4)*π
 ub = ones(4)*π
 
-res1 = gsa(ishi,KSRank(),[[lb[i],ub[i]] for i in 1:4],samples=15000)
-res2 = gsa(ishi_batch,KSRank(),[[lb[i],ub[i]] for i in 1:4],samples=15000,batch=true)
+res1 = gsa(ishi,RSA(),[[lb[i],ub[i]] for i in 1:4],samples=15000)
+res2 = gsa(ishi_batch,RSA(),[[lb[i],ub[i]] for i in 1:4],samples=15000,batch=true)
 ```
+
+### References
+[^1]: Hornberger, G.M. & Spear, Robert. (1981). An Approach to the Preliminary Analysis of Environmental Systems. J. Environ. Manage.; (United States). 12:1. 
 """
-struct KSRank <: GSAMethod
+struct RSA <: GSAMethod
     n_dummy_parameters::Int
     acceptance_threshold::Union{Function, Real}
 end
 
-function KSRank(; n_dummy_parameters = 50, acceptance_threshold = mean)
-    KSRank(n_dummy_parameters, acceptance_threshold)
+function RSA(; n_dummy_parameters = 50, acceptance_threshold = mean)
+    RSA(n_dummy_parameters, acceptance_threshold)
 end
 
-struct KSRankResult{T}
+struct RSAResult{T}
     S::AbstractVector{T}
     Sd::Tuple{T, T}
 end
 
-function ks_rank_sensitivity(Xi, flag)
+function rsa_sensitivity(Xi, flag)
     sort_idx = sortperm(Xi)
     acceptance_dist = cumsum(flag[sort_idx])
     rejection_dist = cumsum(1 .- flag[sort_idx])
@@ -77,7 +78,7 @@ function ks_rank_sensitivity(Xi, flag)
     maximum(abs.(acceptance_dist .- rejection_dist))
 end
 
-function _compute_ksrank(X::AbstractArray, Y::AbstractArray, method::KSRank)
+function _compute_rsa(X::AbstractArray, Y::AbstractArray, method::RSA)
 
     # K is the number of variables, samples is the number of simulations
     K = size(X, 1)
@@ -89,25 +90,25 @@ function _compute_ksrank(X::AbstractArray, Y::AbstractArray, method::KSRank)
     else
         acceptance_threshold = method.acceptance_threshold
     end
-    flag = Int.(Y .> acceptance_threshold)
+    flag = map!(>(acceptance_threshold), similar(Y), Y)
 
     # Cumulative distributions (for model parameters and dummies)
     @inbounds for i in 1:K
         Xi = @view X[i, :]
 
         # calculate KS score
-        sensitivities[i] = ks_rank_sensitivity(Xi, flag)
+        sensitivities[i] = rsa_sensitivity(Xi, flag)
     end
 
     # collect dummy sensitivities (mean and std)
     dummy_sensitivities = (mean(sensitivities[(K - method.n_dummy_parameters + 1):end]),
         std(sensitivities[(K - method.n_dummy_parameters + 1 + 1):end]))
 
-    return KSRankResult(
+    return RSAResult(
         sensitivities[1:(K - method.n_dummy_parameters)], dummy_sensitivities)
 end
 
-function gsa(f, method::KSRank, p_range; samples, batch = false)
+function gsa(f, method::RSA, p_range; samples, batch = false)
     lb = [i[1] for i in p_range]
     ub = [i[2] for i in p_range]
 
@@ -129,5 +130,5 @@ function gsa(f, method::KSRank, p_range; samples, batch = false)
             desol = true
         end
     end
-    return _compute_ksrank(X, Y, method)
+    return _compute_rsa(X, Y, method)
 end

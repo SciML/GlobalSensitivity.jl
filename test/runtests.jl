@@ -14,6 +14,6 @@ const GROUP = get(ENV, "GROUP", "All")
         @time @safetestset "Rbd-fast method" include("rbd-fast_method.jl")
         @time @safetestset "Easi Method" include("easi_method.jl")
         @time @safetestset "Shapley Method" include("shapley_method.jl")
-        @time @safetestset "KSRank Method" include("ks_rank_method.jl")
+        @time @safetestset "RSA Method" include("rsa_method.jl")
     end
 end
