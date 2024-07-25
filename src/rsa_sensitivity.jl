@@ -1,8 +1,8 @@
 @doc raw"""
 
-    RSA(; n_dummy_parameters::Int = 50, acceptance_threshold::Union{Function, Real} = mean)
+    RSA(; n_dummy_parameters::Int = 10, acceptance_threshold::Union{Function, Real} = mean)
 
-- `n_dummy_parameters`: Number of dummy parameters to add to the model, used for sensitivity hypothesis testing and to check the amount of samples. Defaults to 50.
+- `n_dummy_parameters`: Number of dummy parameters to add to the model, used for sensitivity hypothesis testing and to check the amount of samples. Defaults to 10.
 - `acceptance_threshold`: Threshold or function to compute the threshold for defining the acceptance distribution of the sensitivity outputs. The function must be of signature f(Y) 
    and return a real number, where Y is the output of given sensitivity criterion. Defaults to the mean of the sensitivity values.  
 
@@ -57,7 +57,7 @@ struct RSA <: GSAMethod
     acceptance_threshold::Union{Function, Real}
 end
 
-function RSA(; n_dummy_parameters = 50, acceptance_threshold = mean)
+function RSA(; n_dummy_parameters = 10, acceptance_threshold = mean)
     RSA(n_dummy_parameters, acceptance_threshold)
 end
 
