@@ -26,16 +26,19 @@ lb = -ones(4) * π
 ub = ones(4) * π
 
 res1 = gsa(
-    ishi, KSRank(n_dummy_parameters = 50), [[lb[i], ub[i]] for i in 1:4], samples = 100_000)
+    ishi, RSA(n_dummy_parameters = 10), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
 res2 = gsa(
-    ishi_batch, KSRank(), [[lb[i], ub[i]] for i in 1:4], samples = 100_000, batch = true)
+    ishi_batch, RSA(n_dummy_parameters = 10), [[lb[i], ub[i]] for i in 1:4],
+    samples = 10_000, batch = true)
 
 @test (4 * res1.Sd[1] .> res1.S) == [0, 0, 1, 1]
 @test (4 * res2.Sd[1] .> res2.S) == [0, 0, 1, 1]
 
-res1 = gsa(linear, KSRank(), [[lb[i], ub[i]] for i in 1:4], samples = 100_000)
-res2 = gsa(linear_batch, KSRank(), [[lb[i], ub[i]] for i in 1:4], batch = true,
-    samples = 100_000)
+res1 = gsa(
+    linear, RSA(n_dummy_parameters = 10), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
+res2 = gsa(
+    linear_batch, RSA(n_dummy_parameters = 10), [[lb[i], ub[i]] for i in 1:4], batch = true,
+    samples = 10_000)
 
 @test (4 * res1.Sd[1] .> res1.S) == [0, 1, 1, 1]
 @test (4 * res2.Sd[1] .> res2.S) == [0, 1, 1, 1]
