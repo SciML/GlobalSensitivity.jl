@@ -67,9 +67,9 @@ weakdeps = ["StaticArrays"]
     AdaptStaticArraysExt = "StaticArrays"
 
 [[deps.AdaptivePredicates]]
-git-tree-sha1 = "92a21f116834321b815ce74e0f3415191b58bf5b"
+git-tree-sha1 = "7d5da5dd472490d048b081ca1bda4a7821b06456"
 uuid = "35492f91-a3bd-45ad-95db-fcad7dcfedb7"
-version = "1.1.0"
+version = "1.1.1"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
