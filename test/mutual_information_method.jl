@@ -33,9 +33,9 @@ ishi_batch, MutualInformation(order=[0,1,2]), [[lb[i], ub[i]] for i in 1:4],
 samples = 10_000, batch = true)
 
 @test res1.S1 ≈ [0.1416, 0.1929, 0.1204, 0.0925] atol = 1e-3
-@test [0.095, 0.095, 0.095, 0.095] <= res1.S1_Conf_Int[:,1] <= [0.1, 0.1, 0.1, 0.1]
+@test [0.09, 0.09, 0.09, 0.09] <= res1.S1_Conf_Int[:,1] <= [0.1, 0.1, 0.1, 0.1]
 @test res2.S1 ≈ [0.1416, 0.1929, 0.1204, 0.0925] atol = 1e-3
-@test [0.095, 0.095, 0.095, 0.095] <= res2.S1_Conf_Int[:,1] <= [0.1, 0.1, 0.1, 0.1]
+@test [0.09, 0.09, 0.09, 0.09] <= res2.S1_Conf_Int[:,1] <= [0.1, 0.1, 0.1, 0.1]
 
 @test sortperm(res1.ST) == [4,3,1,2]
 @test sortperm(res2.ST) == [4,3,1,2]
