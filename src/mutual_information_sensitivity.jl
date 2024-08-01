@@ -101,7 +101,7 @@ res2 = gsa(ishi_batch,MutualInformation(),[[lb[i],ub[i]] for i in 1:4],samples=1
 
 ### References
 [^1]: Lüdtke, N., Panzeri, S., Brown, M., Broomhead, D. S., Knowles, J., Montemurro, M. A., & Kell, D. B. (2007). Information-theoretic sensitivity analysis: a general method for credit assignment in complex networks. Journal of The Royal Society Interface, 5(19), 223–235.
-[^2]: Datseris, G., & Parlitz, U. (2022). Information Across Timeseries. 105-119.
+[^2]: Datseris, G., & Parlitz, U. (2022). Nonlinear Dynamics, Ch. 7, pg. 105-119.
 """
 struct MutualInformation <: GSAMethod 
     order::Vector{Int}
