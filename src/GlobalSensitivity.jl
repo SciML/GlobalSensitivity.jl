@@ -3,8 +3,9 @@ module GlobalSensitivity
 using Statistics, RecursiveArrayTools, LinearAlgebra, Random
 using QuasiMonteCarlo, ForwardDiff, KernelDensity, Trapz
 using Parameters: @unpack
-using FFTW, Distributions, StatsBase, InformationMeasures
+using FFTW, Distributions, StatsBase
 using Copulas, Combinatorics, ThreadsX
+using ComplexityMeasures: entropy, ValueHistogram, StateSpaceSet
 
 abstract type GSAMethod end
 
