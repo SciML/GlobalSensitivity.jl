@@ -126,8 +126,9 @@ function _total_order_ci(Xi, Y, entropy_Y, discretization_entropy; n_bootstraps 
     # perform permutations of Y and calculate total order
     mi_values = zeros(n_bootstraps)
     est = ValueHistogram(Int(round(sqrt(length(Y)))))
+    Y_perm = copy(Y)
     for i in 1:n_bootstraps
-        Y_perm = Y[randperm(length(Y))]
+        shuffle!(Y_perm)
         
         conditional_entropy = entropy(est, StateSpaceSet(Xi, Y_perm)) - entropy(est, Xi)
         mi_values[i] = (entropy_Y - conditional_entropy) / (entropy_Y - discretization_entropy)
@@ -143,8 +144,9 @@ function _first_order_ci(Xi, Y; n_bootstraps = 100, conf_level = 0.95)
     # perform permutations of Y and calculate mutual information
     mi_values = zeros(n_bootstraps)
     est = ValueHistogram(Int(round(sqrt(length(Y)))))
+    Y_perm = copy(Y)
     for i in 1:n_bootstraps
-        Y_perm = Y[randperm(length(Y))]
+        shuffle!(Y_perm)
         mutual_information = entropy(est, Xi) + entropy(est, Y_perm) - entropy(est, StateSpaceSet(Xi, Y_perm))
         mi_values[i] = mutual_information / entropy(est, Y_perm)
     end
@@ -159,8 +161,9 @@ function _second_order_ci(Xi, Xj, Y; n_bootstraps = 100, conf_level = 0.95)
     # perform permutations of Y and calculate second order mutual information
     mi_values = zeros(n_bootstraps)
     est = ValueHistogram(Int(round(sqrt(length(Y)))))
+    Y_perm = copy(Y)
     for i in 1:n_bootstraps
-        Y_perm = Y[randperm(length(Y))]
+        shuffle!(Y_perm)
         conditional_mutual_information = entropy(est, StateSpaceSet(Xi, Y_perm)) + entropy(est, StateSpaceSet(Xj, Y_perm)) - entropy(est, StateSpaceSet(Xi, Xj, Y_perm)) - entropy(est, Y_perm)
         mutual_information = entropy(est, Xi) + entropy(est, Xj) - entropy(est, StateSpaceSet(Xi, Xj))
         mi_values[i] = (conditional_mutual_information - mutual_information) / entropy(est, Y_perm)
