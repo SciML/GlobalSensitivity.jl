@@ -59,7 +59,18 @@ From Lüdtke et al. (2007)[^1], the total order sensitivity indices can be calcu
 S_{\text{total},i} = \frac{H(Y) - H(Y|\{X_1,...,X_n\} \\ X_i)}{H(Y) - H_{\Delta}}}
 ```
 
-Where ``H_{\Delta}`` is the discretization entropy of the output, which is introduced to account for the discretization of the input space. 
+Where ``H_{\Delta}`` is the discretization entropy of the output, which quantifies the remaining uncertainty in the output after discretization of the input parameters.
+Estimation of the discretization entropy is done by randomly selecting `n_bin_configurations` number of possible combinations of bins in X. Then, for each configuration,
+we have a set of bins ``\{B_{1,j}, B_{2,j},...,B_{n,j}\}`` where ``B_{i,j}`` is the bin for the input parameter ``X_i`` for configuration ``j``. Within each configuration,
+`n_samples_per_configuration` number of samples are drawn from the input space where ``\{X_1 = x_1 \in B_{1,j}, X_2 = x_2 \in B_{2,j},...,X_n = x_n \in B_{n,j} \}`` and the 
+entropy of the output is calculated. The estimated discretization entropy is then:
+```math
+\hat{H}_{\Delta} = \frac{1}{n_{\text{config}}} \sum_{j=1}^{n_{\text{config}}} H(Y|\{X_1 = x_1 \in B_{1,j}, X_2 = x_2 \in B_{2,j},...,X_n = x_n \in B_{n,j} \})
+```
+
+As a result, as ``n_{\text{config}}`` increases towards the number of possible configurations ``N = n_{\text{bins}}^n_{\text{params}}``, the estimated discretization entropy 
+converges to the true discretization entropy. In practice, the number of configurations that need to be sampled was found to be much smaller than the total number of possible 
+configurations. [^1]
 
 ## API
 
