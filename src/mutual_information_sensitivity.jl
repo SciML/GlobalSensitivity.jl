@@ -114,15 +114,19 @@ res2 = gsa(ishi_batch,MutualInformation(),[[lb[i],ub[i]] for i in 1:4],samples=1
 [^1]: Lüdtke, N., Panzeri, S., Brown, M., Broomhead, D. S., Knowles, J., Montemurro, M. A., & Kell, D. B. (2007). Information-theoretic sensitivity analysis: a general method for credit assignment in complex networks. Journal of The Royal Society Interface, 5(19), 223–235.
 [^2]: Datseris, G., & Parlitz, U. (2022). Nonlinear Dynamics, Ch. 7, pg. 105-119.
 """
-struct MutualInformation <: GSAMethod 
+struct MutualInformation <: GSAMethod
     order::Vector{Int}
-    nboot::Int 
+    nboot::Int
     conf_level::Real
     n_bin_configurations::Int
     n_samples_per_configuration::Int
 end
 
-MutualInformation(; order = [0, 1], nboot = 1, conf_level = 0.95, n_bin_configurations = 800, n_samples_per_configuration = 100) = MutualInformation(order, nboot, conf_level, n_bin_configurations, n_samples_per_configuration)
+function MutualInformation(; order = [0, 1], nboot = 1, conf_level = 0.95,
+        n_bin_configurations = 800, n_samples_per_configuration = 100)
+    MutualInformation(
+        order, nboot, conf_level, n_bin_configurations, n_samples_per_configuration)
+end
 
 struct MutualInformationResult{T1, T2, T3, T4}
     S1::T1
@@ -133,7 +137,8 @@ struct MutualInformationResult{T1, T2, T3, T4}
     ST_Conf_Int::T2
 end
 
-function _total_order_ci(Xi, Y, entropy_Y, discretization_entropy; n_bootstraps = 100, conf_level = 0.95)
+function _total_order_ci(
+        Xi, Y, entropy_Y, discretization_entropy; n_bootstraps = 100, conf_level = 0.95)
     # perform permutations of Y and calculate total order
     mi_values = zeros(n_bootstraps)
     est = ValueHistogram(Int(round(sqrt(length(Y)))))
@@ -141,14 +146,15 @@ function _total_order_ci(Xi, Y, entropy_Y, discretization_entropy; n_bootstraps 
     entropy_Xi = entropy(est, Xi)
     for i in 1:n_bootstraps
         shuffle!(Y_perm)
-        
+
         conditional_entropy = entropy(est, StateSpaceSet(Xi, Y_perm)) - entropy_Xi
-        mi_values[i] = (entropy_Y - conditional_entropy) / (entropy_Y - discretization_entropy)
+        mi_values[i] = (entropy_Y - conditional_entropy) /
+                       (entropy_Y - discretization_entropy)
     end
 
     α = 1 - conf_level
 
-    return quantile(mi_values, [α/2, 1 - α/2])
+    return quantile(mi_values, [α / 2, 1 - α / 2])
 end
 
 function _first_order_ci(Xi, Y; n_bootstraps = 100, conf_level = 0.95)
@@ -161,36 +167,41 @@ function _first_order_ci(Xi, Y; n_bootstraps = 100, conf_level = 0.95)
     entropy_Y = entropy(est, Y)
     for i in 1:n_bootstraps
         shuffle!(Y_perm)
-        mutual_information = entropy_Xi + entropy_Y - entropy(est, StateSpaceSet(Xi, Y_perm))
+        mutual_information = entropy_Xi + entropy_Y -
+                             entropy(est, StateSpaceSet(Xi, Y_perm))
         mi_values[i] = mutual_information / entropy_Y
     end
 
     α = 1 - conf_level
 
-    return quantile(mi_values, [α/2, 1 - α/2])
+    return quantile(mi_values, [α / 2, 1 - α / 2])
 end
 
 function _second_order_ci(Xi, Xj, Y; n_bootstraps = 100, conf_level = 0.95)
-    
+
     # perform permutations of Y and calculate second order mutual information
     mi_values = zeros(n_bootstraps)
     est = ValueHistogram(Int(round(sqrt(length(Y)))))
     Y_perm = copy(Y)
-    mutual_information = entropy(est, Xi) + entropy(est, Xj) - entropy(est, StateSpaceSet(Xi, Xj))
+    mutual_information = entropy(est, Xi) + entropy(est, Xj) -
+                         entropy(est, StateSpaceSet(Xi, Xj))
     entropy_Y = entropy(est, Y_perm)
     for i in 1:n_bootstraps
         shuffle!(Y_perm)
-        conditional_mutual_information = entropy(est, StateSpaceSet(Xi, Y_perm)) + entropy(est, StateSpaceSet(Xj, Y_perm)) - entropy(est, StateSpaceSet(Xi, Xj, Y_perm)) - entropy_Y
+        conditional_mutual_information = entropy(est, StateSpaceSet(Xi, Y_perm)) +
+                                         entropy(est, StateSpaceSet(Xj, Y_perm)) -
+                                         entropy(est, StateSpaceSet(Xi, Xj, Y_perm)) -
+                                         entropy_Y
         mi_values[i] = (conditional_mutual_information - mutual_information) / entropy_Y
     end
 
     α = 1 - conf_level
 
-
-    return quantile(mi_values, [α/2, 1 - α/2])
+    return quantile(mi_values, [α / 2, 1 - α / 2])
 end
 
-function _discretization_entropy(X::AbstractArray, f, batch; n_bin_configurations = 800, n_samples_per_configuration = 100)
+function _discretization_entropy(X::AbstractArray, f, batch; n_bin_configurations = 800,
+        n_samples_per_configuration = 100)
     n_bins = Int(round(sqrt(size(X, 2))))
     n_dims = size(X, 1)
 
@@ -201,9 +212,11 @@ function _discretization_entropy(X::AbstractArray, f, batch; n_bin_configuration
         config = rand(1:n_bins, n_dims)
         bin_edges = [span .* (config .- 1) span .* config]
         if batch
-            samples_Y = f(hcat([rand.(Uniform.(bin_edges[:,1], bin_edges[:,2])) for _ in 1:n_samples_per_configuration]...))
+            samples_Y = f(hcat([rand.(Uniform.(bin_edges[:, 1], bin_edges[:, 2]))
+                                for _ in 1:n_samples_per_configuration]...))
         else
-            samples_Y = [f(rand.(Uniform.(bin_edges[:,1], bin_edges[:,2]))) for _ in 1:n_samples_per_configuration]
+            samples_Y = [f(rand.(Uniform.(bin_edges[:, 1], bin_edges[:, 2])))
+                         for _ in 1:n_samples_per_configuration]
         end
         entropy_Y += entropy(ValueHistogram(Int(round(sqrt(length(samples_Y))))), samples_Y)
     end
@@ -212,8 +225,9 @@ function _discretization_entropy(X::AbstractArray, f, batch; n_bin_configuration
 end
 
 function _compute_mi(X::AbstractArray, f, batch::Bool, method::MutualInformation)
-
-    discretization_entropy = _discretization_entropy(X, f, batch; n_bin_configurations = method.n_bin_configurations, n_samples_per_configuration = method.n_samples_per_configuration)
+    discretization_entropy = _discretization_entropy(
+        X, f, batch; n_bin_configurations = method.n_bin_configurations,
+        n_samples_per_configuration = method.n_samples_per_configuration)
     if batch
         Y = f(X)
         multioutput = Y isa AbstractMatrix
@@ -250,8 +264,11 @@ function _compute_mi(X::AbstractArray, f, batch::Bool, method::MutualInformation
         @inbounds for i in 1:K
             Xi = @view X[i, :]
             conditional_entropy = entropy(est, StateSpaceSet(Xi, Y)) - entropy(est, Xi)
-            total_order[i] = (entropy_Y - conditional_entropy) / (entropy_Y - discretization_entropy)
-            total_order_ci[i, :] = _total_order_ci(Xi, Y, entropy_Y, discretization_entropy, n_bootstraps = method.nboot, conf_level = method.conf_level)
+            total_order[i] = (entropy_Y - conditional_entropy) /
+                             (entropy_Y - discretization_entropy)
+            total_order_ci[i, :] = _total_order_ci(
+                Xi, Y, entropy_Y, discretization_entropy,
+                n_bootstraps = method.nboot, conf_level = method.conf_level)
         end
     end
 
@@ -259,9 +276,11 @@ function _compute_mi(X::AbstractArray, f, batch::Bool, method::MutualInformation
         # calculate mutual information
         @inbounds for i in 1:K
             Xi = @view X[i, :]
-            mutual_information = entropy(est, Xi) + entropy_Y - entropy(est, StateSpaceSet(Xi, Y))
+            mutual_information = entropy(est, Xi) + entropy_Y -
+                                 entropy(est, StateSpaceSet(Xi, Y))
             first_order[i] = mutual_information / entropy_Y
-            first_order_ci[i, :] .= _first_order_ci(Xi, Y, n_bootstraps = method.nboot, conf_level = method.conf_level)
+            first_order_ci[i, :] .= _first_order_ci(
+                Xi, Y, n_bootstraps = method.nboot, conf_level = method.conf_level)
         end
     end
 
@@ -269,10 +288,16 @@ function _compute_mi(X::AbstractArray, f, batch::Bool, method::MutualInformation
         for (i, j) in combinations(1:K, 2)
             Xi = @view X[i, :]
             Xj = @view X[j, :]
-            conditional_mutual_information = entropy(est, StateSpaceSet(Xi, Y)) + entropy(est, StateSpaceSet(Xj, Y)) - entropy(est, StateSpaceSet(Xi, Xj, Y)) - entropy_Y
-            mutual_information = entropy(est, Xi) + entropy(est, Xj) - entropy(est, StateSpaceSet(Xi, Xj))
-            second_order[i,j] = second_order[j,i] = (conditional_mutual_information - mutual_information) / entropy_Y
-            second_order_ci[i,j,:] = second_order_ci[j,i,:] = _second_order_ci(Xi, Xj, Y, n_bootstraps = method.nboot, conf_level = method.conf_level)
+            conditional_mutual_information = entropy(est, StateSpaceSet(Xi, Y)) +
+                                             entropy(est, StateSpaceSet(Xj, Y)) -
+                                             entropy(est, StateSpaceSet(Xi, Xj, Y)) -
+                                             entropy_Y
+            mutual_information = entropy(est, Xi) + entropy(est, Xj) -
+                                 entropy(est, StateSpaceSet(Xi, Xj))
+            second_order[i, j] = second_order[j, i] = (conditional_mutual_information -
+                                                       mutual_information) / entropy_Y
+            second_order_ci[i, j, :] = second_order_ci[j, i, :] = _second_order_ci(
+                Xi, Xj, Y, n_bootstraps = method.nboot, conf_level = method.conf_level)
         end
     end
 
@@ -284,7 +309,9 @@ function gsa(f, method::MutualInformation, p_range; samples, batch = false)
     ub = [i[2] for i in p_range]
 
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
-    total_order, total_order_ci, first_order, first_order_ci, second_order, second_order_ci = _compute_mi(X, f, batch, method)
+    total_order, total_order_ci, first_order, first_order_ci, second_order, second_order_ci = _compute_mi(
+        X, f, batch, method)
 
-    return MutualInformationResult(first_order, first_order_ci, second_order, second_order_ci, total_order, total_order_ci)
+    return MutualInformationResult(first_order, first_order_ci, second_order,
+        second_order_ci, total_order, total_order_ci)
 end
