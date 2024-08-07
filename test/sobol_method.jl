@@ -1,4 +1,4 @@
-using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq
+using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq, Random
 
 function ishi_batch(X)
     A = 7
@@ -22,10 +22,10 @@ function linear(X)
     A * X[1] + B * X[2]
 end
 
-n = 600000
+n = 524288
 lb = -ones(4) * π
 ub = ones(4) * π
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 19, rng = Random.default_rng()))
 A, B = QuasiMonteCarlo.generate_design_matrices(n, lb, ub, sampler)
 
 res1 = gsa(ishi, Sobol(order = [0, 1, 2]), A, B)
@@ -48,10 +48,7 @@ res1 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20), A, B)
                0.0 0.0 4.279200031668718e-5 1.2542212940962112e-5;
                0.0 0.0 0.0 -7.998213172266514e-7; 0.0 0.0 0.0 0.0] atol=1e-4
 @test res1.S1_Conf_Int≈[
-    0.00013100970128286063,
-    0.00014730548523359544,
-    7.398816006175431e-5,
-    0.0
+    0.00018057916212640867, 0.0002327582551601999, 9.116874912775071e-5, 0.0
 ] atol=1e-4
 @test res1.ST_Conf_Int≈[
     5.657364947147881e-5,
@@ -94,7 +91,7 @@ ishigami.fun <- function(X) {
   B <- 0.1
   A * X[, 1] + B * X[, 2]
 }
-n <- 6000000
+n <- 524288
 X1 <- data.frame(matrix(runif(4 * n,-pi,pi), nrow = n))
 X2 <- data.frame(matrix(runif(4 * n,-pi,pi), nrow = n))
 sobol2007(ishigami.fun, X1, X2)

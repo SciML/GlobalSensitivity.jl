@@ -65,7 +65,7 @@ scatter(
 For the Sobol method, we can similarly do:
 
 ```@example ode
-m = gsa(f1, Sobol(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1000)
+m = gsa(f1, Sobol(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1024)
 ```
 
 ## Direct Use of Design Matrices
@@ -76,10 +76,10 @@ we use [QuasiMonteCarlo.jl](https://docs.sciml.ai/QuasiMonteCarlo/stable/) to ge
 as follows:
 
 ```@example ode
-samples = 500
+samples = 512
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 9, rng = _rng))
 A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
 ```
 

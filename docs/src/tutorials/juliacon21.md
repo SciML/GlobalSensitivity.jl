@@ -5,7 +5,7 @@ We showcase how to use multiple GSA methods, analyze their results and leverage 
 perform Global Sensitivity analysis at scale.
 
 ```@example lv
-using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
+using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie, Random
 
 function f(du, u, p, t)
     du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
@@ -54,7 +54,7 @@ fig
 ```
 
 ```@example lv
-sobol_sens = gsa(f1, Sobol(), bounds, samples = 500)
+sobol_sens = gsa(f1, Sobol(), bounds, samples = 512)
 efast_sens = gsa(f1, eFAST(), bounds, samples = 500)
 ```
 
@@ -94,10 +94,10 @@ fig
 
 ```@example lv
 using QuasiMonteCarlo
-samples = 500
+samples = 512
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 9, rng = _rng))
 A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
 sobol_sens_desmat = gsa(f1, Sobol(), A, B)
 
@@ -129,7 +129,7 @@ f1 = function (p)
     prob1 = remake(prob; p = p)
     sol = solve(prob1, Tsit5(); saveat = t)
 end
-sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples = 500)
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples = 512)
 fig = Figure(resolution = (600, 400))
 ax, hm = CairoMakie.scatter(
     fig[1, 1], sobol_sens.S1[1][1, 2:end], label = "Prey", markersize = 4)
