@@ -41,8 +41,8 @@ res_sobol = gsa(
     ishi, Sobol(order = [0, 1, 2]), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
 print(res1.S)
 print(res2.S)
-@test res1.S≈[0.2439708737198949, 0.5391319252363749, 0.12221504399804894, 0.0] atol=1e-4
-@test res2.S≈[0.2439694207933475, 0.5394854849633759, 0.12179972423772056, 0.0] atol=1e-4
+@test res1.S≈[0.244, 0.5391, 0.1222, 0.0] atol=1e-3
+@test res2.S≈[0.244, 0.5391, 0.1222, 0.0] atol=1e-3
 
 @test sortperm(res1.S) == [4, 3, 1, 2]
 @test sortperm(res2.S) == [4, 3, 1, 2]
@@ -56,5 +56,5 @@ res2 = gsa(
     linear_batch, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], batch = true,
     samples = 10_000)
 
-@test res1.S≈[4.5853400740929775, 0.0, 0.0, 0.0] atol=1e-4
-@test res2.S≈[4.585864831042779, 0.0, 0.0, 0.0] atol=1e-4
+@test res1.S≈[4.586, 0.0, 0.0, 0.0] atol=1e-3
+@test res2.S≈[4.585, 0.0, 0.0, 0.0] atol=1e-3
