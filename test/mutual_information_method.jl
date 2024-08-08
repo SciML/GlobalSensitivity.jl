@@ -11,6 +11,12 @@ function ishi(X)
     sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
 end
 
+function linear_int(X)
+    A = 7
+    B = 5.0
+    A * X[1] + B * X[2] * X[3]
+end
+
 function linear_batch(X)
     A = 7
     B = 0.1
@@ -26,31 +32,23 @@ lb = -ones(4) * π
 ub = ones(4) * π
 
 res1 = gsa(
-    ishi, MutualInformation(order = [0, 1, 2]), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
+    ishi, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
 
 res2 = gsa(
-    ishi_batch, MutualInformation(order = [0, 1, 2]), [[lb[i], ub[i]] for i in 1:4],
-    samples = 10_000, batch = true)
+    ishi_batch, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], samples = 10_000, batch = true)
 
-res1.S1_Conf_Int
+res_sobol = gsa(
+    ishi, Sobol(order = [0, 1, 2]), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
+print(res1.S)
+print(res2.S)
+@test res1.S≈[0.2439708737198949, 0.5391319252363749, 0.12221504399804894, 0.0] atol=1e-4
+@test res2.S≈[0.2439694207933475, 0.5394854849633759, 0.12179972423772056, 0.0] atol=1e-4
 
-@test res1.S1≈[0.1416, 0.1929, 0.1204, 0.0925] atol=1e-3
-@test [0.09, 0.09, 0.09, 0.09] <= res1.S1_Conf_Int[:, 1] <= [0.1, 0.1, 0.1, 0.1]
-@test res2.S1≈[0.1416, 0.1929, 0.1204, 0.0925] atol=1e-3
-@test [0.09, 0.09, 0.09, 0.09] <= res2.S1_Conf_Int[:, 1] <= [0.1, 0.1, 0.1, 0.1]
+@test sortperm(res1.S) == [4, 3, 1, 2]
+@test sortperm(res2.S) == [4, 3, 1, 2]
 
-@test sortperm(res1.ST) == [4, 3, 1, 2]
-@test sortperm(res2.ST) == [4, 3, 1, 2]
-
-@test res1.S2≈[0.0 0.576849 0.656412 0.681677
-               0.576849 0.0 0.609111 0.615966
-               0.656412 0.609111 0.0 0.661516
-               0.681677 0.615966 0.661516 0.0] atol=1e-2
-
-@test res2.S2≈[0.0 0.576849 0.656412 0.681677
-               0.576849 0.0 0.609111 0.615966
-               0.656412 0.609111 0.0 0.661516
-               0.681677 0.615966 0.661516 0.0] atol=1e-2
+@test sortperm(res1.S) == sortperm(abs.(res_sobol.S1))
+@test sortperm(res2.S) == sortperm(abs.(res_sobol.S1))
 
 res1 = gsa(
     linear, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
@@ -58,5 +56,5 @@ res2 = gsa(
     linear_batch, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], batch = true,
     samples = 10_000)
 
-@test res1.S1≈[0.8155, 0.08997, 0.09096, 0.09747] atol=1e-3
-@test res2.S1≈[0.8155, 0.08997, 0.09096, 0.09747] atol=1e-3
+@test res1.S≈[4.5853400740929775, 0.0, 0.0, 0.0] atol=1e-4
+@test res2.S≈[4.585864831042779, 0.0, 0.0, 0.0] atol=1e-4

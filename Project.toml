@@ -24,7 +24,7 @@ Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 [compat]
 Aqua = "0.8"
 Combinatorics = "1"
-ComplexityMeasures = "3.6"
+ComplexityMeasures = "3.6.6"
 Copulas = "0.1.22"
 Distributions = "0.25.87"
 FFTW = "1.3"
