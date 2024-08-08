@@ -41,8 +41,10 @@ res_sobol = gsa(
     ishi, Sobol(order = [0, 1, 2]), [[lb[i], ub[i]] for i in 1:4], samples = 10_000)
 print(res1.mutual_information)
 
-@test res1.mutual_information≈[0.8149166301300568, 1.1100302491434046, 0.6926030791690287, 0.5325449915119265] atol=1e-3
-@test res2.mutual_information≈[0.8149166301300568, 1.1100302491434046, 0.6926030791690287, 0.5325449915119265] atol=1e-3
+@test res1.mutual_information≈[
+    0.8149166301300568, 1.1100302491434046, 0.6926030791690287, 0.5325449915119265] atol=1e-3
+@test res2.mutual_information≈[
+    0.8149166301300568, 1.1100302491434046, 0.6926030791690287, 0.5325449915119265] atol=1e-3
 
 @test sortperm(res1.S) == [4, 3, 1, 2]
 @test sortperm(res2.S) == [4, 3, 1, 2]
@@ -56,5 +58,7 @@ res2 = gsa(
     linear_batch, MutualInformation(), [[lb[i], ub[i]] for i in 1:4], batch = true,
     samples = 10_000)
 
-@test res1.mutual_information≈[5.413269699769483, 0.5971993581613084, 0.6037656606447346, 0.6470271152889264] atol=1e-3
-@test res2.mutual_information≈[5.413269699769483, 0.5971993581613084, 0.6037656606447346, 0.6470271152889264] atol=1e-3
+@test res1.mutual_information≈[
+    5.413269699769483, 0.5971993581613084, 0.6037656606447346, 0.6470271152889264] atol=1e-3
+@test res2.mutual_information≈[
+    5.413269699769483, 0.5971993581613084, 0.6037656606447346, 0.6470271152889264] atol=1e-3

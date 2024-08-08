@@ -102,7 +102,7 @@ function _compute_bounds(Xi, Y, conf_level, n_bootstraps)
     for i in 1:n_bootstraps
         shuffle!(Y_perm)
         mi_values[i] = entropy_Xi + entropy_Y -
-                             entropy(est, StateSpaceSet(Xi, Y_perm))
+                       entropy(est, StateSpaceSet(Xi, Y_perm))
     end
 
     return quantile(mi_values, conf_level)
@@ -126,7 +126,7 @@ function _compute_mi(X::AbstractArray, Y::AbstractVector, method::MutualInformat
     @inbounds for i in 1:K
         Xi = @view X[i, :]
         sensitivities[i] = entropy(est, Xi) + entropy_Y -
-                                entropy(est, StateSpaceSet(Xi, Y))
+                           entropy(est, StateSpaceSet(Xi, Y))
         bounds[i] = _compute_bounds(Xi, Y, method.conf_level, method.n_bootstraps)
     end
 
