@@ -152,9 +152,9 @@ function gsa(f, method::MutualInformation, p_range; samples, batch = false)
         end
     end
 
-    mutual_informations, bounds = _compute_mi(X, Y, method)
+    mutual_information_values, bounds = _compute_mi(X, Y, method)
 
-    mi_sensitivity = max.(0.0, mutual_informations .- bounds)
+    mi_sensitivity = max.(0.0, mutual_information_values .- bounds)
 
-    return MutualInformationResult(mi_sensitivity, mutual_informations, bounds)
+    return MutualInformationResult(mi_sensitivity, mutual_information_values, bounds)
 end
