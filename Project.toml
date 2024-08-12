@@ -1,10 +1,11 @@
 name = "GlobalSensitivity"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
 authors = ["Vaibhavdixit02 <vaibhavyashdixit@gmail.com>"]
-version = "2.6.2"
+version = "2.7.0"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+ComplexityMeasures = "ab4b797d-85ee-42ba-b621-05d793b346a2"
 Copulas = "ae264745-0b69-425e-9d9d-cf662c5eec93"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
@@ -23,6 +24,7 @@ Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 [compat]
 Aqua = "0.8"
 Combinatorics = "1"
+ComplexityMeasures = "3.6"
 Copulas = "0.1.22"
 Distributions = "0.25.87"
 FFTW = "1.3"
