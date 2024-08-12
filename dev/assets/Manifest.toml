@@ -368,6 +368,12 @@ deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.1.1+0"
 
+[[deps.ComplexityMeasures]]
+deps = ["Combinatorics", "DelayEmbeddings", "Distances", "FFTW", "LinearAlgebra", "Neighborhood", "QuadGK", "Random", "Reexport", "SparseArrays", "SpecialFunctions", "StateSpaceSets", "StaticArrays", "Statistics", "StatsBase", "StatsFuns", "Wavelets"]
+git-tree-sha1 = "e5235a09ab602ac2d394dd3b3d9cb7789e255887"
+uuid = "ab4b797d-85ee-42ba-b621-05d793b346a2"
+version = "3.6.6"
+
 [[deps.CompositeTypes]]
 git-tree-sha1 = "bce26c3dab336582805503bed209faab1c279768"
 uuid = "b152e2b5-7a66-4b01-a709-34e65c35f657"
@@ -487,6 +493,12 @@ deps = ["AdaptivePredicates", "EnumX", "ExactPredicates", "Random"]
 git-tree-sha1 = "b5f1c6532d2ea71e99b74231b0a3d53fba846ced"
 uuid = "927a84f5-c5f4-47a5-9785-b46e178433df"
 version = "1.1.3"
+
+[[deps.DelayEmbeddings]]
+deps = ["Distances", "Distributions", "LinearAlgebra", "Neighborhood", "Random", "Reexport", "StateSpaceSets", "Statistics", "StatsBase"]
+git-tree-sha1 = "c6212fdc1cfacc78a5c537aea0a16b961a0239f4"
+uuid = "5732040d-69e3-5649-938a-b6b4f237613f"
+version = "2.7.4"
 
 [[deps.DelimitedFiles]]
 deps = ["Mmap"]
@@ -1066,10 +1078,10 @@ uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
 version = "2.80.2+0"
 
 [[deps.GlobalSensitivity]]
-deps = ["Combinatorics", "Copulas", "Distributions", "FFTW", "ForwardDiff", "KernelDensity", "LinearAlgebra", "Parameters", "QuasiMonteCarlo", "Random", "RecursiveArrayTools", "Statistics", "StatsBase", "ThreadsX", "Trapz"]
+deps = ["Combinatorics", "ComplexityMeasures", "Copulas", "Distributions", "FFTW", "ForwardDiff", "KernelDensity", "LinearAlgebra", "Parameters", "QuasiMonteCarlo", "Random", "RecursiveArrayTools", "Statistics", "StatsBase", "ThreadsX", "Trapz"]
 path = "/home/runner/work/GlobalSensitivity.jl/GlobalSensitivity.jl"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
-version = "2.6.2"
+version = "2.7.0"
 
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
@@ -1921,6 +1933,18 @@ version = "1.2.2"
     Requires = "ae029012-a4dd-5104-9daa-d747884805df"
     Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 
+[[deps.NearestNeighbors]]
+deps = ["Distances", "StaticArrays"]
+git-tree-sha1 = "91a67b4d73842da90b526011fa85c5c4c9343fe0"
+uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
+version = "0.4.18"
+
+[[deps.Neighborhood]]
+deps = ["Distances", "NearestNeighbors", "Random", "Test"]
+git-tree-sha1 = "fdea60ca30d724e76cc3b3d90d7f9d29d3d5cab5"
+uuid = "645ca80c-8b79-4109-87ea-e1f58159d116"
+version = "0.2.4"
+
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
 git-tree-sha1 = "d92b107dbb887293622df7697a2223f9f8176fcd"
@@ -2766,6 +2790,12 @@ git-tree-sha1 = "46e589465204cd0c08b4bd97385e4fa79a0c770c"
 uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
 
+[[deps.StateSpaceSets]]
+deps = ["Distances", "LinearAlgebra", "Neighborhood", "Random", "StaticArraysCore", "Statistics"]
+git-tree-sha1 = "4654a6d9fa5df574deb2840ac904d57af701d26e"
+uuid = "40b095a5-5852-4c12-98c7-d43bf788e795"
+version = "1.5.0"
+
 [[deps.Static]]
 deps = ["CommonWorldInvalidations", "IfElse", "PrecompileTools"]
 git-tree-sha1 = "87d51a3ee9a4b0d2fe054bdd3fc2436258db2603"
@@ -3138,6 +3168,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Wayland_jll", "Xorg_libX11_jll", "
 git-tree-sha1 = "2f0486047a07670caad3a81a075d2e518acc5c59"
 uuid = "a44049a8-05dd-5a78-86c9-5fde0876e88c"
 version = "1.3.243+0"
+
+[[deps.Wavelets]]
+deps = ["DSP", "FFTW", "LinearAlgebra", "Reexport", "SpecialFunctions", "Statistics"]
+git-tree-sha1 = "f514f9b16f6a15552c6aad7b03afc7b9a8478ef4"
+uuid = "29a6e085-ba6d-5f35-a997-948ac2efa89a"
+version = "0.10.0"
 
 [[deps.Wayland_jll]]
 deps = ["Artifacts", "EpollShim_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg", "XML2_jll"]
