@@ -20,7 +20,7 @@ Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl
   [1dea7af3] OrdinaryDiffEq v6.89.0
   [91a5bcdd] Plots v1.40.8
   [8a4e6c94] QuasiMonteCarlo v0.3.3
-  [1ed8b502] SciMLSensitivity v7.66.1
+  [1ed8b502] SciMLSensitivity v7.67.0
   [860ef19b] StableRNGs v1.0.2
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.5
@@ -40,7 +40,7 @@ Environment:
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
-  [7d9f7c33] Accessors v0.1.37
+  [7d9f7c33] Accessors v0.1.38
   [79e6a3ab] Adapt v4.0.4
   [35492f91] AdaptivePredicates v1.1.1
   [66dad0bd] AliasTables v1.1.3
@@ -64,7 +64,7 @@ Environment:
   [159f3aea] Cairo v1.1.0
 ⌅ [13f3f980] CairoMakie v0.11.11
   [7057c7e9] Cassette v0.3.13
-  [082447d4] ChainRules v1.69.0
+  [082447d4] ChainRules v1.70.0
   [d360d2e6] ChainRulesCore v1.24.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.6
@@ -95,11 +95,11 @@ Environment:
   [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
-  [927a84f5] DelaunayTriangulation v1.2.0
+  [927a84f5] DelaunayTriangulation v1.3.1
   [5732040d] DelayEmbeddings v2.7.4
   [8bb1440f] DelimitedFiles v1.9.1
   [85a47980] Dictionaries v0.4.2
-  [2b5f629d] DiffEqBase v6.155.0
+  [2b5f629d] DiffEqBase v6.155.1
   [459566f4] DiffEqCallbacks v3.9.1
   [77a26b50] DiffEqNoiseProcess v5.23.0
   [163ba53b] DiffResults v1.1.0
@@ -148,7 +148,7 @@ Environment:
   [d9f16b24] Functors v0.4.12
   [0c68f7d7] GPUArrays v10.3.1
   [46192b85] GPUArraysCore v0.1.6
-  [61eb1bfa] GPUCompiler v0.27.5
+⌃ [61eb1bfa] GPUCompiler v0.27.5
   [28b8d3ca] GR v0.73.7
   [c145ed77] GenericSchur v0.5.4
   [68eda718] GeoFormatTypes v0.4.2
@@ -196,7 +196,7 @@ Environment:
   [2c470bb0] Kronecker v0.5.5
   [ba0b0d4f] Krylov v0.9.6
   [5be7bae1] LBFGSB v0.4.1
-  [929cbde3] LLVM v9.0.0
+⌅ [929cbde3] LLVM v9.0.0
   [b964fa9f] LaTeXStrings v1.3.1
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.5
@@ -219,7 +219,7 @@ Environment:
 ⌅ [20f20a25] MakieCore v0.7.3
   [af67fdf4] ManifoldDiff v0.3.12
 ⌅ [1cead3c2] Manifolds v0.9.20
-  [3362f125] ManifoldsBase v0.15.15
+  [3362f125] ManifoldsBase v0.15.16
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
@@ -258,14 +258,14 @@ Environment:
   [bac558e1] OrderedCollections v1.6.3
   [1dea7af3] OrdinaryDiffEq v6.89.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
-  [6ad6398a] OrdinaryDiffEqBDF v1.1.1
-  [bbf590c4] OrdinaryDiffEqCore v1.5.0
+  [6ad6398a] OrdinaryDiffEqBDF v1.1.2
+  [bbf590c4] OrdinaryDiffEqCore v1.6.0
   [50262376] OrdinaryDiffEqDefault v1.1.0
   [4302a76b] OrdinaryDiffEqDifferentiation v1.1.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
   [e0540318] OrdinaryDiffEqExponentialRK v1.1.0
   [becaefa8] OrdinaryDiffEqExtrapolation v1.1.0
-  [5960d6e9] OrdinaryDiffEqFIRK v1.1.0
+  [5960d6e9] OrdinaryDiffEqFIRK v1.1.1
   [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
@@ -273,7 +273,7 @@ Environment:
   [521117fe] OrdinaryDiffEqLinear v1.1.0
   [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
   [b0944070] OrdinaryDiffEqLowStorageRK v1.2.1
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.2.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.2.1
   [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
   [5dd0a6cf] OrdinaryDiffEqPDIRK v1.1.0
   [5b33eab2] OrdinaryDiffEqPRK v1.1.0
@@ -333,16 +333,16 @@ Environment:
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [37e2e3b7] ReverseDiff v1.15.3
-  [79098fc4] Rmath v0.7.1
-  [f2b01f46] Roots v2.1.8
+  [79098fc4] Rmath v0.8.0
+  [f2b01f46] Roots v2.2.0
   [5eaf0fd0] RoundingEmulator v0.2.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [fdea26ae] SIMD v3.5.0
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-  [0bca4576] SciMLBase v2.52.1
+  [0bca4576] SciMLBase v2.53.1
   [c0aeaf25] SciMLOperators v0.3.10
-  [1ed8b502] SciMLSensitivity v7.66.1
+  [1ed8b502] SciMLSensitivity v7.67.0
   [53ae85a6] SciMLStructures v1.5.0
   [6c6a2e73] Scratch v1.2.1
   [3cc68bcd] SetRounding v0.2.1
@@ -374,7 +374,7 @@ Environment:
   [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
-  [4c63d2b9] StatsFuns v1.3.1
+  [4c63d2b9] StatsFuns v1.3.2
   [7792a7ef] StrideArraysCore v0.5.7
   [09ab397b] StructArrays v0.6.18
   [53d494c1] StructIO v0.3.1
@@ -382,7 +382,7 @@ Environment:
   [2efcf032] SymbolicIndexingInterface v0.3.30
   [19f23fe9] SymbolicLimits v0.2.2
   [d1185830] SymbolicUtils v3.6.0
-  [0c5d862f] Symbolics v6.6.1
+  [0c5d862f] Symbolics v6.11.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
 ⌅ [6aa5eb33] TaylorSeries v0.17.8
@@ -443,8 +443,8 @@ Environment:
   [aacddb02] JpegTurbo_jll v3.0.3+0
   [c1c5ebd0] LAME_jll v3.100.2+0
 ⌅ [88015f11] LERC_jll v3.0.0+1
-  [dad2f222] LLVMExtra_jll v0.0.33+0
-  [1d63c593] LLVMOpenMP_jll v17.0.6+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.33+0
+  [1d63c593] LLVMOpenMP_jll v18.1.7+0
   [dd4b983a] LZO_jll v2.10.2+0
   [81d17ec3] L_BFGS_B_jll v3.0.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
@@ -467,7 +467,7 @@ Environment:
   [629bc702] Qt6Declarative_jll v6.7.1+2
   [ce943373] Qt6ShaderTools_jll v6.7.1+1
   [e99dba38] Qt6Wayland_jll v6.7.1+1
-⌅ [f50d1b31] Rmath_jll v0.4.3+0
+  [f50d1b31] Rmath_jll v0.5.1+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.31.0+0
@@ -566,4 +566,4 @@ Environment:
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Saturday 14 September 2024 09:19">Saturday 14 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Saturday 21 September 2024 08:57">Saturday 21 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
