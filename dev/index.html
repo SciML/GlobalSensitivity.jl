@@ -13,7 +13,7 @@ Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl
   [ae264745] Copulas v0.1.25
   [31c24e10] Distributions v0.25.112
   [e30172f5] Documenter v1.7.0
-  [587475ba] Flux v0.14.20
+  [587475ba] Flux v0.14.21
   [af5da776] GlobalSensitivity v2.7.0 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
 ⌅ [7f7a1694] Optimization v3.28.0
 ⌃ [42dfb2eb] OptimizationOptimisers v0.2.1
@@ -22,17 +22,16 @@ Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl
   [8a4e6c94] QuasiMonteCarlo v0.3.3
   [1ed8b502] SciMLSensitivity v7.68.0
   [860ef19b] StableRNGs v1.0.2
-  [10745b16] Statistics v1.10.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.10.5
-Commit 6f3fdf7b362 (2024-08-27 14:19 UTC)
+  [10745b16] Statistics v1.11.1
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.0
+Commit 501a4f25c2b (2024-10-07 11:40 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 4 × AMD EPYC 7763 64-Core Processor
   WORD_SIZE: 64
-  LIBM: libopenlibm
-  LLVM: libLLVM-15.0.7 (ORCJIT, znver3)
+  LLVM: libLLVM-16.0.6 (ORCJIT, znver3)
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
   JULIA_DEBUG = Documenter</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Manifest.toml`
@@ -95,7 +94,7 @@ Environment:
   [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
-  [927a84f5] DelaunayTriangulation v1.5.1
+  [927a84f5] DelaunayTriangulation v1.6.0
   [5732040d] DelayEmbeddings v2.8.0
   [8bb1440f] DelimitedFiles v1.9.1
   [85a47980] Dictionaries v0.4.2
@@ -137,7 +136,7 @@ Environment:
   [1a297f60] FillArrays v1.13.0
   [6a86dc24] FiniteDiff v2.24.0
   [53c48c17] FixedPointNumbers v0.8.5
-  [587475ba] Flux v0.14.20
+  [587475ba] Flux v0.14.21
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.36
   [b38be410] FreeType v4.1.1
@@ -157,7 +156,7 @@ Environment:
   [d7ba0133] Git v1.3.1
   [af5da776] GlobalSensitivity v2.7.0 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
   [a2bd30eb] Graphics v1.1.2
-  [86223c79] Graphs v1.11.2
+  [86223c79] Graphs v1.12.0
 ⌅ [3955a311] GridLayoutBase v0.10.2
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v1.10.8
@@ -191,14 +190,14 @@ Environment:
   [b835a17e] JpegTurbo v0.1.5
   [b14d175d] JuliaVariables v0.2.4
   [ef3ab10e] KLU v0.6.0
-⌃ [63c18a36] KernelAbstractions v0.9.26
+  [63c18a36] KernelAbstractions v0.9.28
   [5ab0869b] KernelDensity v0.6.9
   [2c470bb0] Kronecker v0.5.5
   [ba0b0d4f] Krylov v0.9.6
   [5be7bae1] LBFGSB v0.4.1
 ⌅ [929cbde3] LLVM v9.0.0
   [b964fa9f] LaTeXStrings v1.3.1
-  [984bce1d] LambertW v0.4.6
+⌅ [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.5
   [73f95e8e] LatticeRules v0.0.1
   [10f19ff3] LayoutPointers v0.1.17
@@ -219,7 +218,7 @@ Environment:
 ⌅ [20f20a25] MakieCore v0.7.3
   [af67fdf4] ManifoldDiff v0.3.12
 ⌅ [1cead3c2] Manifolds v0.9.20
-  [3362f125] ManifoldsBase v0.15.16
+  [3362f125] ManifoldsBase v0.15.17
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
@@ -243,7 +242,7 @@ Environment:
   [b8a86587] NearestNeighbors v0.4.20
   [645ca80c] Neighborhood v0.2.4
   [f09324ee] Netpbm v1.1.1
-  [8913a72c] NonlinearSolve v3.14.0
+⌃ [8913a72c] NonlinearSolve v3.14.0
   [d8793406] ObjectFile v0.4.2
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.14.1
@@ -340,7 +339,7 @@ Environment:
   [fdea26ae] SIMD v3.6.0
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-  [0bca4576] SciMLBase v2.54.1
+  [0bca4576] SciMLBase v2.55.0
   [c0aeaf25] SciMLOperators v0.3.10
   [1ed8b502] SciMLSensitivity v7.68.0
   [53ae85a6] SciMLStructures v1.5.0
@@ -361,7 +360,7 @@ Environment:
   [a2af1166] SortingAlgorithms v1.2.1
 ⌃ [47a9eef4] SparseDiffTools v2.20.0
   [dc90abb0] SparseInverseSubset v0.1.2
-  [0a514795] SparseMatrixColorings v0.4.2
+  [0a514795] SparseMatrixColorings v0.4.6
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.4.0
   [171d559e] SplittablesBase v0.1.15
@@ -372,6 +371,7 @@ Environment:
   [0d7ed370] StaticArrayInterface v1.8.0
   [90137ffa] StaticArrays v1.9.7
   [1e83bf80] StaticArraysCore v1.4.3
+  [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.2
@@ -435,7 +435,7 @@ Environment:
   [d2c73de3] GR_jll v0.73.7+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.46.2+0
-  [7746bdde] Glib_jll v2.80.2+0
+  [7746bdde] Glib_jll v2.80.5+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v8.3.1+0
   [905a6f67] Imath_jll v3.1.11+0
@@ -517,53 +517,53 @@ Environment:
 ⌅ [1270edf5] x264_jll v2021.5.5+0
 ⌅ [dfaa095f] x265_jll v3.5.0+0
   [d8fb68d0] xkbcommon_jll v1.4.1+1
-  [0dad84c5] ArgTools v1.1.1
-  [56f22d72] Artifacts
-  [2a0f44e3] Base64
-  [8bf52ea8] CRC32c
-  [ade2ca70] Dates
-  [8ba89e20] Distributed
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [8bf52ea8] CRC32c v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
   [f43a241f] Downloads v1.6.0
-  [7b1f6079] FileWatching
-  [9fa8497b] Future
-  [b77e0a4c] InteractiveUtils
-  [4af54fe1] LazyArtifacts
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [4af54fe1] LazyArtifacts v1.11.0
   [b27032c2] LibCURL v0.6.4
-  [76f85450] LibGit2
-  [8f399da3] Libdl
-  [37e2e46d] LinearAlgebra
-  [56ddb016] Logging
-  [d6f4376e] Markdown
-  [a63ad114] Mmap
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.11.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.10.0
-  [de0858da] Printf
-  [3fa0cd96] REPL
-  [9a3f8284] Random
+  [44cfe95a] Pkg v1.11.0
+  [de0858da] Printf v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
   [ea8e919c] SHA v0.7.0
-  [9e88b42a] Serialization
-  [1a1011a3] SharedArrays
-  [6462fe0b] Sockets
-  [2f01184e] SparseArrays v1.10.0
-  [10745b16] Statistics v1.10.0
+  [9e88b42a] Serialization v1.11.0
+  [1a1011a3] SharedArrays v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.11.0
+  [f489334b] StyledStrings v1.11.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
   [a4e569a6] Tar v1.10.0
-  [8dfed614] Test
-  [cf7118a7] UUIDs
-  [4ec0a83e] Unicode
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
   [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
-  [deac9b47] LibCURL_jll v8.4.0+0
-  [e37daf67] LibGit2_jll v1.6.4+0
+  [deac9b47] LibCURL_jll v8.6.0+0
+  [e37daf67] LibGit2_jll v1.7.2+0
   [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+1
-  [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+4
+  [c8ffd9c3] MbedTLS_jll v2.28.6+0
+  [14a3606d] MozillaCACerts_jll v2023.12.12
+  [4536629a] OpenBLAS_jll v0.3.27+1
   [05823500] OpenLibm_jll v0.8.1+2
   [efcefdf7] PCRE2_jll v10.42.0+1
-  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [bea87d4a] SuiteSparse_jll v7.7.0+0
   [83775a58] Zlib_jll v1.2.13+1
   [8e850b90] libblastrampoline_jll v5.11.0+0
-  [8e850ede] nghttp2_jll v1.52.0+1
+  [8e850ede] nghttp2_jll v1.59.0+0
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Saturday 5 October 2024 09:02">Saturday 5 October 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.7.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Saturday 12 October 2024 08:38">Saturday 12 October 2024</span>. Using Julia version 1.11.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
