@@ -46,10 +46,14 @@ by dividing other terms in the variance decomposition by `` Var(Y) ``.
 - `:Jansen1999` - [M.J.W. Jansen, 1999, Analysis of variance designs for model output, Computer Physics Communi- cation, 117, 35–43.](https://www.sciencedirect.com/science/article/abs/pii/S0010465598001544)
 - `:Janon2014` - [Janon, A., Klein, T., Lagnoux, A., Nodet, M., & Prieur, C. (2014). Asymptotic normality and efficiency of two Sobol index estimators. ESAIM: Probability and Statistics, 18, 342-364.](https://arxiv.org/abs/1303.6451)
 
+!!! note
+
+    Sobol sampling should be done with $2^k$ points and randomization, take a look at the docs for [QuasiMonteCarlo](https://docs.sciml.ai/QuasiMonteCarlo/stable/randomization/). If the number of samples is not a power of 2, the number of sample points will be changed to the next power of 2.
+
 ### Example
 
 ```julia
-using GlobalSensitivity, QuasiMonteCarlo
+using GlobalSensitivity, QuasiMonteCarlo, Random
 
 function ishi(X)
     A= 7
@@ -57,10 +61,10 @@ function ishi(X)
     sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
 end
 
-samples = 600000
+samples = 524288
 lb = -ones(4)*π
 ub = ones(4)*π
-sampler = SobolSample()
+sampler = SobolSample(; R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = 19, rng = Random.default_rng()))
 A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 
 res1 = gsa(ishi,Sobol(order=[0,1,2]),A,B)
@@ -342,10 +346,18 @@ function gsa_sobol_all_y_analysis(method, all_y::AbstractArray{T}, d, n, Ei_esti
         nboot > 1 ? reshape(ST_CI, size_...) : nothing)
 end
 
-function gsa(f, method::Sobol, p_range::AbstractVector; samples, kwargs...)
+function gsa(f, method::Sobol, p_range::AbstractVector; samples,
+        rng::AbstractRNG = Random.default_rng(), kwargs...)
+    samples2n = nextpow(2, samples)
+    if samples2n != samples
+        samples = samples2n
+        @warn "Passed samples is not a power of 2, number of sample points changed to $samples"
+    end
+    log2num = round(Int, log2(samples))
     AB = QuasiMonteCarlo.generate_design_matrices(samples, [i[1] for i in p_range],
         [i[2] for i in p_range],
-        QuasiMonteCarlo.SobolSample(),
+        QuasiMonteCarlo.SobolSample(;
+            R = QuasiMonteCarlo.OwenScramble(; base = 2, pad = log2num, rng)),
         2 * method.nboot)
     A = reduce(hcat, @view(AB[1:(method.nboot)]))
     B = reduce(hcat, @view(AB[(method.nboot + 1):end]))
