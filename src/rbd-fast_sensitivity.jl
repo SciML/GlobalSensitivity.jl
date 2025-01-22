@@ -60,7 +60,6 @@ and
 """
 
 using FFTW, Random, Statistics, StatsBase, Distributions
-allsame(x) = all(y -> y == first(x), x)
 
 function gsa(f, method::RBDFAST; num_params, samples,
         rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
