@@ -54,26 +54,26 @@ result_neuralode = Optimization.solve(optprob,
     callback = callback,
     maxiters = 300)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">retcode: Default
 u: 54-element Vector{Float32}:
-  1.9751247
-  0.794251
-  0.098090634
- -2.179044
-  0.06895189
- -0.34152472
-  2.4859715
- -2.0781085
- -1.0638136
-  3.3972695
+  1.9742761
+  0.6433492
+ -0.3111065
+  1.7862325
+  0.62868583
+ -2.4390972
+ -0.9702189
+ -0.1046
+  2.4888415
+  1.5642973
   ⋮
- -0.47533363
- -0.8566373
-  1.4632323
-  0.7363874
- -1.3032688
-  0.8911001
- -0.98243266
- -0.6594291
- -0.0315845</code></pre><p>Now we will use the Shapley method to understand the impact of each parameter on the resultant of the cost function. We will use the <code>Shapley</code> function from <code>GlobalSensitivity</code> to compute the so called Shapley Effects. We will first have to define some distributions for the parameters. We will use the standard <code>Normal</code> distribution for all the parameters.</p><p>First let&#39;s assume no correlation between the parameters. Hence the covariance matrix is passed as the identity matrix.</p><pre><code class="language-julia hljs">d = length(θ)
+  1.8908415
+ -0.43457317
+  0.6781624
+ -0.5610966
+ -0.35943064
+  1.0367165
+ -0.40755618
+ -0.9719378
+ -0.435248</code></pre><p>Now we will use the Shapley method to understand the impact of each parameter on the resultant of the cost function. We will use the <code>Shapley</code> function from <code>GlobalSensitivity</code> to compute the so called Shapley Effects. We will first have to define some distributions for the parameters. We will use the standard <code>Normal</code> distribution for all the parameters.</p><p>First let&#39;s assume no correlation between the parameters. Hence the covariance matrix is passed as the identity matrix.</p><pre><code class="language-julia hljs">d = length(θ)
 mu = zeros(Float32, d)
 #covariance matrix for the copula
 Covmat = Matrix(1.0f0 * I, d, d)
@@ -99,7 +99,7 @@ end
 
 shapley_effects = gsa(
     batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 10),
-    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.06358877348683271, 0.0637062036559604, -0.06142407236320032, 0.03361598314440761, 0.026858908675042585, 0.004580888082349295, 0.06004172203377672, 0.04935113598822715, -0.04640471221005171, 0.011981009833703826  …  -0.042404843848123, -0.11057225616867289, -0.08467506455302107, 0.019061992757489512, -0.012583155840717713, 0.16684397124275502, 0.04954984007438241, 0.015697235060071865, -0.005484500440693433, 0.10297070516713347], [0.5493816610885695, 0.5477655440052434, 0.4286532347203387, 0.576311359576077, 0.42018758916248294, 0.4789340138360756, 0.44405585018084304, 0.4491489098789499, 0.46816379553054477, 0.5528826304769651  …  0.3916260260155425, 0.47217633163526296, 0.5213727512324131, 0.41444298801210055, 0.5477076191713133, 0.5762606994475236, 0.4898538755395878, 0.45363393000893365, 0.5673314030502267, 0.5323914504651878], [-1.0131992822467633, -1.0099142625943165, -0.9015844124150643, -1.0959542816247034, -0.796708766083424, -0.9341297790363589, -0.8103077443206756, -0.8309807273745147, -0.9640057514499194, -1.0716689459011477  …  -0.8099918548385864, -1.0360378661737883, -1.1065656569685507, -0.7932462637462275, -1.0860900894164918, -0.9626269996743912, -0.9105637559832096, -0.8734252677574381, -1.1174540504191377, -0.9405165377446346], [1.1403768292204288, 1.1373266699062372, 0.7787362676886636, 1.1631862479135187, 0.8504265834335092, 0.9432915552010573, 0.930391188388229, 0.929682999350969, 0.871196327029816, 1.0956309655685554  …  0.7251821671423403, 0.8148933538364425, 0.9372155278625086, 0.8313702492612066, 1.0609237777350564, 1.2963149421599012, 1.0096634361319745, 0.9048197378775817, 1.106485049537751, 1.1464579480789014])</code></pre><pre><code class="language-julia hljs">barplot(
+    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.1299105584470888, 0.24387377221946294, 0.3153777642633231, -0.043016727620325886, 0.1472750449991071, -0.23599243344797463, -0.08922437492693852, -0.11676422774101043, -0.21403664330462424, 0.14719691053063674  …  -0.07875012792611794, -0.11258830854564762, 0.14569711184390452, -0.1879272451087655, 0.212151135981869, 0.2079993349961704, 0.11479084932193304, -0.05730870456270319, -0.1096138355769494, -0.1953543492851139], [0.9434098145748525, 1.180952813673689, 1.2442504458902153, 1.1488795572839006, 1.0600740989020596, 0.8432406027087428, 0.9798206684187397, 0.8441569207752508, 0.9810520602458285, 2.5407664904821754  …  0.8267861285600999, 1.101639341546096, 0.9872117012422476, 0.9873818846733535, 1.4972033026541167, 1.059230162179152, 0.9838502933423707, 1.095729331074165, 1.0472529212605064, 0.839650991838638], [-1.7191726781196222, -2.070793742580968, -2.123353109681499, -2.294820659896771, -1.9304701888489295, -1.8887440147571104, -2.009672885027668, -1.771311792460502, -2.136898681386448, -4.832705410814427  …  -1.6992509399039137, -2.271801417975996, -1.7892378225909007, -2.1231957390685383, -2.7223673372202, -1.8680917828749677, -1.8135557256291137, -2.2049381934680663, -2.1622295612475417, -1.8410702932888445], [1.9789937950137997, 2.5585412870198936, 2.754108638208145, 2.208787204656119, 2.225020278847144, 1.4167591478611612, 1.8312241351737912, 1.5377833369784812, 1.7088253947771994, 5.1270992318757  …  1.5417506840516777, 2.0466248008847003, 2.08063204627871, 1.7473412488510074, 3.1466696091839377, 2.2840904528673085, 2.0431374242729796, 2.09032078434266, 1.943001890093643, 1.4503615947186166])</code></pre><pre><code class="language-julia hljs">barplot(
     1:54, shapley_effects.shapley_effects;
     color = :green,
     figure = (; size = (600, 400)),
@@ -110,7 +110,7 @@ shapley_effects = gsa(
         ylabel = &quot;Shapley Indices&quot;,
         limits = (nothing, (0.0, 0.2))
     )
-)</code></pre><img src="a4f1ba86.png" alt="Example block output"/><p>Now let&#39;s assume some correlation between the parameters. We will use a correlation of 0.09 between all the parameters.</p><pre><code class="language-julia hljs">Corrmat = fill(0.09f0, d, d)
+)</code></pre><img src="c5c50e15.png" alt="Example block output"/><p>Now let&#39;s assume some correlation between the parameters. We will use a correlation of 0.09 between all the parameters.</p><pre><code class="language-julia hljs">Corrmat = fill(0.09f0, d, d)
 for i in 1:d
     Corrmat[i, i] = 1.0f0
 end
@@ -120,7 +120,7 @@ copula = GaussianCopula(Corrmat)
 input_distribution = SklarDist(copula, marginals)
 shapley_effects = gsa(
     batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 100),
-    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([NaN, 0.07688595856279376, -0.03460102856078512, 0.029911205090447122, 0.01892833628209568, 0.02232654530156181, 0.031698747487002576, 0.002715183971047447, 0.06359174051427231, 0.027802760072958184  …  -0.02024108152404424, 0.01820443439592577, 0.04728271250693575, 0.019955495175998737, 0.04454780042072267, 0.042341974983446426, -0.031888906250990896, 0.019530409396649177, 0.04314244724834349, 0.061693249041718266], [NaN, 0.1945483233378265, 0.16671671836985338, 0.2044941889809907, 0.19391768248989782, 0.2518009938817306, 0.16154117829186668, 0.21800391576092507, 0.19364024327298746, 0.1906847927215383  …  0.17001764284056378, 0.266875650203321, 0.21434698721532666, 0.21668603168338843, 0.18760316761271936, 0.21370478397039844, 0.205493991875653, 0.20451442201895223, 0.21525975710957682, 0.24450622289801405], [NaN, -0.3044287551793462, -0.36136579656569773, -0.3708974053122946, -0.36115032139810405, -0.4712034027066302, -0.2849219619650561, -0.42457249092036564, -0.31594313630078313, -0.34593943366125685  …  -0.35347566149154924, -0.5048718400025833, -0.37283738243510445, -0.40474912692344256, -0.3231544081002073, -0.3765194015985345, -0.43465713032727077, -0.3813178577604972, -0.37876667668642705, -0.4175389478383893], [NaN, 0.45820067230493366, 0.2921637394441275, 0.4307198154931889, 0.3990069939622954, 0.5158564933097538, 0.34831945693906124, 0.4300028588624606, 0.44312661732932773, 0.4015449538071732  …  0.31299349844346075, 0.5412807087944349, 0.467402807448976, 0.4446601172754401, 0.4122500089416526, 0.46120335156542736, 0.370879317825289, 0.42037867655379557, 0.465051571183114, 0.5409254459218258])</code></pre><pre><code class="language-julia hljs">barplot(
+    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.03500726725283395, 0.07035382850509696, 0.05791156759522795, 0.057718088737653044, -0.008271639771618067, 0.02199197169109371, -0.008053261848649289, 0.06147054124894174, 0.016882581430629276, -0.01581253876283352  …  0.012934141256773238, 0.03350326141666329, 0.07394753109258541, 0.005586231899610684, -0.041028727951897936, -0.008773002079853024, 0.033108590448356144, 0.020692488705354374, 0.020661767319135212, 0.0607241722467012], [0.17997378819721316, 0.1741609505541888, 0.21514741794436779, 0.21740949235198123, 0.17966822655483689, 0.1854767647775041, 0.18930293583856553, 0.22242769318216854, 0.18726351822294648, 0.1675262728410929  …  0.1961370821058951, 0.18690002118110496, 0.17820872550743394, 0.21125679336511857, 0.1615048063286469, 0.18497563939715583, 0.19513004368104778, 0.1654148812377551, 0.1592300355417999, 0.1627711229366003], [-0.31774135761370387, -0.27100163458111304, -0.36377737157573287, -0.36840451627223014, -0.36042136381909834, -0.34154248727281433, -0.3790870160922377, -0.3744877373881086, -0.35015391428634585, -0.3441640335313756  …  -0.37149453967078117, -0.33282078009830246, -0.27534157090198513, -0.4084770830960217, -0.35757814835604584, -0.3713252552982785, -0.3493462951664975, -0.3035206785206456, -0.29142910234279257, -0.2583072287090354], [0.3877558921193717, 0.411709291591307, 0.4796005067661888, 0.48384069374753624, 0.34387808427586225, 0.3855264306550017, 0.3629804923949391, 0.4974288198859921, 0.38391907714760437, 0.3125389560057086  …  0.3973628221843276, 0.399827302931629, 0.4232366330871559, 0.41964954689524303, 0.27552069245224997, 0.3537792511385724, 0.41556347606320976, 0.3449056559313544, 0.332752636981063, 0.37975557320243775])</code></pre><pre><code class="language-julia hljs">barplot(
     1:54, shapley_effects.shapley_effects;
     color = :green,
     figure = (; size = (600, 400)),
@@ -131,4 +131,4 @@ shapley_effects = gsa(
         ylabel = &quot;Shapley Indices&quot;,
         limits = (nothing, (0.0, 0.2))
     )
-)</code></pre><img src="1efe780c.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../juliacon21/">« Global Sensitivity Analysis of the Lotka-Volterra model</a><a class="docs-footer-nextpage" href="../../methods/morris/">Morris Method »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Saturday 18 January 2025 08:32">Saturday 18 January 2025</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><img src="3549bd90.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../juliacon21/">« Global Sensitivity Analysis of the Lotka-Volterra model</a><a class="docs-footer-nextpage" href="../../methods/morris/">Morris Method »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Wednesday 22 January 2025 10:35">Wednesday 22 January 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
