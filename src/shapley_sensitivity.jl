@@ -221,8 +221,8 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
                             (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
                 sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[
-                    idx_perm_sorted,
-                    :]
+                idx_perm_sorted,
+                :]
             end
         end
     end

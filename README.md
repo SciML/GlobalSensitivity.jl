@@ -96,7 +96,8 @@ bounds = [[1, 5], [1, 5], [1, 5], [1, 5]]
 
 reg_sens = gsa(f1, RegressionGSA(true), bounds)
 fig = Figure(resolution = (600, 400))
-ax, hm = CairoMakie.heatmap(fig[1, 1], reg_sens.partial_correlation,
+ax,
+hm = CairoMakie.heatmap(fig[1, 1], reg_sens.partial_correlation,
     figure = (resolution = (300, 200),),
     axis = (xticksvisible = false,
         yticksvisible = false,
@@ -104,7 +105,8 @@ ax, hm = CairoMakie.heatmap(fig[1, 1], reg_sens.partial_correlation,
         xticklabelsvisible = false,
         title = "Partial correlation"))
 Colorbar(fig[1, 2], hm)
-ax, hm = CairoMakie.heatmap(fig[2, 1], reg_sens.standard_regression,
+ax,
+hm = CairoMakie.heatmap(fig[2, 1], reg_sens.standard_regression,
     figure = (resolution = (300, 200),),
     axis = (xticksvisible = false,
         yticksvisible = false,
