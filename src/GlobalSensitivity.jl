@@ -1,6 +1,6 @@
 module GlobalSensitivity
 
-using Statistics, RecursiveArrayTools, LinearAlgebra, Random
+using BasicStats, RecursiveArrayTools, LinearAlgebra, Random
 using QuasiMonteCarlo, ForwardDiff, KernelDensity, Trapz
 using Parameters: @unpack
 using FFTW, Distributions, StatsBase
