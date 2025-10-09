@@ -35,8 +35,7 @@ ode_data = Array(solve(prob, Tsit5(), saveat = t))
 
 Now we will define our Neural Network for the dynamics of the system. We will use
 a 2-layer neural network with 10 hidden units in the first layer and the second layer.
-We will use the `Chain` function from `Flux` to define our NN. A detailed tutorial on
-is available [here](https://docs.sciml.ai/SciMLSensitivity/stable/examples/neural_ode/neural_ode_flux/).
+We will use the `Chain` function from `Flux` to define our NN.
 
 ```@example shapley
 dudt2 = Flux.Chain(x -> x .^ 3,
