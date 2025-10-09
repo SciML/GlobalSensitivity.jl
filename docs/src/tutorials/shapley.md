@@ -103,7 +103,7 @@ function batched_loss_n_ode(θ)
     # The copula returns samples of `Float64`s
     θ = convert(AbstractArray{Float32}, θ)
     prob_func(prob, i, repeat) = remake(prob; u0 = θ[1:2, i], p = θ[3:end, i])
-    output_func(sol, i) = (sum(abs2, ode_data .- Matrix(sol.u)), false)
+    output_func(sol, i) = (sum(abs2, ode_data .- Matrix(sol)), false)
     ensemble_prob = EnsembleProblem(prob; prob_func, output_func)
     out = solve(
         ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(θ, 2))
