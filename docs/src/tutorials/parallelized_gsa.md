@@ -124,16 +124,12 @@ t = collect(range(0, stop = 10, length = 200))
 
 f1 = function (p)
     prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
+    output_func(sol, i) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
     ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
     sol = solve(
         ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(p, 2))
-    # Now sol[i] is the solution for the ith set of parameters
-    out = zeros(2, size(p, 2))
-    for i in 1:size(p, 2)
-        out[1, i] = mean(sol[i][1, :])
-        out[2, i] = maximum(sol[i][2, :])
-    end
-    out
+    out = reshape(sol, :, size(p, 2))
+    return out
 end
 ```
 
