@@ -97,7 +97,7 @@ Covmat = Matrix(1.0f0 * I, d, d)
 marginals = [Normal(mu[i]) for i in 1:d]
 
 copula = GaussianCopula(Covmat)
-input_distribution = SklarDist(copula, marginals)
+input_distribution = SklarDist(copula, Tuple(marginals))
 
 function batched_loss_n_ode(θ)
     # The copula returns samples of `Float64`s
@@ -144,7 +144,7 @@ end
 
 #since the marginals are standard normal the covariance matrix and correlation matrix are the same
 copula = GaussianCopula(Corrmat)
-input_distribution = SklarDist(copula, marginals)
+input_distribution = SklarDist(copula, Tuple(marginals))
 shapley_effects = gsa(
     batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 100),
     input_distribution, batch = true)
