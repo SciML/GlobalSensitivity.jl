@@ -135,7 +135,7 @@ end
 function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
         rng::AbstractRNG = Random.default_rng(), kwargs...)
     (; p_steps, relative_scale, num_trajectory, total_num_trajectory,
-    len_design_mat) = method
+        len_design_mat) = method
     if !(length(p_steps) == length(p_range))
         for i in 1:(length(p_range) - length(p_steps))
             push!(p_steps, 100)
