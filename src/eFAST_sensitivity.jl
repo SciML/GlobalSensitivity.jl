@@ -75,7 +75,7 @@ end
 function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
         distributed::Val{SHARED_ARRAY} = Val(false),
         rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
-    @unpack num_harmonics = method
+    (; num_harmonics) = method
     num_params = length(p_range)
     omega = [(samples - 1) ÷ (2 * num_harmonics)]
     m = omega[1] ÷ (2 * num_harmonics)
@@ -156,7 +156,7 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
 end
 function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
         ::Val{multioutput}) where {multioutput}
-    @unpack num_harmonics = method
+    (; num_harmonics) = method
     if multioutput
         size_ = size(all_y)
         first_order = Vector{Vector{eltype(all_y)}}(undef, num_params)
