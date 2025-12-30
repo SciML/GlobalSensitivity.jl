@@ -13,5 +13,6 @@ pages = [
         "methods/fractional.md",
         "methods/rbdfast.md",
         "methods/rsa.md",
+        "methods/shapley.md",
         "methods/mutualinformation.md"]
 ]

@@ -50,8 +50,8 @@ function ishi(X)
 end
 
 n = 600000
-lb = -ones(4) * π
-ub = ones(4) * π
+lb = -ones(3) * π
+ub = ones(3) * π
 sampler = SobolSample()
 A, B = QuasiMonteCarlo.generate_design_matrices(n, lb, ub, sampler)
 
