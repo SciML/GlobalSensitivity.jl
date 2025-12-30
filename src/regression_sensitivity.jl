@@ -6,7 +6,7 @@
 
 Providing this to `gsa` results in a calculation of the following statistics, provided as a `RegressionGSAResult`. If
 the function `f` to be analyzed is of dimensionality ``f: R^n -> R^m``, then these coefficients
-are returned as a matrix, with the corresponding statistic in the `(i, j)`` entry.
+are returned as a matrix, with the corresponding statistic in the `(i, j)` entry.
 
 - `pearson`: This is equivalent to the correlation coefficient matrix between input and output. The rank version is known as the Spearman coefficient.
 - `standard_regression`: Standard regression coefficients, also known as sigma-normalized derivatives
@@ -58,14 +58,14 @@ If `rank` is set to `true`, then the rank coefficients are also calculated.
 using GlobalSensitivity
 
 function linear_batch(X)
-    A= 7
-    B= 0.1
-    @. A*X[1,:]+B*X[2,:]
+    A = 7
+    B = 0.1
+    @. A * X[1, :] + B * X[2, :]
 end
 function linear(X)
-    A= 7
-    B= 0.1
-    A*X[1]+B*X[2]
+    A = 7
+    B = 0.1
+    A * X[1] + B * X[2]
 end
 
 p_range = [[-1, 1], [-1, 1]]

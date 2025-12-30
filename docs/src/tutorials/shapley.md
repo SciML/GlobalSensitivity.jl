@@ -42,7 +42,7 @@ dudt2 = Flux.Chain(x -> x .^ 3,
     Flux.Dense(2, 10, tanh),
     Flux.Dense(10, 2))
 p, re = Flux.destructure(dudt2) # use this p as the initial condition!
-dudt(u, p, t) = re(p)(u) # need to restrcture for backprop!
+dudt(u, p, t) = re(p)(u) # need to restructure for backprop!
 prob = ODEProblem(dudt, u0, tspan)
 
 θ = [u0; p] # the parameter vector to optimize
