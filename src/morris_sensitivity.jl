@@ -46,15 +46,15 @@ Morris method on Ishigami function
 using GlobalSensitivity
 
 function ishi(X)
-    A= 7
-    B= 0.1
-    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
+    A = 7
+    B = 0.1
+    sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
 end
 
-lb = -ones(4)*π
-ub = ones(4)*π
+lb = -ones(4) * π
+ub = ones(4) * π
 
-m = gsa(ishi, Morris(num_trajectory=500000), [[lb[i],ub[i]] for i in 1:4])
+m = gsa(ishi, Morris(num_trajectory = 500000), [[lb[i], ub[i]] for i in 1:4])
 ```
 """
 struct Morris <: GSAMethod
