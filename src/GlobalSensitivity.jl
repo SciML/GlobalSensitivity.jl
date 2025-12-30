@@ -44,7 +44,7 @@ res = gsa(X, Y, method)
 where:
 
 - `X` is the number of parameters * samples matrix with parameter values.
-- `Y` is the output dimension * number of samples matrix with are evaluated at `X`'s columns.
+- `Y` is the output dimension * number of samples matrix which are evaluated at `X`'s columns.
 - `method` is one of the GSA methods below.
 
 For [Sobol Method](@ref), one can use the following design matrices-based method instead of parameter range-based method discussed earlier:

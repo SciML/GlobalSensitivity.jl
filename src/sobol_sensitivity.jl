@@ -52,26 +52,26 @@ by dividing other terms in the variance decomposition by `` Var(Y) ``.
 using GlobalSensitivity, QuasiMonteCarlo
 
 function ishi(X)
-    A= 7
-    B= 0.1
-    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
+    A = 7
+    B = 0.1
+    sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
 end
 
 samples = 600000
-lb = -ones(4)*π
-ub = ones(4)*π
+lb = -ones(4) * π
+ub = ones(4) * π
 sampler = SobolSample()
-A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
+A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
 
-res1 = gsa(ishi,Sobol(order=[0,1,2]),A,B)
+res1 = gsa(ishi, Sobol(order = [0, 1, 2]), A, B)
 
 function ishi_batch(X)
-    A= 7
-    B= 0.1
-    @. sin(X[1,:]) + A*sin(X[2,:])^2+ B*X[3,:]^4 *sin(X[1,:])
+    A = 7
+    B = 0.1
+    @. sin(X[1, :]) + A * sin(X[2, :])^2 + B * X[3, :]^4 * sin(X[1, :])
 end
 
-res2 = gsa(ishi_batch,Sobol(),A,B,batch=true)
+res2 = gsa(ishi_batch, Sobol(), A, B, batch = true)
 ```
 """
 struct Sobol <: GSAMethod
