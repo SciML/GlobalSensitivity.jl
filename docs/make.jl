@@ -9,15 +9,21 @@ using Plots, CairoMakie
 
 include("pages.jl")
 
-makedocs(sitename = "GlobalSensitivity.jl",
+makedocs(
+    sitename = "GlobalSensitivity.jl",
     authors = "Vaibhav Kumar Dixit",
     modules = [GlobalSensitivity],
     clean = true, doctest = false, linkcheck = true,
     linkcheck_ignore = [r"https://www.sciencedirect.com/*"],
     warnonly = [:missing_docs],
-    format = Documenter.HTML(assets = ["assets/favicon.ico"],
-        canonical = "https://docs.sciml.ai/GlobalSensitivity/stable/"),
-    pages = pages)
+    format = Documenter.HTML(
+        assets = ["assets/favicon.ico"],
+        canonical = "https://docs.sciml.ai/GlobalSensitivity/stable/"
+    ),
+    pages = pages
+)
 
-deploydocs(repo = "github.com/SciML/GlobalSensitivity.jl";
-    push_preview = true)
+deploydocs(
+    repo = "github.com/SciML/GlobalSensitivity.jl";
+    push_preview = true
+)

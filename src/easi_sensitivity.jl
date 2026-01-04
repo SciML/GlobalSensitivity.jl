@@ -86,7 +86,7 @@ function _compute_first_order_fft(permuted_outputs, max_harmonic, samples)
     ys = abs2.(ft) .* inv(samples)
     V = 2 * sum(ys)
     Vi = 2 * sum(ys[(1:max_harmonic)])
-    Si = Vi / V
+    return Si = Vi / V
 end
 
 """
@@ -103,7 +103,7 @@ function _compute_first_order_dct(permuted_outputs, max_harmonic, samples)
     ft = dct(permuted_outputs)[2:end]
     V = sum(abs2, ft)
     Vi = sum(abs2, ft[(1:max_harmonic)])
-    Si = Vi / V
+    return Si = Vi / V
 end
 
 function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)

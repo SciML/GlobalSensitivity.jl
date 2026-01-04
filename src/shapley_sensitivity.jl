@@ -87,7 +87,7 @@ struct Shapley <: GSAMethod
 end
 
 function Shapley(; n_perms = -1, n_var, n_outer, n_inner = 3)
-    Shapley(n_perms, n_var, n_outer, n_inner)
+    return Shapley(n_perms, n_var, n_outer, n_inner)
 end
 
 mutable struct ShapleyResult{T1, T2}
@@ -97,10 +97,12 @@ mutable struct ShapleyResult{T1, T2}
     CI_upper::T1
 end
 
-function find_cond_mean_var(cov::Matrix,
+function find_cond_mean_var(
+        cov::Matrix,
         dependent_ind::Vector{Int},
         given_ind::Vector{Int},
-        X_given::Vector)
+        X_given::Vector
+    )
     """
     Find the conditional mean and variance of the given distribution
     """
@@ -118,22 +120,26 @@ function find_cond_mean_var(cov::Matrix,
     return conditional_mean, conditional_var
 end
 
-function cond_sampling(distribution::SklarDist{<:IndependentCopula},
+function cond_sampling(
+        distribution::SklarDist{<:IndependentCopula},
         n_sample::Int,
         idx::Vector{Int},
         idx_c::Vector{Int},
-        x_cond::AbstractArray)
+        x_cond::AbstractArray
+    )
     # conditional sampling in independent random vector is just subset sampling.
     samples = zeros(eltype(x_cond), length(idx), n_sample)
     rand!(Copulas.subsetdims(distribution, idx), samples)
     return samples
 end
 
-function cond_sampling(distribution::SklarDist{<:GaussianCopula},
+function cond_sampling(
+        distribution::SklarDist{<:GaussianCopula},
         n_sample::Int,
         idx::Vector{Int},
         idx_c::Vector{Int},
-        x_cond::AbstractArray)
+        x_cond::AbstractArray
+    )
 
     # select the correct marginal distributions for the two subsets of features
     margins_dependent = [distribution.m[Int(i)] for i in idx]
@@ -201,28 +207,33 @@ function gsa(f, method::Shapley, input_distribution::SklarDist; batch = false)
             # Complementary set
             idx_minus = perm[(j + 1):end]
             sample_complement = rand(
-                Copulas.subsetdims(input_distribution, idx_minus), n_outer)
+                Copulas.subsetdims(input_distribution, idx_minus), n_outer
+            )
 
             if size(sample_complement, 2) == 1
                 sample_complement = reshape(
-                    sample_complement, (1, length(sample_complement)))
+                    sample_complement, (1, length(sample_complement))
+                )
             end
 
             for l in 1:n_outer
                 curr_sample = @view sample_complement[:, l]
                 # Sampling of the set conditionally to the complementary element
-                xj = cond_sampling(input_distribution,
+                xj = cond_sampling(
+                    input_distribution,
                     n_inner,
                     idx_plus,
                     idx_minus,
-                    curr_sample)
+                    curr_sample
+                )
                 xx = [xj; repeat(curr_sample, 1, size(xj, 2))]
                 ind_inner = (i_p - 1) * (dim - 1) * n_outer * n_inner +
-                            (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
+                    (j - 1) * n_outer * n_inner + (l - 1) * n_inner # subtract 1 from all indices
                 ind_inner += 1
                 sample_B[:, ind_inner:(ind_inner + n_inner - 1)] = @view xx[
-                idx_perm_sorted,
-                :]
+                    idx_perm_sorted,
+                    :,
+                ]
             end
         end
     end

@@ -202,7 +202,7 @@ function ff_main_effects(design_matrix::AbstractArray, response_values::Abstract
     """
 
     num_rows, num_cols = size(design_matrix)
-    @assert num_rows==length(response_values) "Number of rows in design matrix must match number of responses"
+    @assert num_rows == length(response_values) "Number of rows in design matrix must match number of responses"
 
     main_effects = zeros(num_cols)
     for column in 1:num_cols

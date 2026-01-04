@@ -61,8 +61,10 @@ and
 
 using FFTW, Random, Statistics, StatsBase, Distributions
 
-function gsa(f, method::RBDFAST; num_params, samples,
-        rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...)
+function gsa(
+        f, method::RBDFAST; num_params, samples,
+        rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...
+    )
     # Initialize matrix containing range of values of the parametric variable
     # along each column (factor).
     s0 = range(-π, stop = π, length = samples)

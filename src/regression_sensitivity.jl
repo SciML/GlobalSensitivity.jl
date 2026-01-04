@@ -107,18 +107,22 @@ function gsa(X::AbstractArray, Y::AbstractArray, method::RegressionGSA)
         corr_rank = _calculate_correlation_matrix(X_rank, Y_rank)
         partials_rank = _calculate_partial_correlation_coefficients(X_rank, Y_rank)
 
-        return RegressionGSAResult(corr,
+        return RegressionGSAResult(
+            corr,
             srcs,
             partials,
             corr_rank,
             srcs_rank,
-            partials_rank)
+            partials_rank
+        )
     end
 
-    return RegressionGSAResult(corr,
+    return RegressionGSAResult(
+        corr,
         srcs,
         partials,
-        nothing, nothing, nothing)
+        nothing, nothing, nothing
+    )
 end
 
 function _calculate_standard_regression_coefficients(X, Y)

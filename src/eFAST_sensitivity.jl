@@ -72,9 +72,11 @@ struct eFASTResult{T1}
     ST::T1
 end
 
-function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
+function gsa(
+        f, method::eFAST, p_range::AbstractVector; samples::Int, batch = false,
         distributed::Val{SHARED_ARRAY} = Val(false),
-        rng::AbstractRNG = Random.default_rng(), kwargs...) where {SHARED_ARRAY}
+        rng::AbstractRNG = Random.default_rng(), kwargs...
+    ) where {SHARED_ARRAY}
     (; num_harmonics) = method
     num_params = length(p_range)
     omega = [(samples - 1) ÷ (2 * num_harmonics)]
@@ -114,26 +116,32 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
                 ps[j, l] .= p_range[j][1]
             else
                 if eltype(dists) <: UnivariateDistribution
-                    ps[j, l] .= quantile.(dists[j],
+                    ps[j, l] .= quantile.(
+                        dists[j],
                         0.5 .+
-                        (1 / pi) .*
-                        (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                            (1 / pi) .*
+                            (asin.(sinpi.(omega_temp[j] .* s .+ phi)))
+                    )
                 else
-                    ps[j, l] .= quantile(dists[j],
+                    ps[j, l] .= quantile(
+                        dists[j],
                         0.5 .+
-                        (1 / pi) .*
-                        (asin.(sinpi.(omega_temp[j] .* s .+ phi))))
+                            (1 / pi) .*
+                            (asin.(sinpi.(omega_temp[j] .* s .+ phi)))
+                    )
                 end
             end
         end
     end
 
-    if batch
+    return if batch
         all_y = f(ps)
         multioutput = all_y isa AbstractMatrix
         y_size = nothing
-        gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
-            Val(multioutput))
+        gsa_efast_all_y_analysis(
+            method, all_y, num_params, y_size, samples, omega,
+            Val(multioutput)
+        )
     else
         _y = [f(ps[:, j]) for j in 1:size(ps, 2)]
         multioutput = !(eltype(_y) <: Number)
@@ -147,15 +155,20 @@ function gsa(f, method::eFAST, p_range::AbstractVector; samples::Int, batch = fa
         if multioutput
             gsa_efast_all_y_analysis(
                 method, reduce(hcat, __y), num_params, y_size, samples,
-                omega, Val(true))
+                omega, Val(true)
+            )
         else
-            gsa_efast_all_y_analysis(method, __y, num_params, y_size, samples, omega,
-                Val(false))
+            gsa_efast_all_y_analysis(
+                method, __y, num_params, y_size, samples, omega,
+                Val(false)
+            )
         end
     end
 end
-function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, omega,
-        ::Val{multioutput}) where {multioutput}
+function gsa_efast_all_y_analysis(
+        method, all_y, num_params, y_size, samples, omega,
+        ::Val{multioutput}
+    ) where {multioutput}
     (; num_harmonics) = method
     if multioutput
         size_ = size(all_y)
@@ -182,9 +195,12 @@ function gsa_efast_all_y_analysis(method, all_y, num_params, y_size, samples, om
             end
             first_order[i] = map(
                 (y, var) -> 2 * sum(y[(1:num_harmonics) * (omega[1])]) ./
-                            var, ys, varnce)
-            total_order[i] = map((y, var) -> 1 .- 2 * sum(y[1:(omega[1] ÷ 2)]) ./ var, ys,
-                varnce)
+                    var, ys, varnce
+            )
+            total_order[i] = map(
+                (y, var) -> 1 .- 2 * sum(y[1:(omega[1] ÷ 2)]) ./ var, ys,
+                varnce
+            )
         end
     end
     if isnothing(y_size)
