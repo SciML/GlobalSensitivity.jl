@@ -65,10 +65,12 @@ struct Morris <: GSAMethod
     len_design_mat::Int
 end
 
-function Morris(; p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
+function Morris(;
+        p_steps::Array{Int, 1} = Int[], relative_scale::Bool = false,
         num_trajectory::Int = 10,
-        total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10)
-    Morris(p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat)
+        total_num_trajectory::Int = 5 * num_trajectory, len_design_mat::Int = 10
+    )
+    return Morris(p_steps, relative_scale, num_trajectory, total_num_trajectory, len_design_mat)
 end
 
 struct MatSpread{T1, T2}
@@ -84,8 +86,10 @@ struct MorrisResult{T1, T2}
 end
 
 function generate_design_matrix(p_range, p_steps, rng; len_design_mat = 10)
-    ps = [range(p_range[i][1], stop = p_range[i][2], length = p_steps[i])
-          for i in 1:length(p_range)]
+    ps = [
+        range(p_range[i][1], stop = p_range[i][2], length = p_steps[i])
+            for i in 1:length(p_range)
+    ]
     indices = [rand(rng, 1:i) for i in p_steps]
     all_idxs = Vector{typeof(indices)}(undef, len_design_mat)
 
@@ -105,7 +109,7 @@ function generate_design_matrix(p_range, p_steps, rng; len_design_mat = 10)
         cur_p = [ps[u][(all_idxs[j][u])] for u in 1:length(p_range)]
         B[j] = cur_p
     end
-    reduce(hcat, B)
+    return reduce(hcat, B)
 end
 
 function calculate_spread(matrix)
@@ -113,11 +117,13 @@ function calculate_spread(matrix)
     for i in 2:size(matrix, 2)
         spread += sqrt(sum(abs2.(matrix[:, i] - matrix[:, i - 1])))
     end
-    spread
+    return spread
 end
 
-function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
-        total_num_trajectory = 5 * num_trajectory, len_design_mat = 10)
+function sample_matrices(
+        p_range, p_steps, rng; num_trajectory = 10,
+        total_num_trajectory = 5 * num_trajectory, len_design_mat = 10
+    )
     matrix_array = []
     if total_num_trajectory < num_trajectory
         error("total_num_trajectory should be greater than num_trajectory preferably atleast 3-4 times higher")
@@ -129,23 +135,29 @@ function sample_matrices(p_range, p_steps, rng; num_trajectory = 10,
     end
     sort!(matrix_array, by = x -> x.spread, rev = true)
     matrices = [i.mat for i in matrix_array[1:num_trajectory]]
-    reduce(hcat, matrices)
+    return reduce(hcat, matrices)
 end
 
-function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
-        rng::AbstractRNG = Random.default_rng(), kwargs...)
-    (; p_steps, relative_scale, num_trajectory, total_num_trajectory,
-        len_design_mat) = method
+function gsa(
+        f, method::Morris, p_range::AbstractVector; batch = false,
+        rng::AbstractRNG = Random.default_rng(), kwargs...
+    )
+    (;
+        p_steps, relative_scale, num_trajectory, total_num_trajectory,
+        len_design_mat,
+    ) = method
     if !(length(p_steps) == length(p_range))
         for i in 1:(length(p_range) - length(p_steps))
             push!(p_steps, 100)
         end
     end
 
-    design_matrices = sample_matrices(p_range, p_steps, rng;
+    design_matrices = sample_matrices(
+        p_range, p_steps, rng;
         num_trajectory = num_trajectory,
         total_num_trajectory = total_num_trajectory,
-        len_design_mat = len_design_mat)
+        len_design_mat = len_design_mat
+    )
 
     multioutput = false
     desol = false
@@ -167,7 +179,7 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
     effects = []
     for i in 1:num_trajectory
         y1 = multioutput ? all_y[:, (i - 1) * len_design_mat + 1] :
-             all_y[(i - 1) * len_design_mat + 1]
+            all_y[(i - 1) * len_design_mat + 1]
         for j in ((i - 1) * len_design_mat + 1):((i * len_design_mat) - 1)
             y2 = y1
             del = design_matrices[:, j + 1] - design_matrices[:, j]
@@ -222,6 +234,8 @@ function gsa(f, method::Morris, p_range::AbstractVector; batch = false,
         means_star = map(f_shape, means_star)
         variances = map(f_shape, variances)
     end
-    MorrisResult(reduce(hcat, means), reduce(hcat, means_star), reduce(hcat, variances),
-        effects)
+    return MorrisResult(
+        reduce(hcat, means), reduce(hcat, means_star), reduce(hcat, variances),
+        effects
+    )
 end

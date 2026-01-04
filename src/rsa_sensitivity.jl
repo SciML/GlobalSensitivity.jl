@@ -58,7 +58,7 @@ struct RSA <: GSAMethod
 end
 
 function RSA(; n_dummy_parameters = 10, acceptance_threshold = mean)
-    RSA(n_dummy_parameters, acceptance_threshold)
+    return RSA(n_dummy_parameters, acceptance_threshold)
 end
 
 struct RSAResult{T}
@@ -75,7 +75,7 @@ function rsa_sensitivity(Xi, flag)
     acceptance_dist = acceptance_dist / maximum(acceptance_dist)
     rejection_dist = rejection_dist / maximum(rejection_dist)
 
-    maximum(abs.(acceptance_dist .- rejection_dist))
+    return maximum(abs.(acceptance_dist .- rejection_dist))
 end
 
 function _compute_rsa(X::AbstractArray, Y::AbstractArray, method::RSA)
@@ -101,11 +101,14 @@ function _compute_rsa(X::AbstractArray, Y::AbstractArray, method::RSA)
     end
 
     # collect dummy sensitivities (mean and std)
-    dummy_sensitivities = (mean(sensitivities[(K - method.n_dummy_parameters + 1):end]),
-        std(sensitivities[(K - method.n_dummy_parameters + 1 + 1):end]))
+    dummy_sensitivities = (
+        mean(sensitivities[(K - method.n_dummy_parameters + 1):end]),
+        std(sensitivities[(K - method.n_dummy_parameters + 1 + 1):end]),
+    )
 
     return RSAResult(
-        sensitivities[1:(K - method.n_dummy_parameters)], dummy_sensitivities)
+        sensitivities[1:(K - method.n_dummy_parameters)], dummy_sensitivities
+    )
 end
 
 function gsa(f, method::RSA, p_range; samples, batch = false)
