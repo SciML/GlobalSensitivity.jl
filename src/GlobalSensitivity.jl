@@ -63,6 +63,7 @@ export gsa
 
 export Sobol, Morris, RegressionGSA, DGSM, eFAST, DeltaMoment, EASI, FractionalFactorial,
     RBDFAST, Shapley, RSA, MutualInformation
-# Added for shapley_sensitivity
+
+include("precompilation.jl")
 
 end # module
