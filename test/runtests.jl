@@ -16,5 +16,6 @@ const GROUP = get(ENV, "GROUP", "All")
         @time @safetestset "Shapley Method" include("shapley_method.jl")
         @time @safetestset "RSA Method" include("rsa_method.jl")
         @time @safetestset "Mutual Information Method" include("mutual_information_method.jl")
+        @time @safetestset "Interface Tests" include("interface_tests.jl")
     end
 end
