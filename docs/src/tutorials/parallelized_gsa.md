@@ -37,7 +37,7 @@ Now, let's perform a Morris global sensitivity analysis on this model. We specif
 
 ```@example ode
 m = gsa(f1, Morris(total_num_trajectory = 1000, num_trajectory = 150),
-    [[1, 5], [1, 5], [1, 5], [1, 5]])
+    [[1.0, 5.0], [1.0, 5.0], [1.0, 5.0], [1.0, 5.0]])
 ```
 
 Let's get the means and variances from the `MorrisResult` struct.
@@ -65,7 +65,7 @@ scatter(
 For the Sobol method, we can similarly do:
 
 ```@example ode
-m = gsa(f1, Sobol(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1000)
+m = gsa(f1, Sobol(), [[1.0, 5.0], [1.0, 5.0], [1.0, 5.0], [1.0, 5.0]], samples = 1000)
 ```
 
 ## Direct Use of Design Matrices
