@@ -12,7 +12,7 @@ on:
       - 'docs/**'
 jobs:
   test:
-    if: false # Disabled: waiting on OrdinaryDiffEq updates. See issue for details.
+    if: false # Disabled: waiting on OrdinaryDiffEq updates. See #215
     runs-on: ubuntu-latest
     strategy:
       matrix:
