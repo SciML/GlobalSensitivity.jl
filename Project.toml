@@ -1,6 +1,6 @@
 name = "GlobalSensitivity"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
-version = "2.9.0"
+version = "2.10.0"
 authors = ["Vaibhavdixit02 <vaibhavyashdixit@gmail.com>"]
 
 [deps]
