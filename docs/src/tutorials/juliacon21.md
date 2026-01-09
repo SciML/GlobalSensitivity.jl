@@ -24,7 +24,7 @@ f1 = function (p)
     return [mean(sol[1, :]), maximum(sol[2, :])]
 end
 
-bounds = [[1, 5], [1, 5], [1, 5], [1, 5]]
+bounds = [[1.0, 5.0], [1.0, 5.0], [1.0, 5.0], [1.0, 5.0]]
 
 reg_sens = gsa(f1, RegressionGSA(true), bounds, samples = 200)
 fig = Figure(resolution = (600, 400))

@@ -8,11 +8,11 @@ using LinearAlgebra
 function ishi(X)
     A = 7
     B = 0.1
-    sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
+    return sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
 end
 
 function f_linear(X)
-    X[1] + 2 * X[2] + 3 * X[3]
+    return X[1] + 2 * X[2] + 3 * X[3]
 end
 
 @testset "Interface Compatibility Tests" begin
