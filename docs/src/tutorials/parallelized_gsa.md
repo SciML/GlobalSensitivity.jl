@@ -125,10 +125,10 @@ t = collect(range(0, stop = 10, length = 200))
 f1 = function (p)
     prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
     output_func(sol, i) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
-    ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
+    ensemble_prob = EnsembleProblem(prob; prob_func = prob_func, output_func = output_func)
     sol = solve(
         ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(p, 2))
-    out = reshape(sol, :, size(p, 2))
+    out = hcat(sol.u...)
     return out
 end
 ```
@@ -137,6 +137,20 @@ And now to do the parallelized calls, we simply add the `batch=true` keyword arg
 
 ```@example ode
 sobol_result = gsa(f1, Sobol(), A, B, batch = true)
+```
+
+We can plot the results just as before:
+
+```@example ode
+p1 = bar(["a", "b", "c", "d"], sobol_result.ST[1, :],
+    title = "Total Order Indices prey", legend = false)
+p2 = bar(["a", "b", "c", "d"], sobol_result.S1[1, :],
+    title = "First Order Indices prey", legend = false)
+p1_ = bar(["a", "b", "c", "d"], sobol_result.ST[2, :],
+    title = "Total Order Indices predator", legend = false)
+p2_ = bar(["a", "b", "c", "d"], sobol_result.S1[2, :],
+    title = "First Order Indices predator", legend = false)
+plot(p1, p2, p1_, p2_)
 ```
 
 This user-side parallelism thus allows you to take control, and thus for example you can use
