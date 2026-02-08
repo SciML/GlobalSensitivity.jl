@@ -112,8 +112,8 @@ function _compute_rsa(X::AbstractArray, Y::AbstractArray, method::RSA)
 end
 
 function gsa(f, method::RSA, p_range; samples, batch = false)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
+    lb = [float(i[1]) for i in p_range]
+    ub = [float(i[2]) for i in p_range]
 
     # add dummy parameters
     lb = [lb; repeat([typeof(lb[1])(0.0)], method.n_dummy_parameters)]

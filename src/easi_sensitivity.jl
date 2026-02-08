@@ -145,8 +145,8 @@ function gsa(X::AbstractArray, Y::AbstractArray, method::EASI)
 end
 
 function gsa(f, method::EASI, p_range; samples, batch = false)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
+    lb = [float(i[1]) for i in p_range]
+    ub = [float(i[2]) for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
 
     if batch

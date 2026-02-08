@@ -404,8 +404,8 @@ end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples, kwargs...)
     AB = QuasiMonteCarlo.generate_design_matrices(
-        samples, [i[1] for i in p_range],
-        [i[2] for i in p_range],
+        samples, [float(i[1]) for i in p_range],
+        [float(i[2]) for i in p_range],
         QuasiMonteCarlo.SobolSample(),
         2 * method.nboot
     )

@@ -146,8 +146,8 @@ function _calculate_partial_correlation_coefficients(X, Y)
 end
 
 function gsa(f, method::RegressionGSA, p_range::AbstractVector; samples::Int, batch = false)
-    lb = [i[1] for i in p_range]
-    ub = [i[2] for i in p_range]
+    lb = [float(i[1]) for i in p_range]
+    ub = [float(i[2]) for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
     desol = false
 
