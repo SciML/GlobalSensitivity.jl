@@ -46,9 +46,9 @@ d = gsa(f3, DGSM(), dist3, samples = samples)
 #crossedsq for x2:x3 = 0.0
 #crossedsq for x1:x3 = 12.686
 
-f2(x) = sin(x[1]) + 7 * sin(x[2])^2 + 0.1 * (x[3]^4) * sin(x[1])
-dist2 = [Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi)]
-c = gsa(f2, DGSM(crossed = true), dist2, samples = samples)
+f2_crossed(x) = sin(x[1]) + 7 * sin(x[2])^2 + 0.1 * (x[3]^4) * sin(x[1])
+dist2_crossed = [Uniform(-pi, pi), Uniform(-pi, pi), Uniform(-pi, pi)]
+c = gsa(f2_crossed, DGSM(crossed = true), dist2_crossed, samples = samples)
 @test [c.crossedsq[2]] ≈ [0.0] atol = 20.0e-1
 @test [c.crossedsq[6]] ≈ [0.0] atol = 20.0e-1
 @test [c.crossedsq[3]] ≈ [12.686] atol = 20.0e-1
