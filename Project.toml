@@ -1,6 +1,6 @@
 name = "GlobalSensitivity"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
-version = "2.10.1"
+version = "2.11.0"
 authors = ["Vaibhavdixit02 <vaibhavyashdixit@gmail.com>"]
 
 [deps]
@@ -34,7 +34,7 @@ OrdinaryDiffEq = "6.62"
 PrecompileTools = "1"
 QuasiMonteCarlo = "0.2.3, 0.3"
 Random = "1.10"
-RecursiveArrayTools = "3.2"
+RecursiveArrayTools = "3.2, 4"
 SafeTestsets = "0.1"
 StableRNGs = "1"
 Statistics = "1.10"
