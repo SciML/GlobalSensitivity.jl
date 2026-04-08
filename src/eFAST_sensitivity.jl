@@ -171,46 +171,33 @@ function gsa_efast_all_y_analysis(
     ) where {multioutput}
     (; num_harmonics) = method
     FT = float(eltype(all_y))
-    CT = complex(FT)
-    buf = Vector{CT}(undef, samples)
-    fft_buf = @view(buf[2:(samples ÷ 2)])
-    P = plan_fft!(buf)
     if multioutput
-        size_ = size(all_y)
         first_order = Vector{Vector{FT}}(undef, num_params)
         total_order = Vector{Vector{FT}}(undef, num_params)
+        nout = size(all_y, 1)
+        ft = rfft(reshape(all_y, nout, samples, num_params), 2)
+        buf = Vector{FT}(undef, (samples ÷ 2) - 1)
+        for (i, fti) in enumerate(eachslice(ft; dims = 3))
+            fo = first_order[i] = Vector{FT}(undef, nout)
+            to = total_order[i] = Vector{FT}(undef, nout)
+            for (j, row) in enumerate(eachrow(fti))
+                map!(abs2, buf, @view(row[2:(samples ÷ 2)]))
+                z = sum(buf)
+                fo[j] = sum(@view(buf[(1:num_harmonics) * Int(omega[1])])) / z
+                to[j] = 1 - sum(@view(buf[1:(omega[1] ÷ 2)])) / z
+            end
+        end
     else
         first_order = Vector{FT}(undef, num_params)
         total_order = Vector{FT}(undef, num_params)
-    end
-    soffset = 1
-    for i in 1:num_params
-        if !multioutput
-            copyto!(buf, 1, all_y, soffset, samples)
-            P * buf
-            ys = abs2.(fft_buf .* inv(samples))
-            varnce = 2 * sum(ys)
-            first_order[i] = 2 * sum(ys[(1:num_harmonics) * Int(omega[1])]) / varnce
-            total_order[i] = 1 .- 2 * sum(ys[1:(omega[1] ÷ 2)]) / varnce
-        else
-            ys = Vector{Vector{FT}}(undef, size(all_y, 1))
-            varnce = Vector{FT}(undef, size(all_y, 1))
-            for (j, all_y_j) in enumerate(eachrow(all_y))
-                copyto!(buf, 1, all_y_j, soffset, samples)
-                P * buf
-                ys[j] = ysⱼ = abs2.(fft_buf .* inv(samples))
-                varnce[j] = 2 * sum(ysⱼ)
-            end
-            first_order[i] = map(
-                (y, var) -> 2 * sum(y[(1:num_harmonics) * (omega[1])]) ./
-                    var, ys, varnce
-            )
-            total_order[i] = map(
-                (y, var) -> 1 .- 2 * sum(y[1:(omega[1] ÷ 2)]) ./ var, ys,
-                varnce
-            )
+        ft = rfft(reshape(all_y, samples, num_params), 1)
+        buf = Vector{FT}(undef, (samples ÷ 2) - 1)
+        for (i, fti) in enumerate(eachcol(ft))
+            map!(abs2, buf, @view(fti[2:(samples ÷ 2)]))
+            z = sum(buf)
+            first_order[i] = sum(@view(buf[(1:num_harmonics) * Int(omega[1])])) / z
+            total_order[i] = 1 - sum(@view(buf[1:(omega[1] ÷ 2)])) / z
         end
-        soffset += samples
     end
     if isnothing(y_size)
         _first_order = reduce(hcat, first_order)
