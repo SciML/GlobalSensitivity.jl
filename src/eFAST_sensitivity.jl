@@ -170,27 +170,35 @@ function gsa_efast_all_y_analysis(
         ::Val{multioutput}
     ) where {multioutput}
     (; num_harmonics) = method
+    FT = float(eltype(all_y))
+    CT = complex(FT)
+    buf = Vector{CT}(undef, samples)
+    fft_buf = @view(buf[2:(samples ÷ 2)])
+    P = plan_fft!(buf)
     if multioutput
         size_ = size(all_y)
-        first_order = Vector{Vector{eltype(all_y)}}(undef, num_params)
-        total_order = Vector{Vector{eltype(all_y)}}(undef, num_params)
+        first_order = Vector{Vector{FT}}(undef, num_params)
+        total_order = Vector{Vector{FT}}(undef, num_params)
     else
-        first_order = Vector{eltype(all_y)}(undef, num_params)
-        total_order = Vector{eltype(all_y)}(undef, num_params)
+        first_order = Vector{FT}(undef, num_params)
+        total_order = Vector{FT}(undef, num_params)
     end
+    soffset = 1
     for i in 1:num_params
         if !multioutput
-            ft = (fft(all_y[((i - 1) * samples + 1):(i * samples)]))[2:(samples ÷ 2)]
-            ys = abs2.(ft .* inv(samples))
+            copyto!(buf, 1, all_y, soffset, samples)
+            P * buf
+            ys = abs2.(fft_buf .* inv(samples))
             varnce = 2 * sum(ys)
             first_order[i] = 2 * sum(ys[(1:num_harmonics) * Int(omega[1])]) / varnce
             total_order[i] = 1 .- 2 * sum(ys[1:(omega[1] ÷ 2)]) / varnce
         else
-            ys = Vector{Vector{eltype(all_y)}}(undef, size(all_y, 1))
-            varnce = Vector{eltype(all_y)}(undef, size(all_y, 1))
-            for j in eachindex(ys)
-                ff = fft(all_y[j, ((i - 1) * samples + 1):(i * samples)])[2:(samples ÷ 2)]
-                ys[j] = ysⱼ = abs2.(ff .* inv(samples))
+            ys = Vector{Vector{FT}}(undef, size(all_y, 1))
+            varnce = Vector{FT}(undef, size(all_y, 1))
+            for (j, all_y_j) in enumerate(eachrow(all_y))
+                copyto!(buf, 1, all_y_j, soffset, samples)
+                P * buf
+                ys[j] = ysⱼ = abs2.(fft_buf .* inv(samples))
                 varnce[j] = 2 * sum(ysⱼ)
             end
             first_order[i] = map(
@@ -202,6 +210,7 @@ function gsa_efast_all_y_analysis(
                 varnce
             )
         end
+        soffset += samples
     end
     if isnothing(y_size)
         _first_order = reduce(hcat, first_order)

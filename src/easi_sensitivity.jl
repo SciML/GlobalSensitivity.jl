@@ -81,12 +81,11 @@ function _permute_outputs(X::AbstractArray, Y::AbstractArray)
     return @view Y[result]
 end
 
-function _compute_first_order_fft(permuted_outputs, max_harmonic, samples)
-    ft = (fft(permuted_outputs))[2:(samples ÷ 2)]
-    ys = abs2.(ft) .* inv(samples)
-    V = 2 * sum(ys)
-    Vi = 2 * sum(ys[(1:max_harmonic)])
-    return Si = Vi / V
+function _compute_first_order_fft!(P, buf, permuted_outputs, max_harmonic, samples::Int)
+    copyto!(buf, permuted_outputs)
+    P * buf
+    half_samples = samples ÷ 2
+    return sum(abs2, @view(buf[(begin + 1):min(begin + (half_samples - 1), begin + max_harmonic)])) / sum(abs2, @view(buf[(begin + 1):(begin + half_samples - 1)]))
 end
 
 """
@@ -99,11 +98,10 @@ Pages 188-191,
 ISSN 1364-8152,
 https://doi.org/10.1016/j.envsoft.2012.03.004.
 """
-function _compute_first_order_dct(permuted_outputs, max_harmonic, samples)
-    ft = dct(permuted_outputs)[2:end]
-    V = sum(abs2, ft)
-    Vi = sum(abs2, ft[(1:max_harmonic)])
-    return Si = Vi / V
+function _compute_first_order_dct!(P, buf::Vector{<:Real}, permuted_outputs, max_harmonic::Int, samples)
+    copyto!(buf, permuted_outputs)
+    P * buf
+    return sum(abs2, @view(buf[(begin + 1):min(end, begin + max_harmonic)])) / sum(abs2, @view(buf[(begin + 1):end]))
 end
 
 function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
@@ -126,14 +124,23 @@ function gsa(X::AbstractArray, Y::AbstractArray, method::EASI)
     sensitivities = zeros(K)
     sensitivities_c = zeros(K)
 
+    T = float(eltype(Y))
+    if method.dct_method
+        buf = Vector{T}(undef, samples)
+        P = plan_dct!(buf)
+    else
+        buf = Vector{complex(T)}(undef, samples)
+        P = plan_fft!(buf)
+    end
+
     for i in 1:K
         Xi = @view X[i, :]
 
         if method.dct_method
-            S1 = _compute_first_order_dct(Y[sortperm(Xi)], method.max_harmonic, samples)
+            S1 = _compute_first_order_dct!(P, buf, Y[sortperm(Xi)], method.max_harmonic, samples)
         else
             Y_reordered = _permute_outputs(Xi, Y)
-            S1 = _compute_first_order_fft(Y_reordered, method.max_harmonic, samples)
+            S1 = _compute_first_order_fft!(P, buf, Y_reordered, method.max_harmonic, samples)
         end
 
         S1_C = _unskew_S1(S1, method.max_harmonic, samples) # get bias-corrected version

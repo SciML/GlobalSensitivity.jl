@@ -82,6 +82,9 @@ function gsa(
     # Iterate over factors
 
     sensitivities = zeros(num_params)
+    CT = complex(float(eltype(Y)))
+    buf = Vector{CT}(undef, samples)
+    P = plan_fft!(buf)
     for i in 1:num_params
         s_order = sortperm(s[i])
         # Order Ys by how they would occur if they were
@@ -89,8 +92,9 @@ function gsa(
         # parametric variable s (not its permutation) increased.
         y_reordered = @view Y[s_order]
 
-        ft = fft(y_reordered)
-        ys = abs2.(ft) ./ samples
+        buf .= y_reordered
+        P * buf
+        ys = abs2.(buf) ./ samples
         V = sum(ys[2:samples])
         Vi = 2 * sum(ys[2:(method.num_harmonics + 1)])
         Si = Vi / V
