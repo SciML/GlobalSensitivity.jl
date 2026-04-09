@@ -178,13 +178,13 @@ function gsa_efast_all_y_analysis(
         ft = rfft(reshape(all_y, nout, samples, num_params), 2)
         buf = Vector{FT}(undef, (samples ÷ 2) - 1)
         for (i, fti) in enumerate(eachslice(ft; dims = 3))
-            fo = first_order[i] = Vector{FT}(undef, nout)
-            to = total_order[i] = Vector{FT}(undef, nout)
+            first_order_i = first_order[i] = Vector{FT}(undef, nout)
+            total_order_i = total_order[i] = Vector{FT}(undef, nout)
             for (j, row) in enumerate(eachrow(fti))
                 map!(abs2, buf, @view(row[2:(samples ÷ 2)]))
                 z = sum(buf)
-                fo[j] = sum(@view(buf[(1:num_harmonics) * Int(omega[1])])) / z
-                to[j] = 1 - sum(@view(buf[1:(omega[1] ÷ 2)])) / z
+                first_order_i[j] = sum(@view(buf[(1:num_harmonics) * Int(omega[1])])) / z
+                total_order_i[j] = 1 - sum(@view(buf[1:(omega[1] ÷ 2)])) / z
             end
         end
     else
