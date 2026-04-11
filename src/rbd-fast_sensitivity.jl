@@ -25,23 +25,26 @@ sensitivity index of factor `Xi`.
 ### Example
 
 ```julia
+using StableRNGs
+
 function linear_batch(X)
-    A= 7
-    B= 0.1
-    @. A*X[1,:]+B*X[2,:]
+    A = 7
+    B = 0.1
+    @. A * X[1, :] + B * X[2, :]
 end
 function linear(X)
-    A= 7
-    B= 0.1
-    A*X[1]+B*X[2]
+    A = 7
+    B = 0.1
+    A * X[1] + B * X[2]
 end
 
-lb = -ones(4)*π
-ub = ones(4)*π
+lb = -ones(4) * π
+ub = ones(4) * π
 
 rng = StableRNG(123)
-res1 = gsa(linear,GlobalSensitivity.RBDFAST(),num_params = 4, samples=15000)
-res2 = gsa(linear_batch,GlobalSensitivity.RBDFAST(),num_params = 4, batch=true, samples=15000)
+res1 = gsa(linear, GlobalSensitivity.RBDFAST(), num_params = 4, samples = 15000, rng = rng)
+res2 = gsa(linear_batch, GlobalSensitivity.RBDFAST(), num_params = 4, batch = true,
+    samples = 15000, rng = rng)
 ```
 """
 struct RBDFAST <: GSAMethod
