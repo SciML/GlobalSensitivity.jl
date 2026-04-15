@@ -123,7 +123,7 @@ function gsa(X::AbstractArray, Y::AbstractArray, method::EASI)
     K = size(X, 1)
     samples = size(X, 2)
 
-    # Reuseable buffers for sorting
+    # Reusable buffers for sorting
     Yperm = Matrix{eltype(Y)}(undef, samples, K)
     perm = Vector{Int}(undef, samples)
 
