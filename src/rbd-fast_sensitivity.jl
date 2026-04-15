@@ -76,32 +76,38 @@ function gsa(
     s = [s0[randperm(rng, samples)] for i in 1:num_params]
     x = hcat([0.5 .+ asin.(sin.(s[i])) ./ pi for i in 1:num_params]...)
 
-    # Compute outputs
-    if batch
-        Y = f(x')
+    # Compute outputs (type unstable, therefore we use a function barrier below)
+    Y = if batch
+        f(x')
     else
-        Y = [f(@view x[i, :]) for i in axes(x, 1)]
+        [f(xj) for xj in eachrow(x)]
     end
-    # Iterate over factors
 
-    sensitivities = zeros(num_params)
-    for i in 1:num_params
-        s_order = sortperm(s[i])
-        # Order Ys by how they would occur if they were
-        # monotonically increasing as the
-        # parametric variable s (not its permutation) increased.
-        y_reordered = @view Y[s_order]
+    return _rbdfast_analysis(Y, s, method)
+end
 
-        ft = fft(y_reordered)
-        ys = abs2.(ft) ./ samples
-        V = sum(ys[2:samples])
-        Vi = 2 * sum(ys[2:(method.num_harmonics + 1)])
-        Si = Vi / V
-        # println(ys)
-        # unskew the sensitivies
-        # lambda = 2*method.num_harmonics/samples
-        # sensitivities[i] = Si - (lambda / (1 - lambda)) * (1-Si)
-        sensitivities[i] = Si
+function _rbdfast_analysis(Y::AbstractVector{<:Real}, s::Vector{<:AbstractVector{<:Real}}, method::RBDFAST)
+    # Build a (samples, num_params) matrix of per-parameter-reordered outputs:
+    # each column holds Y reordered so the corresponding parametric variable
+    # would increase monotonically.
+    samples = length(Y)
+    num_params = length(s)
+    Yperm = Matrix{eltype(Y)}(undef, samples, num_params)
+    perm = Vector{Int}(undef, samples)
+    for (i, si) in zip(axes(Yperm, 2), s)
+        sortperm!(perm, si)
+        for (k, pk) in zip(axes(Yperm, 1), perm)
+            Yperm[k, i] = Y[pk]
+        end
+    end
+    ft = rfft(Yperm, 1)
+
+    sensitivities = let H = method.num_harmonics
+        map(eachcol(ft)) do fti
+            V = 2 * sum(abs2, @view(fti[(begin + 1):(end - 1)])) + abs2(fti[end])
+            Vi = 2 * sum(abs2, @view(fti[(begin + 1):(begin + H)]))
+            return Vi / V
+        end
     end
 
     return sensitivities
