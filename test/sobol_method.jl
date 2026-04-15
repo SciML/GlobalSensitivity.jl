@@ -72,7 +72,7 @@ res1 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20), A, B)
 
 # issue #181
 @testset "CI" begin
-    res80 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.80), A, B)
+    res80 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.8), A, B)
     res95 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.95), A, B)
     res99 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.99), A, B)
 
@@ -93,7 +93,7 @@ res1 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20), A, B)
 
     # Actually, the only thing changing is the z-multiplier,
     # so the normalized standard error estimates across runs must equal
-    z80 = quantile(Normal(0.0, 1.0), (1 + 0.80) / 2)
+    z80 = quantile(Normal(0.0, 1.0), (1 + 0.8) / 2)
     z95 = quantile(Normal(0.0, 1.0), (1 + 0.95) / 2)
     z99 = quantile(Normal(0.0, 1.0), (1 + 0.99) / 2)
     @test res80.S1_Conf_Int ./ z80 ≈ res95.S1_Conf_Int ./ z95
