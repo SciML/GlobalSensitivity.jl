@@ -353,12 +353,14 @@ function gsa_sobol_all_y_analysis(
         S1 = [[Sᵢ[i] for Sᵢ in Sᵢs] for i in 1:length(Sᵢs[1])]
         ST = [[Tᵢ[i] for Tᵢ in Tᵢs] for i in 1:length(Tᵢs[1])]
 
-        function calc_ci(x, mean = nothing)
-            alpha = (1 - method.conf_level)
-            return std(x, mean = mean) / sqrt(length(x))
+        S1_mean = map(mean, S1)
+        ST_mean = map(mean, ST)
+
+        calc_ci = let z = quantile(Normal(0.0, 1.0), (1 + method.conf_level) / 2)
+            (x, mean) -> z * std(x; mean) / sqrt(length(x))
         end
-        S1_CI = map(calc_ci, S1)
-        ST_CI = map(calc_ci, ST)
+        S1_CI = map(calc_ci, S1, S1_mean)
+        ST_CI = map(calc_ci, ST, ST_mean)
 
         if 2 in method.order
             size__ = size(Sᵢⱼs[1])
@@ -373,8 +375,8 @@ function gsa_sobol_all_y_analysis(
                 S2_CI[i] = calc_ci(b, b̄)
             end
         end
-        Sᵢ = reshape(mean.(S1), size_...)
-        Tᵢ = reshape(mean.(ST), size_...)
+        Sᵢ = reshape(S1_mean, size_...)
+        Tᵢ = reshape(ST_mean, size_...)
     else
         Sᵢ = Sᵢs[1]
         Tᵢ = Tᵢs[1]

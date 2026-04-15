@@ -1,4 +1,5 @@
 using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq
+using Distributions: Normal, quantile
 
 function ishi_batch(X)
     A = 7
@@ -52,22 +53,56 @@ res1 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20), A, B)
     0.0 0.0 0.0 -7.998213172266514e-7; 0.0 0.0 0.0 0.0
 ] atol = 1.0e-4
 @test res1.S1_Conf_Int ≈ [
-    0.00013100970128286063,
-    0.00014730548523359544,
-    7.398816006175431e-5,
+    0.00025677429613976373,
+    0.0002887134457830459,
+    0.00014501412900342335,
     0.0,
-] atol = 1.0e-4
+] atol = 1.0e-6
 @test res1.ST_Conf_Int ≈ [
-    5.657364947147881e-5,
-    0.00015856915718858496,
-    0.00012283019177515212,
+    0.0001223019032979223,
+    0.00025743925490551845,
+    0.00018012100786659994,
     0.0,
-] atol = 1.0e-4
+] atol = 1.0e-6
 @test res1.S2_Conf_Int ≈ [
-    0.0 0.00019922618025106458 0.00017554669020070315 0.00020712452452973623;
-    0.0 0.0 0.00010571366158995006 0.00010243796353601678;
-    0.0 0.0 0.0 8.791383305689058e-5; 0.0 0.0 0.0 0.0
-] atol = 1.0e-4
+    0.0 0.00039047613806956837 0.00034406519039858785 0.00040595660839326563;
+    0.0 0.0 0.0002071949693901681 0.00020077471918021318;
+    0.0 0.0 0.0 0.00017230794653437235; 0.0 0.0 0.0 0.0
+] atol = 1.0e-6
+
+# issue #181
+@testset "CI" begin
+    res80 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.80), A, B)
+    res95 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.95), A, B)
+    res99 = gsa(ishi, Sobol(order = [0, 1, 2], nboot = 20, conf_level = 0.99), A, B)
+
+    # Point estimates do not depend on conf_level
+    @test res80.S1 == res95.S1 == res99.S1
+    @test res80.ST == res95.ST == res99.ST
+    @test res80.S2 == res95.S2 == res99.S2
+
+    # Confidence intervals depend on confidence levels
+    @test res80.S1_Conf_Int != res95.S1_Conf_Int
+    @test res80.ST_Conf_Int != res95.ST_Conf_Int
+    @test res80.S2_Conf_Int != res95.S2_Conf_Int
+
+    # Wider intervals for higher confidence levels
+    @test all(res80.S1_Conf_Int .≤ res95.S1_Conf_Int .≤ res99.S1_Conf_Int)
+    @test all(res80.ST_Conf_Int .≤ res95.ST_Conf_Int .≤ res99.ST_Conf_Int)
+    @test all(res80.S2_Conf_Int .≤ res95.S2_Conf_Int .≤ res99.S2_Conf_Int)
+
+    # Actually, the only thing changing is the z-multiplier,
+    # so the normalized standard error estimates across runs must equal
+    z80 = quantile(Normal(0.0, 1.0), (1 + 0.80) / 2)
+    z95 = quantile(Normal(0.0, 1.0), (1 + 0.95) / 2)
+    z99 = quantile(Normal(0.0, 1.0), (1 + 0.99) / 2)
+    @test res80.S1_Conf_Int ./ z80 ≈ res95.S1_Conf_Int ./ z95
+    @test res80.S1_Conf_Int ./ z80 ≈ res99.S1_Conf_Int ./ z99
+    @test res80.ST_Conf_Int ./ z80 ≈ res95.ST_Conf_Int ./ z95
+    @test res80.ST_Conf_Int ./ z80 ≈ res99.ST_Conf_Int ./ z99
+    @test res80.S2_Conf_Int ./ z80 ≈ res95.S2_Conf_Int ./ z95
+    @test res80.S2_Conf_Int ./ z80 ≈ res99.S2_Conf_Int ./ z99
+end
 
 res1 = gsa(linear, Sobol(), A, B)
 res2 = gsa(linear_batch, Sobol(), A, B, batch = true)
