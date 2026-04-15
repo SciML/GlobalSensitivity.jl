@@ -72,20 +72,27 @@ Code based on the theory presented in
 and the python implementation of EASI in python's Sensitivity Analysis Library ("SALib")
 """
 
-function _permute_outputs(X::AbstractArray, Y::AbstractArray)
-    """
-    Triangular shape permutation of the precomputed inputs
-    """
-    permutation_index = sortperm(X) # non-mutating
-    result = cat(permutation_index[1:2:end], reverse(permutation_index[2:2:end]), dims = 1)
-    return @view Y[result]
-end
-
-function _compute_first_order_fft!(P, buf, permuted_outputs, max_harmonic, samples::Int)
-    copyto!(buf, permuted_outputs)
-    P * buf
-    half_samples = samples ÷ 2
-    return sum(abs2, @view(buf[(begin + 1):min(begin + (half_samples - 1), begin + max_harmonic)])) / sum(abs2, @view(buf[(begin + 1):(begin + half_samples - 1)]))
+function _gather_triangular_permutation!(dest::AbstractVector, perm::Vector{<:Integer}, Y::AbstractArray)
+    #=
+    Apply the triangular-shape permutation (odd-indexed samples forward,
+    even-indexed samples in reverse) to Y using the sort-order vector `perm`,
+    writing the result directly into `dest`.
+    Avoids intermediate allocations
+    =#
+    n = length(perm)
+    j = firstindex(dest) - 1
+    # Odd-indexed entries of perm (1, 3, 5, ...) in forward order
+    for k in 1:2:n
+        j += 1
+        dest[j] = Y[perm[k]]
+    end
+    # Even-indexed entries of perm (2, 4, 6, ...) in reverse order
+    last_even = 2 * (n ÷ 2)
+    for k in last_even:-2:2
+        j += 1
+        dest[j] = Y[perm[k]]
+    end
+    return dest
 end
 
 """
@@ -98,11 +105,6 @@ Pages 188-191,
 ISSN 1364-8152,
 https://doi.org/10.1016/j.envsoft.2012.03.004.
 """
-function _compute_first_order_dct!(P, buf::Vector{<:Real}, permuted_outputs, max_harmonic::Int, samples)
-    copyto!(buf, permuted_outputs)
-    P * buf
-    return sum(abs2, @view(buf[(begin + 1):min(end, begin + max_harmonic)])) / sum(abs2, @view(buf[(begin + 1):end]))
-end
 
 function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
     """
@@ -117,36 +119,41 @@ function _unskew_S1(S1::Number, max_harmonic::Integer, samples::Integer)
 end
 
 function gsa(X::AbstractArray, Y::AbstractArray, method::EASI)
-
     # K is the number of variables, samples is the number of simulations
     K = size(X, 1)
     samples = size(X, 2)
-    sensitivities = zeros(K)
-    sensitivities_c = zeros(K)
 
-    T = float(eltype(Y))
-    if method.dct_method
-        buf = Vector{T}(undef, samples)
-        P = plan_dct!(buf)
-    else
-        buf = Vector{complex(T)}(undef, samples)
-        P = plan_fft!(buf)
-    end
+    # Reuseable buffers for sorting
+    Yperm = Matrix{eltype(Y)}(undef, samples, K)
+    perm = Vector{Int}(undef, samples)
 
-    for i in 1:K
-        Xi = @view X[i, :]
-
-        if method.dct_method
-            S1 = _compute_first_order_dct!(P, buf, Y[sortperm(Xi)], method.max_harmonic, samples)
-        else
-            Y_reordered = _permute_outputs(Xi, Y)
-            S1 = _compute_first_order_fft!(P, buf, Y_reordered, method.max_harmonic, samples)
+    sensitivities = if method.dct_method
+        for (i, xi) in zip(axes(Yperm, 2), eachrow(X))
+            sortperm!(perm, xi)
+            for (k, pk) in zip(axes(Yperm, 1), perm)
+                Yperm[k, i] = Y[pk]
+            end
         end
-
-        S1_C = _unskew_S1(S1, method.max_harmonic, samples) # get bias-corrected version
-        sensitivities[i] = S1
-        sensitivities_c[i] = S1_C
+        dct_Yperm = dct(Yperm, 1)
+        sensitivities = let max_harmonic = method.max_harmonic
+            map(eachcol(dct_Yperm)) do dcti
+                return sum(abs2, @view(dcti[(begin + 1):min(begin + max_harmonic, end)])) / sum(abs2, @view(dcti[(begin + 1):end]))
+            end
+        end
+    else
+        for (i, xi) in zip(axes(Yperm, 2), eachrow(X))
+            sortperm!(perm, xi)
+            _gather_triangular_permutation!(@view(Yperm[:, i]), perm, Y)
+        end
+        rfft_Yperm = rfft(Yperm, 1)
+        sensitivities = let max_harmonic = method.max_harmonic
+            map(eachcol(rfft_Yperm)) do rffti
+                return sum(abs2, @view(rffti[(begin + 1):min(begin + max_harmonic, end - 1)])) / sum(abs2, @view(rffti[(begin + 1):(end - 1)]))
+            end
+        end
     end
+
+    sensitivities_c = map(s -> _unskew_S1(s, method.max_harmonic, samples), sensitivities)
 
     return EASIResult(sensitivities, sensitivities_c)
 end
@@ -156,17 +163,11 @@ function gsa(f, method::EASI, p_range; samples, batch = false)
     ub = [float(i[2]) for i in p_range]
     X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
 
-    if batch
-        Y = f(X)
-        multioutput = Y isa AbstractMatrix
+    Y = if batch
+        f(X)
     else
-        Y = [f(X[:, j]) for j in axes(X, 2)]
-        multioutput = !(eltype(Y) <: Number)
-        if eltype(Y) <: RecursiveArrayTools.AbstractVectorOfArray
-            y_size = size(Y[1])
-            Y = vec.(Y)
-            desol = true
-        end
+        [(y = f(x); y isa RecursiveArrayTools.AbstractVectorOfArray ? vec(y) : y) for x in eachcol(X)]
     end
+
     return gsa(X, Y, method)
 end
