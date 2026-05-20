@@ -88,10 +88,13 @@ function gsa(
         dists = p_range
     end
 
-    if m >= num_params - 1
-        append!(omega, floor.(Int, collect(range(1, stop = m, length = num_params - 1))))
+    n_comp = num_params - 1
+    if n_comp == 1
+        append!(omega, [1])          # single complementary param → assign frequency 1
+    elseif m >= n_comp
+        append!(omega, floor.(Int, collect(range(1, stop = m, length = n_comp))))
     else
-        append!(omega, collect(range(0, stop = num_params - 2)) .% m .+ 1)
+        append!(omega, collect(range(0, stop = n_comp - 1)) .% m .+ 1)
     end
 
     omega_temp = similar(omega)
