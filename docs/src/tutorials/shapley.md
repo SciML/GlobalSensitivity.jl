@@ -101,8 +101,8 @@ input_distribution = SklarDist(copula, marginals)
 function batched_loss_n_ode(θ)
     # The copula returns samples of `Float64`s
     θ = convert(AbstractArray{Float32}, θ)
-    prob_func(prob, i, repeat) = remake(prob; u0 = θ[1:2, i], p = θ[3:end, i])
-    output_func(sol, i) = (sum(abs2, ode_data .- Matrix(sol)), false)
+    prob_func(prob, ctx) = remake(prob; u0 = θ[1:2, ctx.sim_id], p = θ[3:end, ctx.sim_id])
+    output_func(sol, ctx) = (sum(abs2, ode_data .- Matrix(sol)), false)
     ensemble_prob = EnsembleProblem(prob; prob_func, output_func)
     out = solve(
         ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(θ, 2))
