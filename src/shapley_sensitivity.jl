@@ -26,7 +26,7 @@ we use Copulas.jl to define the joint input distribution as a SklarDist.
 ### Example
 
 ```julia
-using Copulas, Distributions, GlobalSensitivity
+using Copulas, Distributions, GlobalSensitivity, LinearAlgebra
 
 function ishi(X)
     A = 7
