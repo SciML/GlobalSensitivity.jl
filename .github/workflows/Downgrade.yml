@@ -12,12 +12,11 @@ on:
       - 'docs/**'
 jobs:
   test:
-    if: false # Disabled: waiting on OrdinaryDiffEq updates. See #215
     name: "Downgrade"
     strategy:
       matrix:
         group:
-          - Core
+          - GSA
         julia-version: ['1.10']
     uses: "SciML/.github/.github/workflows/downgrade.yml@v1"
     with:
