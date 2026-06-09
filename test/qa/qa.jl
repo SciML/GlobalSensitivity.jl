@@ -1,4 +1,4 @@
-using GlobalSensitivity, Aqua
+using GlobalSensitivity, Aqua, Test
 @testset "Aqua" begin
     Aqua.find_persistent_tasks_deps(GlobalSensitivity)
     Aqua.test_ambiguities(GlobalSensitivity, recursive = false)
