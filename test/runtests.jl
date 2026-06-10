@@ -1,9 +1,9 @@
-using SafeTestsets, Test
+using SafeTestsets, Test, Pkg
 
 const GROUP = get(ENV, "GROUP", "All")
 
 @time begin
-    if GROUP == "All" || GROUP == "GSA"
+    if GROUP == "All" || GROUP == "Core"
         @time @safetestset "Morris Method" include("morris_method.jl")
         @time @safetestset "Sobol Method" include("sobol_method.jl")
         @time @safetestset "DGSM Method" include("DGSM.jl")
@@ -17,5 +17,12 @@ const GROUP = get(ENV, "GROUP", "All")
         @time @safetestset "RSA Method" include("rsa_method.jl")
         @time @safetestset "Mutual Information Method" include("mutual_information_method.jl")
         @time @safetestset "Interface Tests" include("interface_tests.jl")
+    end
+
+    if GROUP == "QA"
+        Pkg.activate(joinpath(@__DIR__, "qa"))
+        Pkg.develop(PackageSpec(path = dirname(@__DIR__)))
+        Pkg.instantiate()
+        @time include(joinpath(@__DIR__, "qa", "qa.jl"))
     end
 end
