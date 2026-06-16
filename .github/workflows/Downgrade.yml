@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         group:
-          - GSA
+          - Core
         julia-version: ['lts']
     uses: "SciML/.github/.github/workflows/downgrade.yml@v1"
     with:
