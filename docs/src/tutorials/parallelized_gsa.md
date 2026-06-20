@@ -4,6 +4,7 @@ Let's run GSA on the [Lotka-Volterra model](https://en.wikipedia.org/wiki/Lotka%
 
 ```@example ode
 using GlobalSensitivity, Statistics, OrdinaryDiffEq, QuasiMonteCarlo, Plots
+using SciMLBase: EnsembleProblem, EnsembleThreads
 ```
 
 First, let's define our model:
@@ -123,8 +124,8 @@ prob = ODEProblem(f, u0, tspan, p)
 t = collect(range(0, stop = 10, length = 200))
 
 f1 = function (p)
-    prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
-    output_func(sol, i) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
+    prob_func(prob, ctx) = remake(prob; p = p[:, ctx.sim_id])
+    output_func(sol, ctx) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
     ensemble_prob = EnsembleProblem(prob; prob_func = prob_func, output_func = output_func)
     sol = solve(
         ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(p, 2))

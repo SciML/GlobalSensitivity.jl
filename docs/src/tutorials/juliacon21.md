@@ -6,6 +6,7 @@ perform Global Sensitivity analysis at scale.
 
 ```@example lv
 using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
+using SciMLBase: EnsembleProblem, EnsembleThreads
 
 function f(du, u, p, t)
     du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
@@ -104,8 +105,8 @@ A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
 sobol_sens_desmat = gsa(f1, Sobol(), A, B)
 
 f_batch = function (p)
-    prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
-    output_func(sol, i) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
+    prob_func(prob, ctx) = remake(prob; p = p[:, ctx.sim_id])
+    output_func(sol, ctx) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
     ensemble_prob = EnsembleProblem(prob; prob_func, output_func)
 
     sol = solve(
