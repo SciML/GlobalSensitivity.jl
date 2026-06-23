@@ -1037,10 +1037,10 @@ uuid = "46192b85-c4d5-4398-a991-12ede77f4527"
 version = "0.2.0"
 
 [[deps.GPUCompiler]]
-deps = ["ExprTools", "InteractiveUtils", "LLVM", "Libdl", "Logging", "PrecompileTools", "Preferences", "Scratch", "Serialization", "TOML", "Tracy", "UUIDs"]
-git-tree-sha1 = "33aea1888707263cc7adfc44bc49cf6006b864b4"
+deps = ["ExprTools", "InteractiveUtils", "LLVM", "Libdl", "Logging", "PrecompileTools", "Preferences", "REPL", "Scratch", "Serialization", "TOML", "Tracy", "UUIDs"]
+git-tree-sha1 = "00a4f68b6142befb17ed899b44b18ff8f9959066"
 uuid = "61eb1bfa-7361-4325-ad38-22787b887f55"
-version = "1.22.4"
+version = "1.22.5"
 
     [deps.GPUCompiler.weakdeps]
     LLVMDowngrader_jll = "f52de702-fb25-5922-94ba-81dd59b07444"
@@ -1124,9 +1124,9 @@ version = "2.86.3+0"
 
 [[deps.GlobalSensitivity]]
 deps = ["Combinatorics", "ComplexityMeasures", "Copulas", "Distributions", "FFTW", "ForwardDiff", "KernelDensity", "LinearAlgebra", "PrecompileTools", "QuasiMonteCarlo", "Random", "RecursiveArrayTools", "Statistics", "StatsBase", "Trapz"]
-path = "/home/runner/work/GlobalSensitivity.jl/GlobalSensitivity.jl"
+path = "/home/runner/_work/GlobalSensitivity.jl/GlobalSensitivity.jl"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
-version = "2.12.0"
+version = "2.12.1"
 
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
@@ -2704,9 +2704,9 @@ version = "3.7.2"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PreallocationTools", "PrecompileTools", "Preferences", "Printf", "Random", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLLogging", "SciMLOperators", "SciMLPublic", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface"]
-git-tree-sha1 = "f69639db3069d10f9c0d36e895e974564e82f01c"
+git-tree-sha1 = "58cc83369cf114cc4c24f005346e0e7d1bf4bb64"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "3.21.0"
+version = "3.22.0"
 
     [deps.SciMLBase.extensions]
     SciMLBaseChainRulesCoreExt = "ChainRulesCore"
@@ -3117,9 +3117,9 @@ version = "1.10.0"
 
 [[deps.TaylorSeries]]
 deps = ["FixedSizeArrays", "LinearAlgebra", "Markdown", "Reexport", "SparseArrays"]
-git-tree-sha1 = "c487dd96368ec81f2fef0f473100aebf2aa4201f"
+git-tree-sha1 = "63851e232449e4901ee1200e5df43904c6f44a4b"
 uuid = "6aa5eb33-94cf-58f4-a9d0-e4b2c4fc25ea"
-version = "0.22.1"
+version = "0.22.2"
 
     [deps.TaylorSeries.extensions]
     TaylorSeriesIAExt = "IntervalArithmetic"
