@@ -1,12 +1,23 @@
-using GlobalSensitivity, Aqua, Test
-@testset "Aqua" begin
-    Aqua.find_persistent_tasks_deps(GlobalSensitivity)
-    Aqua.test_ambiguities(GlobalSensitivity, recursive = false)
-    Aqua.test_deps_compat(GlobalSensitivity, check_extras = false)
-    @test_broken false  # Aqua deps_compat: missing [compat] entry for Pkg extra — see https://github.com/SciML/GlobalSensitivity.jl/issues/239
-    Aqua.test_piracies(GlobalSensitivity)
-    Aqua.test_project_extras(GlobalSensitivity)
-    Aqua.test_stale_deps(GlobalSensitivity)
-    Aqua.test_unbound_args(GlobalSensitivity)
-    Aqua.test_undefined_exports(GlobalSensitivity)
-end
+using SciMLTesting, GlobalSensitivity, Test
+run_qa(
+    GlobalSensitivity;
+    explicit_imports = true,
+    aqua_kwargs = (; ambiguities = (; recursive = false)),
+    ei_kwargs = (;
+        # OtherPkg-non-public names accessed qualified (e.g. `Random.default_rng`);
+        # de-facto public, just not yet declared `public` upstream.
+        all_qualified_accesses_are_public = (;
+            ignore = (
+                :default_rng,              # Random
+                :generate_design_matrices, # QuasiMonteCarlo
+                :sample,                   # QuasiMonteCarlo
+                :gradient,                 # ForwardDiff
+                :hessian,                  # ForwardDiff
+            ),
+        ),
+    ),
+    # Heavy `using Statistics/Distributions/...` implicit imports; making each
+    # explicit is a large, mechanical refactor — tracked in
+    # https://github.com/SciML/GlobalSensitivity.jl/issues/245
+    ei_broken = (:no_implicit_imports,)
+)
