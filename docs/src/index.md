@@ -21,6 +21,7 @@ Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl pack
 The general interface for performing global sensitivity analysis using this package is:
 
 ```@docs
+GlobalSensitivity
 gsa(f, method::GlobalSensitivity.GSAMethod, param_range; samples, batch = false)
 ```
 

@@ -1,3 +1,13 @@
+"""
+    GlobalSensitivity
+
+Global sensitivity analysis methods for quantifying how model inputs contribute to
+output uncertainty.
+
+Use [`gsa`](@ref) with method objects such as [`Sobol`](@ref), [`Morris`](@ref),
+or [`RegressionGSA`](@ref) to estimate sensitivity indices from model evaluations
+or precomputed design matrices.
+"""
 module GlobalSensitivity
 
 using Statistics, RecursiveArrayTools, LinearAlgebra, Random
