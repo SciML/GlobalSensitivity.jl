@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Global Sensitivity Analysis of the Lotka-Volterra model · GlobalSensitivity.jl</title><meta name="title" content="Global Sensitivity Analysis of the Lotka-Volterra model · GlobalSensitivity.jl"/><meta property="og:title" content="Global Sensitivity Analysis of the Lotka-Volterra model · GlobalSensitivity.jl"/><meta property="twitter:title" content="Global Sensitivity Analysis of the Lotka-Volterra model · GlobalSensitivity.jl"/><meta name="description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:description" content="Documentation for GlobalSensitivity.jl."/><meta property="twitter:description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/juliacon21/"/><meta property="twitter:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/juliacon21/"/><link rel="canonical" href="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/juliacon21/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="GlobalSensitivity.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">GlobalSensitivity.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a></li><li class="is-active"><a class="tocitem" href>Global Sensitivity Analysis of the Lotka-Volterra model</a></li><li><a class="tocitem" href="../shapley/">Using the Shapley method in case of correlated inputs</a></li></ul></li><li><span class="tocitem">Methods</span><ul><li><a class="tocitem" href="../../methods/morris/">Morris Method</a></li><li><a class="tocitem" href="../../methods/sobol/">Sobol Method</a></li><li><a class="tocitem" href="../../methods/regression/">Regression Method</a></li><li><a class="tocitem" href="../../methods/efast/">eFAST Method</a></li><li><a class="tocitem" href="../../methods/delta/">Delta Moment-Independent Method</a></li><li><a class="tocitem" href="../../methods/dgsm/">Derivative based Global Sensitivity Measure Method</a></li><li><a class="tocitem" href="../../methods/easi/">EASI Method</a></li><li><a class="tocitem" href="../../methods/fractional/">Fractional Factorial Method</a></li><li><a class="tocitem" href="../../methods/rbdfast/">Random Balance Design FAST Method</a></li><li><a class="tocitem" href="../../methods/rsa/">RSA Method</a></li><li><a class="tocitem" href="../../methods/mutualinformation/">Mutual Information Method</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Global Sensitivity Analysis of the Lotka-Volterra model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Global Sensitivity Analysis of the Lotka-Volterra model</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl/blob/master/docs/src/tutorials/juliacon21.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Global-Sensitivity-Analysis-of-the-Lotka-Volterra-model"><a class="docs-heading-anchor" href="#Global-Sensitivity-Analysis-of-the-Lotka-Volterra-model">Global Sensitivity Analysis of the Lotka-Volterra model</a><a id="Global-Sensitivity-Analysis-of-the-Lotka-Volterra-model-1"></a><a class="docs-heading-anchor-permalink" href="#Global-Sensitivity-Analysis-of-the-Lotka-Volterra-model" title="Permalink"></a></h1><p>The tutorial covers a workflow of using GlobalSensitivity.jl on the <a href="https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations">Lotka-Volterra differential equations</a>. We showcase how to use multiple GSA methods, analyze their results and leverage Julia&#39;s parallelism capabilities to perform Global Sensitivity analysis at scale.</p><pre><code class="language-julia hljs">using GlobalSensitivity, QuasiMonteCarlo, OrdinaryDiffEq, Statistics, CairoMakie
+
+function f(du, u, p, t)
+    du[1] = p[1] * u[1] - p[2] * u[1] * u[2] #prey
+    du[2] = -p[3] * u[2] + p[4] * u[1] * u[2] #predator
+end
+
+u0 = [1.0; 1.0]
+tspan = (0.0, 10.0)
+p = [1.5, 1.0, 3.0, 1.0]
+prob = ODEProblem(f, u0, tspan, p)
+t = collect(range(0, stop = 10, length = 200))
+
+f1 = function (p)
+    prob1 = remake(prob; p = p)
+    sol = solve(prob1, Tsit5(); saveat = t)
+    return [mean(sol[1, :]), maximum(sol[2, :])]
+end
+
+bounds = [[1, 5], [1, 5], [1, 5], [1, 5]]
+
+reg_sens = gsa(f1, RegressionGSA(true), bounds, samples = 200)
+fig = Figure(resolution = (600, 400))
+ax,
+hm = CairoMakie.heatmap(fig[1, 1],
+    reg_sens.partial_correlation,
+    axis = (xticksvisible = false, yticksvisible = false, yticklabelsvisible = false,
+        xticklabelsvisible = false, title = &quot;Partial correlation&quot;))
+Colorbar(fig[1, 2], hm)
+ax,
+hm = CairoMakie.heatmap(fig[2, 1],
+    reg_sens.standard_regression,
+    axis = (xticksvisible = false, yticksvisible = false, yticklabelsvisible = false,
+        xticklabelsvisible = false, title = &quot;Standard regression&quot;))
+Colorbar(fig[2, 2], hm)
+fig</code></pre><img src="9bca789d.png" alt="Example block output"/><pre><code class="language-julia hljs">using StableRNGs
+_rng = StableRNG(1234)
+morris_sens = gsa(f1, Morris(), bounds, rng = _rng)
+fig = Figure(resolution = (600, 400))
+CairoMakie.scatter(fig[1, 1], [1, 2, 3, 4], morris_sens.means_star[1, :], color = :green,
+    axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Prey&quot;))
+CairoMakie.scatter(fig[1, 2], [1, 2, 3, 4], morris_sens.means_star[2, :], color = :red,
+    axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Predator&quot;))
+fig</code></pre><img src="6a300732.png" alt="Example block output"/><pre><code class="language-julia hljs">sobol_sens = gsa(f1, Sobol(), bounds, samples = 500)
+efast_sens = gsa(f1, eFAST(), bounds, samples = 500)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.eFASTResult{Matrix{Float64}}([0.0008798508304897034 0.0006572390686308804 0.35658759902704396 0.5468668084248138; 0.16645782078300414 0.5367301092379495 0.0051975430262981865 0.007975128167018638], [0.017766499360079346 0.01518189447323326 0.45254229268306423 0.6430357817519468; 0.33854400171326027 0.7608191931985977 0.05152755858540481 0.05916949639353419])</code></pre><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
+barplot(fig[1, 1],
+    [1, 2, 3, 4],
+    sobol_sens.S1[1, :],
+    color = :green,
+    axis = (xticksvisible = false, xticklabelsvisible = false,
+        title = &quot;Prey (Sobol)&quot;, ylabel = &quot;First order&quot;))
+barplot(fig[2, 1], [1, 2, 3, 4], sobol_sens.ST[1, :], color = :green,
+    axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = &quot;Total order&quot;))
+barplot(fig[1, 2], [1, 2, 3, 4], efast_sens.S1[1, :], color = :red,
+    axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Prey (eFAST)&quot;))
+barplot(fig[2, 2], [1, 2, 3, 4], efast_sens.ST[1, :], color = :red,
+    axis = (xticksvisible = false, xticklabelsvisible = false))
+fig</code></pre><img src="8db9727b.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
+barplot(fig[1, 1],
+    [1, 2, 3, 4],
+    sobol_sens.S1[2, :],
+    color = :green,
+    axis = (xticksvisible = false, xticklabelsvisible = false,
+        title = &quot;Predator (Sobol)&quot;, ylabel = &quot;First order&quot;))
+barplot(fig[2, 1], [1, 2, 3, 4], sobol_sens.ST[2, :], color = :green,
+    axis = (xticksvisible = false, xticklabelsvisible = false, ylabel = &quot;Total order&quot;))
+barplot(fig[1, 2], [1, 2, 3, 4], efast_sens.S1[2, :], color = :red,
+    axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Predator (eFAST)&quot;))
+barplot(fig[2, 2], [1, 2, 3, 4], efast_sens.ST[2, :], color = :red,
+    axis = (xticksvisible = false, xticklabelsvisible = false))
+fig</code></pre><img src="71943545.png" alt="Example block output"/><pre><code class="language-julia hljs">using QuasiMonteCarlo
+samples = 500
+lb = [1.0, 1.0, 1.0, 1.0]
+ub = [5.0, 5.0, 5.0, 5.0]
+sampler = SobolSample()
+A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
+sobol_sens_desmat = gsa(f1, Sobol(), A, B)
+
+f_batch = function (p)
+    prob_func(prob, i, repeat) = remake(prob; p = p[:, i])
+    output_func(sol, i) = ([mean(sol[1, :]), maximum(sol[2, :])], false)
+    ensemble_prob = EnsembleProblem(prob; prob_func, output_func)
+
+    sol = solve(
+        ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(p, 2))
+
+    out = reshape(sol, :, size(p, 2))
+
+    return out
+end
+
+sobol_sens_batch = gsa(f_batch, Sobol(), A, B, batch = true)
+
+@time gsa(f1, Sobol(), A, B)
+@time gsa(f_batch, Sobol(), A, B, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.SobolResult{Matrix{Float64}, Nothing, Nothing, Nothing}([0.003262329062357596 0.0008479151394403853 0.3861166605049151 0.5857017008864309; 0.18030735028467892 0.6811020777868712 0.015497077775390158 0.016787467758784966], nothing, nothing, nothing, [0.0030820249111739805 0.001782162061204294 0.5227658940133568 0.6434138086084489; 0.37947491137996653 0.8342672817828763 0.05281573377806027 0.052230874260074014], nothing)</code></pre><pre><code class="language-julia hljs">f1 = function (p)
+    prob1 = remake(prob; p = p)
+    sol = solve(prob1, Tsit5(); saveat = t)
+end
+sobol_sens = gsa(f1, Sobol(nboot = 20), bounds, samples = 500)
+fig = Figure(resolution = (600, 400))
+ax,
+hm = CairoMakie.scatter(
+    fig[1, 1], sobol_sens.S1[1][1, 2:end], label = &quot;Prey&quot;, markersize = 4)
+CairoMakie.scatter!(
+    fig[1, 1], sobol_sens.S1[1][2, 2:end], label = &quot;Predator&quot;, markersize = 4)
+
+# Legend(fig[1,2], ax)
+
+ax,
+hm = CairoMakie.scatter(
+    fig[1, 2], sobol_sens.S1[2][1, 2:end], label = &quot;Prey&quot;, markersize = 4)
+CairoMakie.scatter!(
+    fig[1, 2], sobol_sens.S1[2][2, 2:end], label = &quot;Predator&quot;, markersize = 4)
+
+ax,
+hm = CairoMakie.scatter(
+    fig[2, 1], sobol_sens.S1[3][1, 2:end], label = &quot;Prey&quot;, markersize = 4)
+CairoMakie.scatter!(
+    fig[2, 1], sobol_sens.S1[3][2, 2:end], label = &quot;Predator&quot;, markersize = 4)
+
+ax,
+hm = CairoMakie.scatter(
+    fig[2, 2], sobol_sens.S1[4][1, 2:end], label = &quot;Prey&quot;, markersize = 4)
+CairoMakie.scatter!(
+    fig[2, 2], sobol_sens.S1[4][2, 2:end], label = &quot;Predator&quot;, markersize = 4)
+
+title = Label(fig[0, :], &quot;First order Sobol indices&quot;)
+legend = Legend(fig[2, 3], ax)
+fig</code></pre><img src="e828c359.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../parallelized_gsa/">« Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a><a class="docs-footer-nextpage" href="../shapley/">Using the Shapley method in case of correlated inputs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 15 October 2025 01:12">Wednesday 15 October 2025</span>. Using Julia version 1.12.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
