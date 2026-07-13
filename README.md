@@ -147,6 +147,11 @@ If you use this software in your work, please cite:
   volume={7},
   number={76},
   pages={4561},
-  year={2022}
+  year={2022},
+  doi = {10.21105/joss.04561},
+  issn = {2577-3569},
+  shorttitle = {GlobalSensitivity. jl},
+  url = {https://doi.org/10.21105/joss.04561},
+  copyright = {http://creativecommons.org/licenses/by/4.0/},
 }
 ```
