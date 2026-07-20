@@ -3,6 +3,7 @@ using GlobalSensitivity
 using QuasiMonteCarlo
 using Distributions
 using LinearAlgebra
+using StableRNGs
 
 # Test functions
 function ishi(X)
@@ -67,10 +68,13 @@ end
             res = gsa(
                 ishi,
                 Morris(num_trajectory = 5, len_design_mat = 4),
-                p_range
+                p_range;
+                rng = StableRNG(652)
             )
             @test res.means isa Matrix
             @test size(res.means, 2) == 3
+            @test length(res.elementary_effects) == 3
+            @test isempty(res.elementary_effects[1])
         end
 
         @testset "eFAST method" begin

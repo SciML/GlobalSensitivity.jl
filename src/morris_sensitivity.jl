@@ -204,16 +204,15 @@ function gsa(
                     elem_effect = y1 isa Number ? effect : mean(effect, dims = 2)
                 end
             end
-            if length(effects) >= change_index && change_index > 0
-                push!(effects[change_index], elem_effect)
-            elseif change_index > 0
-                while (length(effects) < change_index - 1)
-                    push!(effects, typeof(elem_effect)[])
+            if change_index > 0
+                if isempty(effects)
+                    effects = [typeof(elem_effect)[] for _ in eachindex(p_range)]
                 end
-                push!(effects, [elem_effect])
+                push!(effects[change_index], elem_effect)
             end
         end
     end
+    effect_prototype = first(Iterators.flatten(effects))
     means = eltype(effects[1])[]
     means_star = eltype(effects[1])[]
     variances = eltype(effects[1])[]
@@ -223,9 +222,9 @@ function gsa(
             push!(means_star, mean(x -> abs.(x), k))
             push!(variances, var(k))
         else
-            push!(means, zero(effects[1][1]))
-            push!(means_star, zero(effects[1][1]))
-            push!(variances, zero(effects[1][1]))
+            push!(means, zero(effect_prototype))
+            push!(means_star, zero(effect_prototype))
+            push!(variances, zero(effect_prototype))
         end
     end
     if desol
