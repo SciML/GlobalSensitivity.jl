@@ -34,14 +34,22 @@ include("mutual_information_sensitivity.jl")
 """
     gsa(f, method::GSAMethod, param_range; samples, batch=false)
 
-where:
+Perform global sensitivity analysis for a model or precomputed design matrices.
 
-- `y=f(x)` is a function that takes in a single vector and spits out a single vector or scalar.
-  If `batch=true`, then `f` takes in a matrix where each row is a set of parameters,
-  and returns a matrix where each row is the output for the corresponding row of parameters.
-- `method` is one of the available GSA methods.
-- `param_range` is a vector of tuples for the upper and lower bound for the given parameter `i`.
-- `samples` is a required keyword argument for the number of samples of parameters for the design matrix. Note that this is not relevant for [Fractional Factorial Method](@ref) and [Morris Method](@ref).
+# Arguments
+
+  - `f`: model function. It accepts one parameter vector and returns a scalar or vector.
+  - `method`: global sensitivity analysis method.
+  - `param_range`: lower and upper bounds for each parameter.
+
+# Keyword Arguments
+
+  - `samples`: required number of design-matrix samples, except for the fractional
+    factorial and Morris methods.
+  - `batch`: when `true`, `f` accepts parameter sets as matrix rows and returns one
+    output row per input row.
+
+# Alternative Interfaces
 
 Additionally,
 
