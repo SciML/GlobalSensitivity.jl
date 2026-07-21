@@ -2,7 +2,6 @@ using SciMLTesting, GlobalSensitivity, Test
 run_qa(
     GlobalSensitivity;
     explicit_imports = true,
-    api_docs_kwargs = (; rendered = true),
     aqua_kwargs = (; ambiguities = (; recursive = false)),
     ei_kwargs = (;
         # OtherPkg-non-public names accessed qualified (e.g. `Random.default_rng`);
