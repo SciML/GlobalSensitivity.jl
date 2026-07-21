@@ -1150,7 +1150,7 @@ version = "2.86.3+0"
 
 [[deps.GlobalSensitivity]]
 deps = ["Combinatorics", "ComplexityMeasures", "Copulas", "Distributions", "FFTW", "ForwardDiff", "KernelDensity", "LinearAlgebra", "PrecompileTools", "QuasiMonteCarlo", "Random", "RecursiveArrayTools", "Statistics", "StatsBase", "Trapz"]
-path = "/home/runner/_work/GlobalSensitivity.jl/GlobalSensitivity.jl"
+path = "/home/runner/work/GlobalSensitivity.jl/GlobalSensitivity.jl"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
 version = "2.12.4"
 
