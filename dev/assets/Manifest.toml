@@ -420,13 +420,18 @@ version = "0.6.3"
 
 [[deps.Copulas]]
 deps = ["ADTypes", "Combinatorics", "Distributions", "ForwardDiff", "HCubature", "LambertW", "LinearAlgebra", "LogExpFunctions", "MvNormalCDF", "Optim", "PolyLog", "Printf", "QuadGK", "Random", "Roots", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns", "TaylorSeries"]
-git-tree-sha1 = "4cfba1c418d398a9d01fe1aa8c802abf8abf1ed0"
+git-tree-sha1 = "f911fdd14c5bec6b6736ade6b2ab632a89024325"
 uuid = "ae264745-0b69-425e-9d9d-cf662c5eec93"
-version = "0.1.35"
-weakdeps = ["Plots", "RecipesBase"]
+version = "0.1.38"
 
     [deps.Copulas.extensions]
+    CopulasExpectationMaximizationExt = "ExpectationMaximization"
     CopulasPlotsExt = ["Plots", "RecipesBase"]
+
+    [deps.Copulas.weakdeps]
+    ExpectationMaximization = "e1fe09cc-5134-44c2-a941-50f4cd97986a"
+    Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+    RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [[deps.CoreMath]]
 deps = ["CoreMath_jll"]
@@ -442,9 +447,9 @@ version = "0.1.0+0"
 
 [[deps.DSP]]
 deps = ["Bessels", "FFTW", "IterTools", "LinearAlgebra", "Polynomials", "Random", "Reexport", "SpecialFunctions", "Statistics"]
-git-tree-sha1 = "d335b2929e1b6067951a1250df247cc5fab7d40e"
+git-tree-sha1 = "a65cfc2999988f5ba09fc4bd8049e3ed914e5a04"
 uuid = "717857b8-e6f2-59f4-9121-6e50c889abd2"
-version = "0.8.5"
+version = "0.8.6"
 weakdeps = ["OffsetArrays"]
 
     [deps.DSP.extensions]
@@ -687,9 +692,9 @@ version = "1.0.7"
 
 [[deps.Enzyme]]
 deps = ["CEnum", "EnzymeCore", "Enzyme_jll", "GPUCompiler", "InteractiveUtils", "LLVM", "Libdl", "LinearAlgebra", "ObjectFile", "PrecompileTools", "Preferences", "Printf", "Random", "SparseArrays"]
-git-tree-sha1 = "9164db5ba945df77c80c393df5ecf9ef26ce11c0"
+git-tree-sha1 = "babb434e99c4f2ae47d156be99cb7cbde4bc4aab"
 uuid = "7da242da-08ed-463a-9acd-ee780be4f1d9"
-version = "0.13.189"
+version = "0.13.190"
 
     [deps.Enzyme.extensions]
     EnzymeBFloat16sExt = "BFloat16s"
@@ -720,9 +725,9 @@ weakdeps = ["Adapt", "ChainRulesCore"]
 
 [[deps.Enzyme_jll]]
 deps = ["Artifacts", "JLLWrappers", "LazyArtifacts", "Libdl", "TOML"]
-git-tree-sha1 = "ab8c1bf73ea8af5e9ae6935d84e5e9a4ee556237"
+git-tree-sha1 = "a4e2a26dd2378112980bdc77d9291950defb4a61"
 uuid = "7cc45869-7501-5eee-bdea-0790c847d4ef"
-version = "0.0.285+0"
+version = "0.0.288+0"
 
 [[deps.EpollShim_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -868,9 +873,9 @@ version = "1.11.0"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "2f979084d1e13948a3352cf64a25df6bd3b4dca3"
+git-tree-sha1 = "5bad39456d9f0166184fce2248783dd9862645c1"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.16.0"
+version = "1.17.0"
 weakdeps = ["PDMats", "SparseArrays", "StaticArrays", "Statistics"]
 
     [deps.FillArrays.extensions]
@@ -1145,9 +1150,9 @@ version = "2.86.3+0"
 
 [[deps.GlobalSensitivity]]
 deps = ["Combinatorics", "ComplexityMeasures", "Copulas", "Distributions", "FFTW", "ForwardDiff", "KernelDensity", "LinearAlgebra", "PrecompileTools", "QuasiMonteCarlo", "Random", "RecursiveArrayTools", "Statistics", "StatsBase", "Trapz"]
-path = "/home/runner/work/GlobalSensitivity.jl/GlobalSensitivity.jl"
+path = "/home/runner/_work/GlobalSensitivity.jl/GlobalSensitivity.jl"
 uuid = "af5da776-676b-467e-8baf-acd8249e4f0f"
-version = "2.12.3"
+version = "2.12.4"
 
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
@@ -2252,9 +2257,9 @@ version = "2.3.0"
 
 [[deps.OrdinaryDiffEqDifferentiation]]
 deps = ["ADTypes", "ArrayInterface", "ConcreteStructs", "ConstructionBase", "DiffEqBase", "DifferentiationInterface", "FastBroadcast", "FiniteDiff", "ForwardDiff", "FunctionWrappersWrappers", "LinearAlgebra", "LinearSolve", "OrdinaryDiffEqCore", "SciMLBase", "SciMLOperators", "SparseMatrixColorings", "StaticArraysCore"]
-git-tree-sha1 = "62c51fdbaf278b367b55da18294ee47fa59ff493"
+git-tree-sha1 = "4e490965d490314171cc63aca57a90242b2377d1"
 uuid = "4302a76b-040a-498a-8c04-15b101fed76b"
-version = "3.3.1"
+version = "3.3.2"
 weakdeps = ["SparseArrays"]
 
     [deps.OrdinaryDiffEqDifferentiation.extensions]
@@ -2809,9 +2814,9 @@ weakdeps = ["Tracy"]
 
 [[deps.SciMLOperators]]
 deps = ["Accessors", "Adapt", "ArrayInterface", "DocStringExtensions", "LinearAlgebra"]
-git-tree-sha1 = "6727e42481434c5e72574e7957c4a97e70ee3c6a"
+git-tree-sha1 = "71878d6cb880919fcf64135083fbac0bc2ef0098"
 uuid = "c0aeaf25-5076-4817-a8d5-81caf7dfa961"
-version = "1.24.3"
+version = "1.24.4"
 
     [deps.SciMLOperators.extensions]
     SciMLOperatorsLoopVectorizationExt = "LoopVectorization"
