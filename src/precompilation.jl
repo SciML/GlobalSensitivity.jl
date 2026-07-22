@@ -1,7 +1,7 @@
 # Precompilation workload for GlobalSensitivity.jl
 # This file precompiles common code paths to improve TTFX (Time To First X)
 
-using PrecompileTools
+import PrecompileTools: @compile_workload, @setup_workload
 
 @setup_workload begin
     # Minimal test function (Ishigami-like)
