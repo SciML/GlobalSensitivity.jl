@@ -33,8 +33,6 @@ Code based on the theory presetned in:
 Saltelli, A. (2008). Global sensitivity analysis: The primer. Chichester: Wiley, pp. 71-76.
 """
 
-using LinearAlgebra
-
 function _recursive_hadamard(k::Integer)
     """
     Generate a hadamard matrix via recursion.

@@ -1,4 +1,4 @@
-@doc raw"""
+"""
 
     RegressionGSA(; rank::Bool = false)
 
@@ -22,26 +22,26 @@ The measures provided for this analysis by us in GlobalSensitivity.jl are
   a) Pearson Correlation Coefficient:
 
 ```math
-r = \frac{\sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \overline{x})^2(y_i - \overline{y})^2}}
+r = \\frac{\\sum_{i=1}^{n} (x_i - \\overline{x})(y_i - \\overline{y})}{\\sqrt{\\sum_{i=1}^{n} (x_i - \\overline{x})^2(y_i - \\overline{y})^2}}
 ```
 
   b) Standard Regression Coefficient (SRC):
 
 ```math
-SRC_j = \beta_{j} \sqrt{\frac{Var(X_j)}{Var(Y)}}
+SRC_j = \\beta_{j} \\sqrt{\\frac{Var(X_j)}{Var(Y)}}
 ```
 
-where ``\beta_j`` is the linear regression coefficient associated to ``X\_j``. This is also known
+where ``\\beta_j`` is the linear regression coefficient associated to ``X\\_j``. This is also known
 as a sigma-normalized derivative.
 
   c) Partial Correlation Coefficient (PCC):
 
 ```math
-PCC_j = \rho(X_j - \hat{X_{-j}},Y_j - \hat{Y_{-j}})
+PCC_j = \\rho(X_j - \\hat{X_{-j}},Y_j - \\hat{Y_{-j}})
 ```
 
-where ``\hat{X_{-j}}`` is the prediction of the linear model, expressing ``X_{j}``
-with respect to the other inputs and ``\hat{Y_{-j}}`` is the prediction of the
+where ``\\hat{X_{-j}}`` is the prediction of the linear model, expressing ``X_{j}``
+with respect to the other inputs and ``\\hat{Y_{-j}}`` is the prediction of the
 linear model where ``X_j`` is absent. PCC measures the sensitivity of ``Y`` to
 ``X_j`` when the effects of the other inputs have been canceled.
 

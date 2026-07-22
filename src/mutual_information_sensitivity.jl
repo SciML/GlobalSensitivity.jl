@@ -1,4 +1,4 @@
-@doc raw"""
+"""
 
 MutualInformation(; n_bootstraps = 1000, conf_level = 0.95)
 
@@ -13,12 +13,12 @@ the output uncertainty is quantified by the entropy of the output distribution, 
 given by:
 
 ```math
-H(Y) = -\sum_y p(y) \log p(y)
+H(Y) = -\\sum_y p(y) \\log p(y)
 ```
 Where ``p(y)`` is the probability density function of the output ``Y``. By fixing an input ``X_i``, the conditional entropy of the output ``Y`` is given by:
 
 ```math
-H(Y|X_i) = -\sum_{x} p(x) H(Y|X_i = x)
+H(Y|X_i) = -\\sum_{x} p(x) H(Y|X_i = x)
 ```
 
 The mutual information between the input ``X_i`` and the output ``Y`` is then given by:
@@ -30,11 +30,11 @@ I(X_i;Y) = H(Y) - H(Y|X_i) = H(X) + H(Y) - H(X,Y)
 Where ``H(X,Y)`` is the joint entropy of the input and output. The mutual information can be used to calculate the sensitivity indices of the input parameters. 
 
 ### Sensitivity Indices
-The sensitivity indices are calculated as the mutual information between the input ``X_i`` and the output ``Y`` where the ``\alpha`` quantile of
+The sensitivity indices are calculated as the mutual information between the input ``X_i`` and the output ``Y`` where the ``\\alpha`` quantile of
 null distribution of the output is subtracted from the mutual information:
 
 ```math
-S_{1,i} = I(X_i;Y) - Q(I(X_i; Y_\text{null}), \alpha)
+S_{1,i} = I(X_i;Y) - Q(I(X_i; Y_\\text{null}), \\alpha)
 ```
 
 Using mutual information for sensitivity analysis is introduced in Lüdtke et al. (2007)[^1] and also present in Datseris & Parlitz (2022)[^2]. 
