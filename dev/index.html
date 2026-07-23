@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>GlobalSensitivity.jl: Global Sensitivity Analysis (GSA) · GlobalSensitivity.jl</title><meta name="title" content="GlobalSensitivity.jl: Global Sensitivity Analysis (GSA) · GlobalSensitivity.jl"/><meta property="og:title" content="GlobalSensitivity.jl: Global Sensitivity Analysis (GSA) · GlobalSensitivity.jl"/><meta property="twitter:title" content="GlobalSensitivity.jl: Global Sensitivity Analysis (GSA) · GlobalSensitivity.jl"/><meta name="description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:description" content="Documentation for GlobalSensitivity.jl."/><meta property="twitter:description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/"/><meta property="twitter:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/"/><link rel="canonical" href="https://docs.sciml.ai/GlobalSensitivity/stable/"/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href><img src="assets/logo.png" alt="GlobalSensitivity.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href>GlobalSensitivity.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)</a><ul class="internal"><li><a class="tocitem" href="#Installation"><span>Installation</span></a></li><li><a class="tocitem" href="#General-Interface"><span>General Interface</span></a></li><li><a class="tocitem" href="#Citing"><span>Citing</span></a></li><li><a class="tocitem" href="#Reproducibility"><span>Reproducibility</span></a></li></ul></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a></li><li><a class="tocitem" href="tutorials/juliacon21/">Global Sensitivity Analysis of the Lotka-Volterra model</a></li><li><a class="tocitem" href="tutorials/shapley/">Using the Shapley method in case of correlated inputs</a></li></ul></li><li><span class="tocitem">Methods</span><ul><li><a class="tocitem" href="methods/morris/">Morris Method</a></li><li><a class="tocitem" href="methods/sobol/">Sobol Method</a></li><li><a class="tocitem" href="methods/regression/">Regression Method</a></li><li><a class="tocitem" href="methods/efast/">eFAST Method</a></li><li><a class="tocitem" href="methods/delta/">Delta Moment-Independent Method</a></li><li><a class="tocitem" href="methods/dgsm/">Derivative based Global Sensitivity Measure Method</a></li><li><a class="tocitem" href="methods/easi/">EASI Method</a></li><li><a class="tocitem" href="methods/fractional/">Fractional Factorial Method</a></li><li><a class="tocitem" href="methods/rbdfast/">Random Balance Design FAST Method</a></li><li><a class="tocitem" href="methods/rsa/">RSA Method</a></li><li><a class="tocitem" href="methods/shapley/">Shapley Method</a></li><li><a class="tocitem" href="methods/mutualinformation/">Mutual Information Method</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl/blob/master/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="GlobalSensitivity.jl:-Robust,-Fast,-and-Parallel-Global-Sensitivity-Analysis-(GSA)-in-Julia"><a class="docs-heading-anchor" href="#GlobalSensitivity.jl:-Robust,-Fast,-and-Parallel-Global-Sensitivity-Analysis-(GSA)-in-Julia">GlobalSensitivity.jl: Robust, Fast, and Parallel Global Sensitivity Analysis (GSA) in Julia</a><a id="GlobalSensitivity.jl:-Robust,-Fast,-and-Parallel-Global-Sensitivity-Analysis-(GSA)-in-Julia-1"></a><a class="docs-heading-anchor-permalink" href="#GlobalSensitivity.jl:-Robust,-Fast,-and-Parallel-Global-Sensitivity-Analysis-(GSA)-in-Julia" title="Permalink"></a></h1><p>Global Sensitivity Analysis (GSA) methods are used to quantify the uncertainty in the output of a model with respect to the parameters. These methods allow practitioners to measure both parameter&#39;s individual contributions and the contribution of their interactions to the output uncertainty.</p><h2 id="Installation"><a class="docs-heading-anchor" href="#Installation">Installation</a><a id="Installation-1"></a><a class="docs-heading-anchor-permalink" href="#Installation" title="Permalink"></a></h2><p>To use this functionality, you must install GlobalSensitivity.jl:</p><pre><code class="language-julia hljs">using Pkg
-Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl package.</p><h2 id="General-Interface"><a class="docs-heading-anchor" href="#General-Interface">General Interface</a><a id="General-Interface-1"></a><a class="docs-heading-anchor-permalink" href="#General-Interface" title="Permalink"></a></h2><p>The general interface for performing global sensitivity analysis using this package is:</p><article><details class="docstring" open="true"><summary id="GlobalSensitivity"><a class="docstring-binding" href="#GlobalSensitivity"><code>GlobalSensitivity</code></a> — <span class="docstring-category">Module</span></summary><section><div><pre><code class="language-julia hljs">GlobalSensitivity</code></pre><p>Global sensitivity analysis methods for quantifying how model inputs contribute to output uncertainty.</p><p>Use <a href="#GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><code>gsa</code></a> with method objects such as <a href="methods/sobol/#GlobalSensitivity.Sobol"><code>Sobol</code></a>, <a href="methods/morris/#GlobalSensitivity.Morris"><code>Morris</code></a>, or <a href="methods/regression/#GlobalSensitivity.RegressionGSA"><code>RegressionGSA</code></a> to estimate sensitivity indices from model evaluations or precomputed design matrices.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/SciML/GlobalSensitivity.jl/blob/77db6b41d1d7e6b0eeda00b4e693d0c61b397c61/src/GlobalSensitivity.jl#L1-L10">source</a></section></details></article><article><details class="docstring" open="true"><summary id="GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><a class="docstring-binding" href="#GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><code>GlobalSensitivity.gsa</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">gsa(f, method::GSAMethod, param_range; samples, batch=false)</code></pre><p>Perform global sensitivity analysis for a model or precomputed design matrices.</p><p><strong>Arguments</strong></p><ul><li><code>f</code>: model function. It accepts one parameter vector and returns a scalar or vector.</li><li><code>method</code>: global sensitivity analysis method.</li><li><code>param_range</code>: lower and upper bounds for each parameter.</li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>samples</code>: required number of design-matrix samples, except for the fractional factorial and Morris methods.</li><li><code>batch</code>: when <code>true</code>, <code>f</code> accepts parameter sets as matrix rows and returns one output row per input row.</li></ul><p><strong>Alternative Interfaces</strong></p><p>Additionally,</p><p>For <a href="methods/delta/#Delta-Moment-Independent-Method">Delta Moment-Independent Method</a>, <a href="methods/easi/#EASI-Method">EASI Method</a> and <a href="methods/regression/#Regression-Method">Regression Method</a> input and output matrix-based method as follows is available:</p><pre><code class="language-julia hljs">res = gsa(X, Y, method)</code></pre><p>where:</p><ul><li><code>X</code> is the number of parameters * samples matrix with parameter values.</li><li><code>Y</code> is the output dimension * number of samples matrix which are evaluated at <code>X</code>&#39;s columns.</li><li><code>method</code> is one of the GSA methods below.</li></ul><p>For <a href="methods/sobol/#Sobol-Method">Sobol Method</a>, one can use the following design matrices-based method instead of parameter range-based method discussed earlier:</p><pre><code class="language-julia hljs">effects = gsa(f, method, A, B; batch=false)</code></pre><p>where <code>A</code> and <code>B</code> are design matrices, with each row being a set of parameters. Note that <code>generate_design_matrices</code> from <a href="https://docs.sciml.ai/QuasiMonteCarlo/stable/">QuasiMonteCarlo.jl</a> can be used to generate the design matrices.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/SciML/GlobalSensitivity.jl/blob/77db6b41d1d7e6b0eeda00b4e693d0c61b397c61/src/GlobalSensitivity.jl#L34-L77">source</a></section></details></article><p>The descriptions of the available methods can be found in the Methods section. The <code>gsa</code> interface allows for utilizing batched functions with the <code>batch</code> kwarg discussed above for parallel computation of GSA results.</p><h2 id="Citing"><a class="docs-heading-anchor" href="#Citing">Citing</a><a id="Citing-1"></a><a class="docs-heading-anchor-permalink" href="#Citing" title="Permalink"></a></h2><p>If you use this software in your work, please cite:</p><pre><code class="language-bib hljs">@article{dixit2022globalsensitivity,
+Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl is unrelated to the GlobalSensitivityAnalysis.jl package.</p><h2 id="General-Interface"><a class="docs-heading-anchor" href="#General-Interface">General Interface</a><a id="General-Interface-1"></a><a class="docs-heading-anchor-permalink" href="#General-Interface" title="Permalink"></a></h2><p>The general interface for performing global sensitivity analysis using this package is:</p><article><details class="docstring" open="true"><summary id="GlobalSensitivity"><a class="docstring-binding" href="#GlobalSensitivity"><code>GlobalSensitivity</code></a> — <span class="docstring-category">Module</span></summary><section><div><pre><code class="language-julia hljs">GlobalSensitivity</code></pre><p>Global sensitivity analysis methods for quantifying how model inputs contribute to output uncertainty.</p><p>Use <a href="#GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><code>gsa</code></a> with method objects such as <a href="methods/sobol/#GlobalSensitivity.Sobol"><code>Sobol</code></a>, <a href="methods/morris/#GlobalSensitivity.Morris"><code>Morris</code></a>, or <a href="methods/regression/#GlobalSensitivity.RegressionGSA"><code>RegressionGSA</code></a> to estimate sensitivity indices from model evaluations or precomputed design matrices.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/SciML/GlobalSensitivity.jl/blob/97101cbd9eccf3ff50f544a59bde8ecf8852830e/src/GlobalSensitivity.jl#L1-L10">source</a></section></details></article><article><details class="docstring" open="true"><summary id="GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><a class="docstring-binding" href="#GlobalSensitivity.gsa-Tuple{Any, GlobalSensitivity.GSAMethod, Any}"><code>GlobalSensitivity.gsa</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">gsa(f, method::GSAMethod, param_range; samples, batch=false)</code></pre><p>Perform global sensitivity analysis for a model or precomputed design matrices.</p><p><strong>Arguments</strong></p><ul><li><code>f</code>: model function. It accepts one parameter vector and returns a scalar or vector.</li><li><code>method</code>: global sensitivity analysis method.</li><li><code>param_range</code>: lower and upper bounds for each parameter.</li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>samples</code>: required number of design-matrix samples, except for the fractional factorial and Morris methods.</li><li><code>batch</code>: when <code>true</code>, <code>f</code> accepts parameter sets as matrix rows and returns one output row per input row.</li></ul><p><strong>Alternative Interfaces</strong></p><p>Additionally,</p><p>For <a href="methods/delta/#Delta-Moment-Independent-Method">Delta Moment-Independent Method</a>, <a href="methods/easi/#EASI-Method">EASI Method</a> and <a href="methods/regression/#Regression-Method">Regression Method</a> input and output matrix-based method as follows is available:</p><pre><code class="language-julia hljs">res = gsa(X, Y, method)</code></pre><p>where:</p><ul><li><code>X</code> is the number of parameters * samples matrix with parameter values.</li><li><code>Y</code> is the output dimension * number of samples matrix which are evaluated at <code>X</code>&#39;s columns.</li><li><code>method</code> is one of the GSA methods below.</li></ul><p>For <a href="methods/sobol/#Sobol-Method">Sobol Method</a>, one can use the following design matrices-based method instead of parameter range-based method discussed earlier:</p><pre><code class="language-julia hljs">effects = gsa(f, method, A, B; batch=false)</code></pre><p>where <code>A</code> and <code>B</code> are design matrices, with each row being a set of parameters. Note that <code>generate_design_matrices</code> from <a href="https://docs.sciml.ai/QuasiMonteCarlo/stable/">QuasiMonteCarlo.jl</a> can be used to generate the design matrices.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/SciML/GlobalSensitivity.jl/blob/97101cbd9eccf3ff50f544a59bde8ecf8852830e/src/GlobalSensitivity.jl#L34-L77">source</a></section></details></article><p>The descriptions of the available methods can be found in the Methods section. The <code>gsa</code> interface allows for utilizing batched functions with the <code>batch</code> kwarg discussed above for parallel computation of GSA results.</p><h2 id="Citing"><a class="docs-heading-anchor" href="#Citing">Citing</a><a id="Citing-1"></a><a class="docs-heading-anchor-permalink" href="#Citing" title="Permalink"></a></h2><p>If you use this software in your work, please cite:</p><pre><code class="language-bib hljs">@article{dixit2022globalsensitivity,
   title={GlobalSensitivity. jl: Performant and Parallel Global Sensitivity Analysis with Julia},
   author={Dixit, Vaibhav Kumar and Rackauckas, Christopher},
   journal={Journal of Open Source Software},
@@ -8,19 +8,19 @@ Pkg.add(&quot;GlobalSensitivity&quot;)</code></pre><p>Note: GlobalSensitivity.jl
   number={76},
   pages={4561},
   year={2022}
-}</code></pre><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Project.toml`
+}</code></pre><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/_work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Project.toml`
   <span class="sgr90">[13f3f980] </span>CairoMakie v0.15.13
   <span class="sgr90">[ae264745] </span>Copulas v0.1.38
   <span class="sgr90">[31c24e10] </span>Distributions v0.25.129
   <span class="sgr90">[e30172f5] </span>Documenter v1.17.0
   <span class="sgr90">[587475ba] </span>Flux v0.16.10
-  <span class="sgr90">[af5da776] </span>GlobalSensitivity v2.12.4 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
+  <span class="sgr90">[af5da776] </span>GlobalSensitivity v2.12.5 `~/_work/GlobalSensitivity.jl/GlobalSensitivity.jl`
   <span class="sgr90">[7f7a1694] </span>Optimization v5.6.5
   <span class="sgr90">[42dfb2eb] </span>OptimizationOptimisers v0.3.19
   <span class="sgr90">[1dea7af3] </span>OrdinaryDiffEq v7.1.3
   <span class="sgr90">[91a5bcdd] </span>Plots v1.41.6
   <span class="sgr90">[8a4e6c94] </span>QuasiMonteCarlo v0.3.8
-  <span class="sgr90">[0bca4576] </span>SciMLBase v3.36.1
+  <span class="sgr90">[0bca4576] </span>SciMLBase v3.37.0
   <span class="sgr90">[1ed8b502] </span>SciMLSensitivity v7.116.2
   <span class="sgr90">[860ef19b] </span>StableRNGs v1.0.4
   <span class="sgr90">[10745b16] </span>Statistics v1.11.1</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.12.6
@@ -29,13 +29,15 @@ Build Info:
   Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 4 × AMD EPYC 9V74 80-Core Processor
+  CPU: 112 × AMD EPYC 7663 56-Core Processor
   WORD_SIZE: 64
-  LLVM: libLLVM-18.1.7 (ORCJIT, znver4)
+  LLVM: libLLVM-18.1.7 (ORCJIT, znver3)
   GC: Built with stock GC
 Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)
 Environment:
-  JULIA_DEBUG = Documenter</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Manifest.toml`
+  JULIA_CPU_THREADS = 4
+  JULIA_NUM_PRECOMPILE_TASKS = 4
+  JULIA_DEBUG = Documenter</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/_work/GlobalSensitivity.jl/GlobalSensitivity.jl/docs/Manifest.toml`
   <span class="sgr90">[47edcb42] </span>ADTypes v1.22.2
   <span class="sgr90">[14f7f29c] </span>AMD v0.5.3
   <span class="sgr90">[a4c015fc] </span>ANSIColoredPrinters v0.0.1
@@ -46,7 +48,7 @@ Environment:
   <span class="sgr90">[35492f91] </span>AdaptivePredicates v1.2.0
   <span class="sgr90">[66dad0bd] </span>AliasTables v1.1.3
   <span class="sgr90">[27a7e980] </span>Animations v0.4.2
-  <span class="sgr90">[4fba245c] </span>ArrayInterface v7.27.0
+  <span class="sgr90">[4fba245c] </span>ArrayInterface v7.28.0
   <span class="sgr90">[a9b6321e] </span>Atomix v1.1.3
   <span class="sgr90">[67c07d97] </span>Automa v1.2.0
   <span class="sgr90">[13072b0f] </span>AxisAlgorithms v1.1.0
@@ -107,7 +109,7 @@ Environment:
   <span class="sgr90">[f151be2c] </span>EnzymeCore v0.8.21
   <span class="sgr90">[429591f6] </span>ExactPredicates v2.2.9
   <span class="sgr90">[460bff9d] </span>ExceptionUnwrapping v0.1.11
-  <span class="sgr90">[e2ba6199] </span>ExprTools v0.1.10
+  <span class="sgr90">[e2ba6199] </span>ExprTools v0.1.11
   <span class="sgr90">[c87230d0] </span>FFMPEG v0.4.5
   <span class="sgr90">[b86e33f2] </span>FFTA v0.3.1
   <span class="sgr90">[7a1cc6ca] </span>FFTW v1.10.0
@@ -127,7 +129,7 @@ Environment:
   <span class="sgr90">[f6369f11] </span>ForwardDiff v1.4.1
   <span class="sgr90">[b38be410] </span>FreeType v4.1.1
   <span class="sgr90">[663a7486] </span>FreeTypeAbstraction v0.10.8
-  <span class="sgr90">[f62d2435] </span>FunctionProperties v1.1.0
+  <span class="sgr90">[f62d2435] </span>FunctionProperties v1.1.1
   <span class="sgr90">[069b7b12] </span>FunctionWrappers v1.1.3
   <span class="sgr90">[77dc65aa] </span>FunctionWrappersWrappers v1.10.1
   <span class="sgr90">[d9f16b24] </span>Functors v0.5.2
@@ -138,7 +140,7 @@ Environment:
   <span class="sgr90">[a0844989] </span>Gamma v1.1.0
   <span class="sgr90">[5c1252a2] </span>GeometryBasics v0.5.11
   <span class="sgr90">[d7ba0133] </span>Git v1.5.0
-  <span class="sgr90">[af5da776] </span>GlobalSensitivity v2.12.4 `~/work/GlobalSensitivity.jl/GlobalSensitivity.jl`
+  <span class="sgr90">[af5da776] </span>GlobalSensitivity v2.12.5 `~/_work/GlobalSensitivity.jl/GlobalSensitivity.jl`
   <span class="sgr90">[a2bd30eb] </span>Graphics v1.1.3
   <span class="sgr90">[3955a311] </span>GridLayoutBase v0.11.2
   <span class="sgr90">[42e2da0e] </span>Grisu v1.0.2
@@ -147,7 +149,7 @@ Environment:
   <span class="sgr90">[076d061b] </span>HashArrayMappedTries v0.2.0
   <span class="sgr90">[34004b35] </span>HypergeometricFunctions v0.3.29
   <span class="sgr90">[b5f81e59] </span>IOCapture v1.0.0
-  <span class="sgr90">[7869d1d1] </span>IRTools v0.4.17
+  <span class="sgr90">[7869d1d1] </span>IRTools v0.4.19
   <span class="sgr90">[2803e5a7] </span>ImageAxes v0.6.12
   <span class="sgr90">[c817782e] </span>ImageBase v0.1.7
   <span class="sgr90">[a09fc81d] </span>ImageCore v0.10.5
@@ -206,7 +208,7 @@ Environment:
   <span class="sgr90">[b8a86587] </span>NearestNeighbors v0.4.29
   <span class="sgr90">[645ca80c] </span>Neighborhood v0.2.5
   <span class="sgr90">[f09324ee] </span>Netpbm v1.1.1
-  <span class="sgr90">[8913a72c] </span>NonlinearSolve v4.21.1
+<span class="sgr32">⌃</span> <span class="sgr90">[8913a72c] </span>NonlinearSolve v4.21.1
 <span class="sgr32">⌃</span> <span class="sgr90">[be0214bd] </span>NonlinearSolveBase v2.35.0
 <span class="sgr32">⌃</span> <span class="sgr90">[5959db7a] </span>NonlinearSolveFirstOrder v2.2.0
 <span class="sgr32">⌃</span> <span class="sgr90">[9a2c21bd] </span>NonlinearSolveQuasiNewton v1.14.0
@@ -220,17 +222,17 @@ Environment:
   <span class="sgr90">[429524aa] </span>Optim v2.2.1
   <span class="sgr90">[3bd65402] </span>Optimisers v0.4.7
   <span class="sgr90">[7f7a1694] </span>Optimization v5.6.5
-  <span class="sgr90">[bca83a33] </span>OptimizationBase v5.2.1
+  <span class="sgr90">[bca83a33] </span>OptimizationBase v5.2.2
   <span class="sgr90">[42dfb2eb] </span>OptimizationOptimisers v0.3.19
 <span class="sgr33">⌅</span> <span class="sgr90">[bac558e1] </span>OrderedCollections v1.8.2
   <span class="sgr90">[1dea7af3] </span>OrdinaryDiffEq v7.1.3
-  <span class="sgr90">[6ad6398a] </span>OrdinaryDiffEqBDF v2.3.2
+  <span class="sgr90">[6ad6398a] </span>OrdinaryDiffEqBDF v2.4.0
   <span class="sgr90">[bbf590c4] </span>OrdinaryDiffEqCore v4.8.0
   <span class="sgr90">[50262376] </span>OrdinaryDiffEqDefault v2.3.0
-  <span class="sgr90">[4302a76b] </span>OrdinaryDiffEqDifferentiation v3.3.2
-  <span class="sgr90">[127b3ac7] </span>OrdinaryDiffEqNonlinearSolve v2.3.0
+<span class="sgr32">⌃</span> <span class="sgr90">[4302a76b] </span>OrdinaryDiffEqDifferentiation v3.4.1
+  <span class="sgr90">[127b3ac7] </span>OrdinaryDiffEqNonlinearSolve v2.4.0
   <span class="sgr90">[43230ef6] </span>OrdinaryDiffEqRosenbrock v2.4.2
-  <span class="sgr90">[b4bd8bb3] </span>OrdinaryDiffEqRosenbrockTableaus v2.2.1
+  <span class="sgr90">[b4bd8bb3] </span>OrdinaryDiffEqRosenbrockTableaus v2.2.2
   <span class="sgr90">[2d112036] </span>OrdinaryDiffEqSDIRK v2.8.1
   <span class="sgr90">[b1df2697] </span>OrdinaryDiffEqTsit5 v2.1.0
   <span class="sgr90">[79d7bb75] </span>OrdinaryDiffEqVerner v2.2.0
@@ -278,7 +280,7 @@ Environment:
   <span class="sgr90">[5eaf0fd0] </span>RoundingEmulator v0.2.1
   <span class="sgr90">[7e49a35a] </span>RuntimeGeneratedFunctions v0.5.22
   <span class="sgr90">[fdea26ae] </span>SIMD v3.7.2
-  <span class="sgr90">[0bca4576] </span>SciMLBase v3.36.1
+  <span class="sgr90">[0bca4576] </span>SciMLBase v3.37.0
   <span class="sgr90">[19f34311] </span>SciMLJacobianOperators v0.1.16
   <span class="sgr90">[a6db7da4] </span>SciMLLogging v2.0.3
   <span class="sgr90">[c0aeaf25] </span>SciMLOperators v1.24.4
@@ -338,7 +340,7 @@ Environment:
   <span class="sgr90">[29a6e085] </span>Wavelets v0.10.1
   <span class="sgr90">[e3aaa7dc] </span>WebP v0.1.3
   <span class="sgr90">[efce3f68] </span>WoodburyMatrices v1.1.0
-  <span class="sgr90">[e88e6eb3] </span>Zygote v0.7.11
+  <span class="sgr90">[e88e6eb3] </span>Zygote v0.7.12
   <span class="sgr90">[700de1a5] </span>ZygoteRules v0.2.7
   <span class="sgr90">[6e34b625] </span>Bzip2_jll v1.0.9+0
   <span class="sgr90">[4e9b3aee] </span>CRlibm_jll v1.0.1+0
@@ -346,7 +348,7 @@ Environment:
   <span class="sgr90">[a38c48d9] </span>CoreMath_jll v0.1.0+0
   <span class="sgr90">[ee1fde0b] </span>Dbus_jll v1.16.2+0
   <span class="sgr90">[5ae413db] </span>EarCut_jll v2.2.4+0
-  <span class="sgr90">[7cc45869] </span>Enzyme_jll v0.0.288+0
+<span class="sgr33">⌅</span> <span class="sgr90">[7cc45869] </span>Enzyme_jll v0.0.288+0
   <span class="sgr90">[2702e6a9] </span>EpollShim_jll v0.0.20230411+1
   <span class="sgr90">[2e619515] </span>Expat_jll v2.8.2+0
   <span class="sgr90">[b22a6f82] </span>FFMPEG_jll v8.1.2+0
@@ -381,7 +383,7 @@ Environment:
   <span class="sgr90">[856f044c] </span>MKL_jll v2025.2.0+0
   <span class="sgr90">[c8ffd9c3] </span>MbedTLS_jll v2.28.1010+0
   <span class="sgr90">[e7412a2a] </span>Ogg_jll v1.3.6+0
-  <span class="sgr90">[6cdc7f73] </span>OpenBLASConsistentFPCSR_jll v0.3.33+1
+  <span class="sgr90">[6cdc7f73] </span>OpenBLASConsistentFPCSR_jll v0.3.34+0
   <span class="sgr90">[18a262bb] </span>OpenEXR_jll v3.4.13+0
   <span class="sgr90">[9bd350c2] </span>OpenSSH_jll v10.4.1+0
   <span class="sgr90">[efe28fd5] </span>OpenSpecFun_jll v0.5.6+0
@@ -428,7 +430,7 @@ Environment:
   <span class="sgr90">[a4ae2306] </span>libaom_jll v3.13.3+0
   <span class="sgr90">[0ac62f75] </span>libass_jll v0.17.4+0
   <span class="sgr90">[1183f4f0] </span>libdecor_jll v0.2.2+0
-  <span class="sgr90">[8e53e030] </span>libdrm_jll v2.4.125+1
+  <span class="sgr90">[8e53e030] </span>libdrm_jll v2.4.134+0
   <span class="sgr90">[2db6ffa8] </span>libevdev_jll v1.13.4+0
   <span class="sgr90">[f638f0a6] </span>libfdk_aac_jll v2.0.4+0
   <span class="sgr90">[36db933b] </span>libinput_jll v1.28.1+0
@@ -492,4 +494,4 @@ Environment:
   <span class="sgr90">[8e850b90] </span>libblastrampoline_jll v5.15.0+0
   <span class="sgr90">[8e850ede] </span>nghttp2_jll v1.64.0+1
   <span class="sgr90">[3f19e933] </span>p7zip_jll v17.7.0+0
-<span class="sgr36"><span class="sgr1">Info</span></span> Packages marked with <span class="sgr32">⌃</span> and <span class="sgr33">⌅</span> have new versions available. Those with <span class="sgr32">⌃</span> may be upgradable, but those with <span class="sgr33">⌅</span> are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.12.4/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.12.4/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 21 July 2026 17:17">Tuesday 21 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<span class="sgr36"><span class="sgr1">Info</span></span> Packages marked with <span class="sgr32">⌃</span> and <span class="sgr33">⌅</span> have new versions available. Those with <span class="sgr32">⌃</span> may be upgradable, but those with <span class="sgr33">⌅</span> are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.12.5/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/SciML/GlobalSensitivity.jl/tree/gh-pages/v2.12.5/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 23 July 2026 20:19">Thursday 23 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
