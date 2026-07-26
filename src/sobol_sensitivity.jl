@@ -405,7 +405,7 @@ function gsa_sobol_all_y_analysis(
 end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples, kwargs...)
-    AB = QuasiMonteCarlo.generate_design_matrices(
+    AB = generate_design_matrices(
         samples, [float(i[1]) for i in p_range],
         [float(i[2]) for i in p_range],
         QuasiMonteCarlo.SobolSample(),

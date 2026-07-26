@@ -137,7 +137,7 @@ function gsa(f, method::MutualInformation, p_range; samples, batch = false)
     lb = [float(i[1]) for i in p_range]
     ub = [float(i[2]) for i in p_range]
 
-    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
+    X = sample(samples, lb, ub, QuasiMonteCarlo.SobolSample())
 
     if batch
         Y = f(X)

@@ -124,6 +124,16 @@ end
         res = gsa(f_linear, DGSM(), dist, samples = 200)
         @test res.a isa Vector
         @test length(res.a) == 3
+
+        f_quadratic(x) = x[1]^2 + x[1] * x[2] + x[2]^2
+        crossed = gsa(
+            f_quadratic,
+            DGSM(crossed = true),
+            [Uniform(-1, 1), Uniform(-1, 1)],
+            samples = 200
+        )
+        @test size(crossed.crossed) == (2, 2)
+        @test all(isfinite, crossed.crossed)
     end
 
     @testset "Direct X,Y interface" begin

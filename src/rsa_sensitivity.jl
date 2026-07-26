@@ -118,7 +118,7 @@ function gsa(f, method::RSA, p_range; samples, batch = false)
     # add dummy parameters
     lb = [lb; repeat([typeof(lb[1])(0.0)], method.n_dummy_parameters)]
     ub = [ub; repeat([typeof(ub[1])(1.0)], method.n_dummy_parameters)]
-    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.LatinHypercubeSample())
+    X = sample(samples, lb, ub, QuasiMonteCarlo.LatinHypercubeSample())
 
     X̂ = X[1:length(lb), :]
     if batch

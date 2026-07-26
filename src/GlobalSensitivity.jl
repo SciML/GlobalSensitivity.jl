@@ -11,15 +11,18 @@ or precomputed design matrices.
 module GlobalSensitivity
 
 import AbstractFFTs: rfft
+import ADTypes: AutoForwardDiff
 import Combinatorics: permutations
 import Copulas
 import Copulas: GaussianCopula, IndependentCopula, SklarDist, condition
 import Distributions: Distribution, MvNormal, Normal, Uniform, UnivariateDistribution, cdf, pdf
+import DifferentiationInterface
 import FFTW: dct
 import ForwardDiff
 import KernelDensity: kde
 import LinearAlgebra: Symmetric, diag, dot, pinv
 import QuasiMonteCarlo
+import QuasiMonteCarlo: generate_design_matrices, sample
 import Random
 import Random: AbstractRNG, rand!, randperm, shuffle!
 import RecursiveArrayTools

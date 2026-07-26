@@ -17,7 +17,7 @@ import PrecompileTools: @compile_workload, @setup_workload
     @compile_workload begin
         # Precompile Sobol method (most common)
         # Use small sample size to keep precompilation time reasonable
-        _A, _B = QuasiMonteCarlo.generate_design_matrices(
+        _A, _B = generate_design_matrices(
             64, _precompile_lb, _precompile_ub,
             QuasiMonteCarlo.SobolSample(), 2
         )
@@ -31,7 +31,7 @@ import PrecompileTools: @compile_workload, @setup_workload
         )
 
         # Precompile RegressionGSA method (matrix-based API)
-        _X_reg = QuasiMonteCarlo.sample(64, _precompile_lb, _precompile_ub, QuasiMonteCarlo.SobolSample())
+        _X_reg = sample(64, _precompile_lb, _precompile_ub, QuasiMonteCarlo.SobolSample())
         _Y_reg = reshape([_precompile_f(_X_reg[:, j]) for j in 1:64], 1, 64)
         _reg_result = gsa(_X_reg, _Y_reg, RegressionGSA())
 

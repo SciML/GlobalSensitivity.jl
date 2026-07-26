@@ -56,11 +56,9 @@ function gsa(f, method::DGSM, distr::AbstractArray; samples::Int, kwargs...)
 
     XX = [rand.(distr) for x in 1:samples]
 
-    #function to evaluate gradient of f wrt x
-    grad(x) = ForwardDiff.gradient(f, x)
-
-    #function to evaluate hessian of f wrt x
-    hess(x) = ForwardDiff.hessian(f, x)
+    ad_backend = AutoForwardDiff()
+    grad(x) = DifferentiationInterface.gradient(f, ad_backend, x)
+    hess(x) = DifferentiationInterface.hessian(f, ad_backend, x)
 
     #Evaluating the derivatives with AD
 

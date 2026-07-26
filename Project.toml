@@ -5,10 +5,12 @@ authors = ["Vaibhavdixit02 <vaibhavyashdixit@gmail.com>"]
 
 [deps]
 AbstractFFTs = "621f4979-c628-5d54-868e-fcf4e3e8185c"
+ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
 ComplexityMeasures = "ab4b797d-85ee-42ba-b621-05d793b346a2"
 Copulas = "ae264745-0b69-425e-9d9d-cf662c5eec93"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+DifferentiationInterface = "a0c0ee7d-e4b9-4e03-894e-1c5f64a51d63"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 KernelDensity = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
@@ -23,10 +25,12 @@ Trapz = "592b5752-818d-11e9-1e9a-2b8ca4a44cd1"
 
 [compat]
 AbstractFFTs = "1"
+ADTypes = "1"
 Combinatorics = "1"
 ComplexityMeasures = "3.6"
 Copulas = "0.1.22"
 Distributions = "0.25.87"
+DifferentiationInterface = "0.7"
 FFTW = "1.4.0"
 ForwardDiff = "1.0.1"
 KernelDensity = "0.6.4"
