@@ -10,10 +10,25 @@ or precomputed design matrices.
 """
 module GlobalSensitivity
 
-using Statistics, RecursiveArrayTools, LinearAlgebra, Random
-using QuasiMonteCarlo, ForwardDiff, KernelDensity, Trapz
-using FFTW, Distributions, StatsBase
-using Copulas, Combinatorics
+import AbstractFFTs: rfft
+import ADTypes: AutoForwardDiff
+import Combinatorics: permutations
+import Copulas
+import Copulas: GaussianCopula, IndependentCopula, SklarDist, condition
+import Distributions: Distribution, MvNormal, Normal, Uniform, UnivariateDistribution, cdf, pdf
+import DifferentiationInterface
+import FFTW: dct
+import ForwardDiff
+import KernelDensity: kde
+import LinearAlgebra: Symmetric, diag, dot, pinv
+import QuasiMonteCarlo
+import QuasiMonteCarlo: generate_design_matrices, sample
+import Random
+import Random: AbstractRNG, rand!, randperm, shuffle!
+import RecursiveArrayTools
+import Statistics: cov, mean, quantile, std, var
+import StatsBase: competerank
+import Trapz: trapz
 using ComplexityMeasures: entropy, ValueHistogram, StateSpaceSet
 
 abstract type GSAMethod end

@@ -1,4 +1,4 @@
-@doc raw"""
+"""
 
     Shapley(n_perms, n_var, n_outer, n_inner)
 

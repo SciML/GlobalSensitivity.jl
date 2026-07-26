@@ -62,8 +62,6 @@ and
     Reliability Engineering and System Safety, 91:6, 717-727
 """
 
-using FFTW, Random, Statistics, StatsBase, Distributions
-
 function gsa(
         f, method::RBDFAST; num_params, samples,
         rng::AbstractRNG = Random.default_rng(), batch = false, kwargs...

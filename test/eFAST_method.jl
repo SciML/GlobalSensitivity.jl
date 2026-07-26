@@ -1,4 +1,5 @@
 using GlobalSensitivity, QuasiMonteCarlo, Test, OrdinaryDiffEq, Distributions
+using StableRNGs: StableRNG
 
 function ishi_batch(X)
     A = 7
@@ -25,10 +26,13 @@ end
 lb = -ones(4) * π
 ub = ones(4) * π
 
-res1 = gsa(ishi, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
+res1 = gsa(
+    ishi, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
+    rng = StableRNG(42)
+)
 res2 = gsa(
     ishi_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
-    batch = true
+    batch = true, rng = StableRNG(42)
 )
 
 @test res1.S1 ≈ [0.307599 0.442412 3.0941e-25 3.42372e-28] atol = 1.0e-4
@@ -37,10 +41,13 @@ res2 = gsa(
 @test res1.ST ≈ [0.556244 0.446861 0.239259 0.027099] atol = 1.0e-4
 @test res2.ST ≈ [0.556244 0.446861 0.239259 0.027099] atol = 1.0e-4
 
-res1 = gsa(ishi, eFAST(), [Uniform(lb[i], ub[i]) for i in 1:4], samples = 15000)
+res1 = gsa(
+    ishi, eFAST(), [Uniform(lb[i], ub[i]) for i in 1:4], samples = 15000,
+    rng = StableRNG(42)
+)
 res2 = gsa(
     ishi_batch, eFAST(), [Uniform(lb[i], ub[i]) for i in 1:4], samples = 15000,
-    batch = true
+    batch = true, rng = StableRNG(42)
 )
 
 @test res1.S1 ≈ [0.307599 0.442412 3.0941e-25 3.42372e-28] atol = 1.0e-4
@@ -49,10 +56,12 @@ res2 = gsa(
 @test res1.ST ≈ [0.556244 0.446861 0.239259 0.027099] atol = 1.0e-4
 @test res2.ST ≈ [0.556244 0.446861 0.239259 0.027099] atol = 1.0e-4
 
-res1 = gsa(ishi, eFAST(), [Normal() for i in 1:4], samples = 15000)
+res1 = gsa(
+    ishi, eFAST(), [Normal() for i in 1:4], samples = 15000, rng = StableRNG(42)
+)
 res2 = gsa(
     ishi_batch, eFAST(), [Normal() for i in 1:4], samples = 15000,
-    batch = true
+    batch = true, rng = StableRNG(42)
 )
 
 @test res1.S1 ≈ [0.10140099594185588 0.7556923800497227 1.5688549609448593e-6 3.0948866309361236e-7] atol = 1.0e-1
@@ -61,10 +70,13 @@ res2 = gsa(
 @test res1.ST ≈ [0.1538586603409846 0.84687840567574 0.12089782535494331 0.101911083206915] atol = 1.0e-1
 @test res2.ST ≈ [0.15130306101221003 0.8455036299750917 0.12229080086326627 0.15148183125412495] atol = 1.0e-1
 
-res1 = gsa(linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
+res1 = gsa(
+    linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
+    rng = StableRNG(42)
+)
 res2 = gsa(
     linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], batch = true,
-    samples = 15000
+    samples = 15000, rng = StableRNG(42)
 )
 
 @test res1.S1 ≈ [0.997504 0.000203575 2.1599e-10 2.18296e-10] atol = 1.0e-4
@@ -87,10 +99,13 @@ function ishi_linear_batch(X)
     return vcat(X1', X2')
 end
 
-res1 = gsa(ishi_linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000)
+res1 = gsa(
+    ishi_linear, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
+    rng = StableRNG(42)
+)
 res2 = gsa(
     ishi_linear_batch, eFAST(), [[lb[i], ub[i]] for i in 1:4], samples = 15000,
-    batch = true
+    batch = true, rng = StableRNG(42)
 )
 
 # Now both tests together
@@ -132,4 +147,7 @@ f1 = let prob = prob, t = t
     end
 end
 
-m = gsa(f1, eFAST(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1000)
+m = gsa(
+    f1, eFAST(), [[1, 5], [1, 5], [1, 5], [1, 5]], samples = 1000,
+    rng = StableRNG(42)
+)

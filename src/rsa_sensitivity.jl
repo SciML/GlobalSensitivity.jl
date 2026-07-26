@@ -1,4 +1,4 @@
-@doc raw"""
+"""
 
     RSA(; n_dummy_parameters::Int = 10, acceptance_threshold::Union{Function, Real} = mean)
 
@@ -9,11 +9,11 @@
 ## Method Details
 
 The RSA (Regional Sensitivity Analysis) method[^1] is a monte-carlo based technique for performing nonparametric global sensitivity analysis. The method is based on the Kolmogorov-Smirnov (KS) test, which is a nonparametric test of the equality of continuous, 
-one-dimensional probability distributions. Each result of a monte-carlo simulation is either classified as behavior (``B``) or non-behavior (``\bar{B}``). For each parameter ``i``, 
-the cumulative distributions of the behavior and non-behavior outputs are determined as ``F_{i}`` and ``\bar{F}_{i}``, respectively. The sensitivity for each parameter ``i`` is then given by:
+one-dimensional probability distributions. Each result of a monte-carlo simulation is either classified as behavior (``\\bar{B}``). For each parameter ``i``,
+the cumulative distributions of the behavior and non-behavior outputs are determined as ``F_{i}`` and ``\\bar{F}_{i}``, respectively. The sensitivity for each parameter ``i`` is then given by:
 
 ```math
-S_{i} = \sup_{j} |F_{i,j} - (1 - F_{i,j})|
+S_{i} = \\sup_{j} |F_{i,j} - (1 - F_{i,j})|
 ```
 
 where ``F_{i,j}`` is sample ``j`` of the cumulative distribution of the sensitivity output for parameter ``i``.
@@ -118,7 +118,7 @@ function gsa(f, method::RSA, p_range; samples, batch = false)
     # add dummy parameters
     lb = [lb; repeat([typeof(lb[1])(0.0)], method.n_dummy_parameters)]
     ub = [ub; repeat([typeof(ub[1])(1.0)], method.n_dummy_parameters)]
-    X = QuasiMonteCarlo.sample(samples, lb, ub, QuasiMonteCarlo.LatinHypercubeSample())
+    X = sample(samples, lb, ub, QuasiMonteCarlo.LatinHypercubeSample())
 
     X̂ = X[1:length(lb), :]
     if batch

@@ -13,9 +13,8 @@ makedocs(
     sitename = "GlobalSensitivity.jl",
     authors = "Vaibhav Kumar Dixit",
     modules = [GlobalSensitivity],
-    clean = true, doctest = false, linkcheck = true,
+    clean = true, doctest = true, checkdocs = :exports, linkcheck = true,
     linkcheck_ignore = [r"https://www.sciencedirect.com/*"],
-    warnonly = [:missing_docs],
     format = Documenter.HTML(
         assets = ["assets/favicon.ico"],
         canonical = "https://docs.sciml.ai/GlobalSensitivity/stable/"
