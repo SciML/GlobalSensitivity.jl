@@ -53,11 +53,11 @@ Perform global sensitivity analysis for a model or precomputed design matrices.
 
 # Arguments
 
-  - `f`: model function. It accepts one parameter vector and returns a scalar or vector.
-  - `method`: global sensitivity analysis method.
+  - `f`: model function that accepts one parameter vector and returns a scalar or vector.
+  - `method::GSAMethod`: global sensitivity analysis method.
   - `param_range`: lower and upper bounds for each parameter.
 
-# Keyword Arguments
+# Keywords
 
   - `samples`: required number of design-matrix samples, except for the fractional
     factorial and Morris methods.
@@ -89,6 +89,15 @@ effects = gsa(f, method, A, B; batch=false)
 where `A` and `B` are design matrices, with each row being a set of parameters. Note that `generate_design_matrices`
 from [QuasiMonteCarlo.jl](https://docs.sciml.ai/QuasiMonteCarlo/stable/) can be used to generate the design
 matrices.
+
+# Example
+
+```julia
+julia> f(x) = x[1] + 2x[2]
+
+julia> length(gsa(f, Sobol(), [[-1.0, 1.0], [-1.0, 1.0]]; samples = 256).S1)
+2
+```
 """
 function gsa(f, method::GSAMethod, param_range; samples, batch = false) end
 

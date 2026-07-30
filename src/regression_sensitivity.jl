@@ -2,7 +2,9 @@
 
     RegressionGSA(; rank::Bool = false)
 
-- `rank::Bool = false`: Flag determining whether to also run a rank regression analysis
+# Keywords
+
+- `rank::Bool = false`: also calculate rank-regression statistics.
 
 Providing this to `gsa` results in a calculation of the following statistics, provided as a `RegressionGSAResult`. If
 the function `f` to be analyzed is of dimensionality ``f: R^n -> R^m``, then these coefficients

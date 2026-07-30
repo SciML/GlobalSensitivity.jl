@@ -2,9 +2,12 @@
 
     RSA(; n_dummy_parameters::Int = 10, acceptance_threshold::Union{Function, Real} = mean)
 
-- `n_dummy_parameters`: Number of dummy parameters to add to the model, used for sensitivity hypothesis testing and to check the amount of samples. Defaults to 10.
-- `acceptance_threshold`: Threshold or function to compute the threshold for defining the acceptance distribution of the sensitivity outputs. The function must be of signature f(Y) 
-   and return a real number, where Y is the output of given sensitivity criterion. Defaults to the mean of the sensitivity values.  
+# Keywords
+
+- `n_dummy_parameters::Int = 10`: number of dummy parameters used for sensitivity
+  hypothesis tests and sample-size checks.
+- `acceptance_threshold::Union{Function, Real} = mean`: acceptance threshold or a
+  function `f(Y)::Real` that calculates one from sensitivity outputs.
 
 ## Method Details
 

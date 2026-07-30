@@ -2,7 +2,9 @@
 
     eFAST(; num_harmonics::Int = 4)
 
-- `num_harmonics`: the number of harmonics to sum in the Fourier series decomposition, this defaults to 4.
+# Keywords
+
+- `num_harmonics::Int = 4`: number of harmonics in the Fourier-series decomposition.
 
 ## Method Details
 
