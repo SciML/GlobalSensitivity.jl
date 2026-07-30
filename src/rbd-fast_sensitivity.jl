@@ -2,7 +2,10 @@
 
     RBDFAST(; num_harmonics = 6)
 
-- `num_harmonics`: Number of harmonics to consider during power spectral density analysis.
+# Keywords
+
+- `num_harmonics::Int = 6`: number of harmonics used in the power-spectral-density
+  analysis.
 
 ## Method Details
 

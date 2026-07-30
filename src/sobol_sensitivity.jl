@@ -2,9 +2,12 @@
 
     Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95)
 
-- `order`: the order of the indices to calculate. Defaults to [0,1], which means the Total and First order indices. Passing 2 enables calculation of the Second order indices as well.
-- `nboot`: for confidence interval calculation `nboot` should be specified for the number (>0) of bootstrap runs.
-- `conf_level`: the confidence level, the default for which is 0.95.
+# Keywords
+
+- `order::Vector{Int} = [0, 1]`: requested sensitivity-index orders. `0` and `1`
+  compute total and first-order indices; include `2` for second-order indices.
+- `nboot::Int = 1`: positive number of bootstrap replicates for confidence intervals.
+- `conf_level::Real = 0.95`: confidence level for bootstrap intervals.
 
 ## Method Details
 

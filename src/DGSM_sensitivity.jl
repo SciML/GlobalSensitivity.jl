@@ -2,7 +2,9 @@
 
     DGSM(; crossed::Bool = false)
 
-- `crossed`: A Boolean which act as indicator for computation of DGSM crossed indices.
+# Keywords
+
+- `crossed::Bool = false`: calculate crossed DGSM indices.
 
 ## Method Details
 

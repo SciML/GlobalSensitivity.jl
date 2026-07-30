@@ -2,8 +2,11 @@
 
 MutualInformation(; n_bootstraps = 1000, conf_level = 0.95)
 
-- `n_bootstraps`: Number of bootstraps to be used for estimation of null distribution. Default is `1000`.
-- `conf_level`: Confidence level for the minimum bound estimation. Default is `0.95`.
+# Keywords
+
+- `n_bootstraps::Int = 1000`: number of bootstrap replicates used to estimate the null
+  distribution.
+- `conf_level::Real = 0.95`: confidence level for the minimum-bound estimate.
 
 
 ## Method Details

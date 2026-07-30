@@ -1,14 +1,14 @@
 """
 
-    Shapley(n_perms, n_var, n_outer, n_inner)
+    Shapley(; n_perms = -1, n_var, n_outer, n_inner = 3)
 
-- `n_perms`: number of permutations to consider. Defaults to -1, which means all permutations
-            are considered hence the exact Shapley effects
-            algorithm is used. If `n_perms` is set to a positive integer, then the random version
-            of Shapley effects is used.
-- `n_var`: size of each bootstrapped sample
-- `n_outer`: number of samples to be taken to estimate conditional variance
-- `n_inner`: size of each `n_outer` sample taken
+# Keywords
+
+- `n_perms::Int`: number of permutations. `-1` evaluates every permutation; a positive
+  value uses a random subset.
+- `n_var::Int`: size of each bootstrapped sample.
+- `n_outer::Int`: number of outer samples used to estimate conditional variance.
+- `n_inner::Int`: number of inner samples used for each outer sample.
 
 ## Method Details
 

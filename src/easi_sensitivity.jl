@@ -1,9 +1,12 @@
 """
 
-    EASI(; max_harmonic::Int = 10, dct_method::Bool = false)
+    EASI(; max_harmonic::Int = 4, dct_method::Bool = false)
 
-- `max_harmonic`: Maximum harmonic of the input frequency for which the output power spectrum is analyzed for. Defaults to 10.
-- `dct_method`: Use Discrete Cosine Transform method to compute the power spectrum. Defaults to false.
+# Keywords
+
+- `max_harmonic::Int = 4`: largest input-frequency harmonic used to analyze the output
+  power spectrum.
+- `dct_method::Bool = false`: compute the power spectrum with a discrete cosine transform.
 
 ## Method Details
 
