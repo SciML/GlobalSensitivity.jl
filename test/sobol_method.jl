@@ -200,3 +200,50 @@ m = gsa(
     samples = 100
 )
 @test m isa GlobalSensitivity.SobolResult
+
+
+# Non-finite (NaN/Inf) filtering tests
+function ishi_nan(X)
+    if X[1] > 2.5
+        return NaN
+    end
+    return ishi(X)
+end
+
+function ishi_nan_batch(X)
+    y = ishi_batch(X)
+    @. y[X[1, :] > 2.5] = NaN
+    return y
+end
+
+res_nan = gsa(ishi_nan, Sobol(), A, B)
+@test res_nan isa GlobalSensitivity.SobolResult
+@test !any(isnan, res_nan.S1)
+@test !any(isnan, res_nan.ST)
+@test res_nan.n < n
+@test res_nan.VY > 0
+
+res_nan_batch = gsa(ishi_nan_batch, Sobol(), A, B, batch = true)
+@test res_nan_batch isa GlobalSensitivity.SobolResult
+@test res_nan_batch.n == res_nan.n
+@test res_nan_batch.S1 ≈ res_nan.S1 atol = 1.0e-4
+
+res_nan_s2_boot = gsa(ishi_nan, Sobol(order = [0, 1, 2], nboot = 5), A, B)
+@test res_nan_s2_boot isa GlobalSensitivity.SobolResult
+@test !any(isnan, res_nan_s2_boot.S1)
+@test !any(isnan, res_nan_s2_boot.S2)
+@test !any(isnan, res_nan_s2_boot.ST)
+@test res_nan_s2_boot.n < (n ÷ 5)
+
+function ishi_linear_nan(X)
+    res = ishi_linear(X)
+    if X[1] > 2.5
+        return [NaN, NaN]
+    end
+    return res
+end
+
+res_multi_nan = gsa(ishi_linear_nan, Sobol(), A, B)
+@test res_multi_nan isa GlobalSensitivity.SobolResult
+@test !any(isnan, res_multi_nan.S1)
+@test res_multi_nan.n < n
