@@ -96,6 +96,8 @@ mutable struct SobolResult{T1, T2, T3, T4, T5, T6}
     n::T6
 end
 
+SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int) = SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int, nothing, nothing)
+
 function fuse_designs(A, B; second_order = false)
     d = size(A, 1)
     Aᵦ = [copy(A) for i in 1:d]
