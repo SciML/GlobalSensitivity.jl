@@ -19,6 +19,7 @@ As the first step let's generate the dataset.
 ```@example shapley
 using GlobalSensitivity, OrdinaryDiffEq, Flux, SciMLSensitivity, LinearAlgebra
 using Optimization, OptimizationOptimisers, Distributions, Copulas, CairoMakie
+using SciMLBase: EnsembleProblem, EnsembleThreads
 
 u0 = [2.0f0; 0.0f0]
 datasize = 30
