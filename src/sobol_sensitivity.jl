@@ -1,13 +1,10 @@
-"""
+@doc raw"""
 
     Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95)
 
-# Keywords
-
-- `order::Vector{Int} = [0, 1]`: requested sensitivity-index orders. `0` and `1`
-  compute total and first-order indices; include `2` for second-order indices.
-- `nboot::Int = 1`: positive number of bootstrap replicates for confidence intervals.
-- `conf_level::Real = 0.95`: confidence level for bootstrap intervals.
+- `order`: the order of the indices to calculate. Defaults to [0,1], which means the Total and First order indices. Passing 2 enables calculation of the Second order indices as well.
+- `nboot`: for confidence interval calculation `nboot` should be specified for the number (>0) of bootstrap runs.
+- `conf_level`: the confidence level, the default for which is 0.95.
 
 ## Method Details
 
@@ -18,14 +15,14 @@ but also gives a way to quantify the affect and sensitivity from
 the interaction between the parameters.
 
 ```math
- Y = f_0+ \\sum_{i=1}^d f_i(X_i)+ \\sum_{i < j}^d f_{ij}(X_i,X_j) ... + f_{1,2...d}(X_1,X_2,..X_d)
+ Y = f_0+ \sum_{i=1}^d f_i(X_i)+ \sum_{i < j}^d f_{ij}(X_i,X_j) ... + f_{1,2...d}(X_1,X_2,..X_d)
 ```
 
 ```math
- Var(Y) = \\sum_{i=1}^d V_i + \\sum_{i < j}^d V_{ij} + ... + V_{1,2...,d}
+ Var(Y) = \sum_{i=1}^d V_i + \sum_{i < j}^d V_{ij} + ... + V_{1,2...,d}
 ```
 
-The Sobol Indices are "order"ed, the first order indices given by ``S_i = \\frac{V_i}{Var(Y)}``
+The Sobol Indices are "order"ed, the first order indices given by ``S_i = \frac{V_i}{Var(Y)}``
 the contribution to the output variance of the main effect of `` X_i ``. Therefore, it
 measures the effect of varying `` X_i `` alone, but averaged over variations
 in other input parameters. It is standardized by the total variance to provide a fractional contribution.
@@ -55,26 +52,26 @@ by dividing other terms in the variance decomposition by `` Var(Y) ``.
 using GlobalSensitivity, QuasiMonteCarlo
 
 function ishi(X)
-    A = 7
-    B = 0.1
-    sin(X[1]) + A * sin(X[2])^2 + B * X[3]^4 * sin(X[1])
+    A= 7
+    B= 0.1
+    sin(X[1]) + A*sin(X[2])^2+ B*X[3]^4 *sin(X[1])
 end
 
 samples = 600000
-lb = -ones(4) * π
-ub = ones(4) * π
+lb = -ones(4)*π
+ub = ones(4)*π
 sampler = SobolSample()
-A, B = QuasiMonteCarlo.generate_design_matrices(samples, lb, ub, sampler)
+A,B = QuasiMonteCarlo.generate_design_matrices(samples,lb,ub,sampler)
 
-res1 = gsa(ishi, Sobol(order = [0, 1, 2]), A, B)
+res1 = gsa(ishi,Sobol(order=[0,1,2]),A,B)
 
 function ishi_batch(X)
-    A = 7
-    B = 0.1
-    @. sin(X[1, :]) + A * sin(X[2, :])^2 + B * X[3, :]^4 * sin(X[1, :])
+    A= 7
+    B= 0.1
+    @. sin(X[1,:]) + A*sin(X[2,:])^2+ B*X[3,:]^4 *sin(X[1,:])
 end
 
-res2 = gsa(ishi_batch, Sobol(), A, B, batch = true)
+res2 = gsa(ishi_batch,Sobol(),A,B,batch=true)
 ```
 """
 struct Sobol <: GSAMethod
@@ -85,14 +82,19 @@ end
 
 Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95) = Sobol(order, nboot, conf_level)
 
-mutable struct SobolResult{T1, T2, T3, T4}
+mutable struct SobolResult{T1, T2, T3, T4, T5}
     S1::T1
     S1_Conf_Int::T2
     S2::T3
     S2_Conf_Int::T4
     ST::T1
     ST_Conf_Int::T2
+    VY::T5  # Total output variance V(Y) = denominator of S_Ti;
+    # near-zero => denominator inflation artifact
+    n::Int
 end
+
+SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int) = SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int, nothing, nothing)
 
 function fuse_designs(A, B; second_order = false)
     d = size(A, 1)
@@ -108,6 +110,86 @@ function fuse_designs(A, B; second_order = false)
         return hcat(A, B, reduce(hcat, Aᵦ), reduce(hcat, Bₐ))
     end
     return hcat(A, B, reduce(hcat, Aᵦ))
+end
+function _compact_all_y_nonfinite!(all_y::AbstractArray, n::Int, d::Int, nboot::Int, second_order::Bool = false)
+    nblocks = second_order ? (2 + 2d) : (2 + d)
+    keep = Base.fill(true, n)
+
+    if all_y isa AbstractVector
+        @inbounds for b in 0:(nboot - 1)
+            b_offset = b * (nblocks * n)
+            for bl in 0:(nblocks - 1)
+                block_offset = b_offset + bl * n
+                for k in 1:n
+                    if !isfinite(all_y[block_offset + k])
+                        keep[k] = false
+                    end
+                end
+            end
+        end
+    else
+        num_outputs = size(all_y, 1)
+        @inbounds for b in 0:(nboot - 1)
+            b_offset = b * (nblocks * n)
+            for bl in 0:(nblocks - 1)
+                block_offset = b_offset + bl * n
+                for k in 1:n
+                    col = block_offset + k
+                    for r in 1:num_outputs
+                        if !isfinite(all_y[r, col])
+                            keep[k] = false
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    nk = count(keep)
+    if nk == n
+        return all_y, n, keep
+    elseif nk == 0
+        error("All rows filtered; nothing left for Sobol analysis.")
+    end
+
+    if all_y isa AbstractVector
+        filtered = similar(all_y, eltype(all_y), nboot * nblocks * nk)
+        dest = 1
+        @inbounds for b in 0:(nboot - 1)
+            b_offset = b * (nblocks * n)
+            for bl in 0:(nblocks - 1)
+                block_offset = b_offset + bl * n
+                for k in 1:n
+                    if keep[k]
+                        filtered[dest] = all_y[block_offset + k]
+                        dest += 1
+                    end
+                end
+            end
+        end
+        return filtered, nk, keep
+    else
+        num_outputs = size(all_y, 1)
+        filtered = similar(all_y, eltype(all_y), num_outputs, nboot * nblocks * nk)
+        dest = 1
+        @inbounds for b in 0:(nboot - 1)
+            b_offset = b * (nblocks * n)
+            for bl in 0:(nblocks - 1)
+                block_offset = b_offset + bl * n
+                for k in 1:n
+                    if keep[k]
+                        col = block_offset + k
+                        for r in 1:num_outputs
+                            filtered[r, dest] = all_y[r, col]
+                        end
+                        dest += 1
+                    end
+                end
+            end
+        end
+        return filtered, nk, keep
+    end
 end
 
 function gsa(
@@ -142,14 +224,16 @@ function gsa(
         all_points = _all_points
     end
 
+    has_second_order = (2 in method.order)
+
     return if batch
         all_y = f(all_points)
         multioutput = all_y isa AbstractMatrix
         y_size = nothing
-        gsa_sobol_all_y_analysis(
-            method, all_y, d, n, Ei_estimator, y_size,
-            Val(multioutput)
-        )
+
+        all_y, n, keep = _compact_all_y_nonfinite!(all_y, n, d, nboot, has_second_order)
+        gsa_sobol_all_y_analysis(method, all_y, d, n, Ei_estimator, y_size, keep, Val(multioutput))
+
     else
         _y = [f(all_points[:, i]) for i in 1:size(all_points, 2)]
         multioutput = !(eltype(_y) <: Number)
@@ -160,18 +244,20 @@ function gsa(
             y_size = nothing
         end
         if multioutput
-            gsa_sobol_all_y_analysis(
-                method, reduce(hcat, _y), d, n, Ei_estimator, y_size,
-                Val(true)
-            )
+            all_y_mat = reduce(hcat, _y)
+            all_y_mat, n, keep = _compact_all_y_nonfinite!(all_y_mat, n, d, nboot, has_second_order)
+            gsa_sobol_all_y_analysis(method, all_y_mat, d, n, Ei_estimator, y_size, keep, Val(true))
         else
-            gsa_sobol_all_y_analysis(method, _y, d, n, Ei_estimator, y_size, Val(false))
+            all_y_vec = _y
+            all_y_vec, n, keep = _compact_all_y_nonfinite!(all_y_vec, n, d, nboot, has_second_order)
+            gsa_sobol_all_y_analysis(method, all_y_vec, d, n, Ei_estimator, y_size, keep, Val(false))
         end
     end
 end
+
 function gsa_sobol_all_y_analysis(
         method, all_y::AbstractArray{T}, d, n, Ei_estimator,
-        y_size, ::Val{multioutput}
+        y_size, keep, ::Val{multioutput}
     ) where {T, multioutput}
     nboot = method.nboot
     Eys = multioutput ? Matrix{T}[] : T[]
@@ -356,14 +442,12 @@ function gsa_sobol_all_y_analysis(
         S1 = [[Sᵢ[i] for Sᵢ in Sᵢs] for i in 1:length(Sᵢs[1])]
         ST = [[Tᵢ[i] for Tᵢ in Tᵢs] for i in 1:length(Tᵢs[1])]
 
-        S1_mean = map(mean, S1)
-        ST_mean = map(mean, ST)
-
-        calc_ci = let z = quantile(Normal(0.0, 1.0), (1 + method.conf_level) / 2)
-            (x, mean) -> z * std(x; mean) / sqrt(length(x))
+        function calc_ci(x, mean = nothing)
+            alpha = (1 - method.conf_level)
+            return std(x, mean = mean) / sqrt(length(x))
         end
-        S1_CI = map(calc_ci, S1, S1_mean)
-        ST_CI = map(calc_ci, ST, ST_mean)
+        S1_CI = map(calc_ci, S1)
+        ST_CI = map(calc_ci, ST)
 
         if 2 in method.order
             size__ = size(Sᵢⱼs[1])
@@ -378,8 +462,8 @@ function gsa_sobol_all_y_analysis(
                 S2_CI[i] = calc_ci(b, b̄)
             end
         end
-        Sᵢ = reshape(S1_mean, size_...)
-        Tᵢ = reshape(ST_mean, size_...)
+        Sᵢ = reshape(mean.(S1), size_...)
+        Tᵢ = reshape(mean.(ST), size_...)
     else
         Sᵢ = Sᵢs[1]
         Tᵢ = Tᵢs[1]
@@ -397,20 +481,25 @@ function gsa_sobol_all_y_analysis(
         _Sᵢ = f_shape(Sᵢ)
         _Tᵢ = f_shape(Tᵢ)
     end
+    # V(Y) = pooled sample variance of fA ∪ fB (2n points), the Sobol denominator.
+    # Near-zero at low overpotentials proves denominator inflation in S_Ti (Task 3).
+    VY = nboot > 1 ? mean(Varys) : Varys[1]
     return SobolResult(
         _Sᵢ,
         nboot > 1 ? reshape(S1_CI, size_...) : nothing,
         2 in method.order ? Sᵢⱼ : nothing,
         nboot > 1 && 2 in method.order ? S2_CI : nothing,
         _Tᵢ,
-        nboot > 1 ? reshape(ST_CI, size_...) : nothing
+        nboot > 1 ? reshape(ST_CI, size_...) : nothing,
+        VY,
+        sum(keep)
     )
 end
 
 function gsa(f, method::Sobol, p_range::AbstractVector; samples, kwargs...)
-    AB = generate_design_matrices(
-        samples, [float(i[1]) for i in p_range],
-        [float(i[2]) for i in p_range],
+    AB = QuasiMonteCarlo.generate_design_matrices(
+        samples, Float64[i[1] for i in p_range],
+        Float64[i[2] for i in p_range],
         QuasiMonteCarlo.SobolSample(),
         2 * method.nboot
     )
