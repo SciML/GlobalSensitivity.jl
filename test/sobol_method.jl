@@ -270,7 +270,7 @@ m = gsa(
     @test !any(isnan, res_multi.ST)
     @test res_multi.n < n_nan
 
-    @test_throws ArgumentError Sobol(nonfinite = :dorp)
+    @test_throws ArgumentError Sobol(nonfinite = :invalid)
 
     # All samples non-finite is an error
     @test_throws ErrorException gsa(

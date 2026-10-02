@@ -280,20 +280,20 @@ function gsa_sobol_all_y_analysis(
                     Eᵢs,
                     [
                         (
-                                sum(fA .^ 2 + fAⁱ[k] .^ 2) ./ (2nk) .-
+                            sum(fA .^ 2 + fAⁱ[k] .^ 2) ./ (2nk) .-
                                 (sum(fA + fAⁱ[k]) ./ (2nk)) .^ 2
-                            ) * (
-                                1.0 .-
+                        ) * (
+                            1.0 .-
                                 (
-                                    1 / nk .* sum(fA .* fAⁱ[k])
+                                1 / nk .* sum(fA .* fAⁱ[k])
                                     .-
                                     (1 / nk .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
-                                ) ./
+                            ) ./
                                 (
-                                    1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2) -
+                                1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2) -
                                     (1 / nk .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
-                                )
                             )
+                        )
                             for k in 1:d
                     ]
                 )
@@ -385,19 +385,19 @@ function gsa_sobol_all_y_analysis(
                         hcat,
                         [
                             (
-                                    sum(fA .^ 2 + fAⁱ[k] .^ 2, dims = 2) ./ (2nk) .-
+                                sum(fA .^ 2 + fAⁱ[k] .^ 2, dims = 2) ./ (2nk) .-
                                     (sum(fA + fAⁱ[k], dims = 2) ./ (2nk)) .^ 2
-                                ) .* (
-                                    1.0 .-
+                            ) .* (
+                                1.0 .-
                                     (
-                                        1 / nk .* sum(fA .* fAⁱ[k], dims = 2) .-
+                                    1 / nk .* sum(fA .* fAⁱ[k], dims = 2) .-
                                         (1 / nk * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
-                                    ) ./
+                                ) ./
                                     (
-                                        1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2, dims = 2) .-
+                                    1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2, dims = 2) .-
                                         (1 / nk * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
-                                    )
-                                ) for k in 1:d
+                                )
+                            ) for k in 1:d
                         ]
                     )
                 )
