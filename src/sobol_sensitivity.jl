@@ -9,10 +9,15 @@
 - `nboot::Int = 1`: positive number of bootstrap replicates for confidence intervals.
 - `conf_level::Real = 0.95`: confidence level for bootstrap intervals.
 - `nonfinite::Symbol = :propagate`: handling of non-finite (`NaN`/`Inf`) model evaluations.
-  Option `:propagate` leaves non-finite values untouched. Option `:drop` filters non-finite
-  sample evaluations per bootstrap replicate and emits a warning with the dropped count.
-  Note that with `:drop`, the resulting indices estimate the input distribution conditioned
-  on the finite output domain.
+  Option `:propagate` leaves non-finite values untouched, so they propagate into the indices.
+  Option `:drop` removes, independently in each bootstrap replicate, every design row whose
+  evaluation is non-finite in any of its `d + 2` blocks (`2d + 2` with second order) and,
+  for multioutput models, in any output component; a warning reports the number of dropped
+  rows. Each replicate must keep at least two rows. The indices are then computed from the
+  kept rows only. They are exact for the input distribution restricted to the finite region
+  only when that region is a Cartesian product of input ranges (e.g. failure depends on a
+  single input). Otherwise the kept `A`/`B` pairs are no longer independent and the indices
+  should be treated as approximate, especially when many rows are dropped.
 
 ## Method Details
 
@@ -87,13 +92,15 @@ struct Sobol <: GSAMethod
     nboot::Int
     conf_level::Float64
     nonfinite::Symbol
+    function Sobol(order, nboot, conf_level, nonfinite = :propagate)
+        nonfinite in (:propagate, :drop) ||
+            throw(ArgumentError("`nonfinite` must be `:propagate` or `:drop`, got `$(repr(nonfinite))`."))
+        return new(order, nboot, conf_level, nonfinite)
+    end
 end
 
-function Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95, nonfinite = :propagate)
-    nonfinite in (:propagate, :drop) ||
-        throw(ArgumentError("`nonfinite` must be `:propagate` or `:drop`, got `$(repr(nonfinite))`."))
-    return Sobol(order, nboot, conf_level, nonfinite)
-end
+Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95, nonfinite = :propagate) =
+    Sobol(order, nboot, conf_level, nonfinite)
 
 """
     SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int, VY, n)
@@ -107,8 +114,10 @@ Structure holding the output of a Sobol sensitivity analysis.
 - `S2_Conf_Int`: Confidence intervals for `S2` (or `nothing` if `nboot == 1`)
 - `ST`: Total-order sensitivity indices
 - `ST_Conf_Int`: Confidence intervals for `ST` (or `nothing` if `nboot == 1`)
-- `VY`: Pooled output variance `Var(Y)` (the Sobol denominator)
-- `n`: Number of valid samples used per replicate (`Int`, or `Vector{Int}` if `nboot > 1`)
+- `VY`: Output variance `Var(Y)` (the Sobol denominator) estimated from the `A` and `B`
+  evaluations; the mean of the per-replicate estimates if `nboot > 1`, and a column matrix
+  (one row per output) for multioutput models
+- `n`: Number of design rows used per replicate (`Int`, or `Vector{Int}` if `nboot > 1`)
 
 `VY` and `n` are `nothing` when constructed with the six-argument form.
 """
@@ -202,6 +211,29 @@ function gsa(
     end
 end
 
+# Mask of design rows that are finite in every block (and, for matrices, every output).
+_finite_rows(f::AbstractVector) = isfinite.(f)
+_finite_rows(f::AbstractMatrix) = vec(all(isfinite, f; dims = 1))
+function _finite_rows(fA, fB, fAⁱ, fBⁱ)
+    keep = _finite_rows(fA) .& _finite_rows(fB)
+    for f in fAⁱ
+        keep .&= _finite_rows(f)
+    end
+    if fBⁱ !== nothing
+        for f in fBⁱ
+            keep .&= _finite_rows(f)
+        end
+    end
+    return keep
+end
+
+function _check_kept_rows(nk, b_idx)
+    return nk >= 2 || error(
+        "Bootstrap replicate $b_idx has $nk design row(s) with finite model evaluations; " *
+            "at least 2 are required for Sobol GSA with `nonfinite = :drop`."
+    )
+end
+
 function gsa_sobol_all_y_analysis(
         method, all_y::AbstractArray{T}, d, n, Ei_estimator,
         y_size, ::Val{multioutput}
@@ -225,15 +257,9 @@ function gsa_sobol_all_y_analysis(
             fBⁱ_raw = 2 in method.order ? [all_y[(j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)] : nothing
 
             if method.nonfinite === :drop
-                keep = [
-                    isfinite(fA_raw[k]) && isfinite(fB_raw[k]) &&
-                        all(isfinite(fAⁱ_raw[j][k]) for j in 1:d) &&
-                        (!(2 in method.order) || all(isfinite(fBⁱ_raw[j][k]) for j in 1:d)) for k in 1:n
-                ]
+                keep = _finite_rows(fA_raw, fB_raw, fAⁱ_raw, fBⁱ_raw)
                 nk = count(keep)
-                if nk == 0
-                    error("All samples in bootstrap replicate $b_idx were non-finite (NaN/Inf); cannot perform Sobol GSA.")
-                end
+                _check_kept_rows(nk, b_idx)
                 total_dropped += n - nk
                 push!(n_kept, nk)
 
@@ -308,15 +334,9 @@ function gsa_sobol_all_y_analysis(
             fBⁱ_raw = 2 in method.order ? [all_y[:, (j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)] : nothing
 
             if method.nonfinite === :drop
-                keep = [
-                    all(isfinite.(fA_raw[:, k])) && all(isfinite.(fB_raw[:, k])) &&
-                        all(all(isfinite.(fAⁱ_raw[j][:, k])) for j in 1:d) &&
-                        (!(2 in method.order) || all(all(isfinite.(fBⁱ_raw[j][:, k])) for j in 1:d)) for k in 1:n
-                ]
+                keep = _finite_rows(fA_raw, fB_raw, fAⁱ_raw, fBⁱ_raw)
                 nk = count(keep)
-                if nk == 0
-                    error("All samples in bootstrap replicate $b_idx were non-finite (NaN/Inf); cannot perform Sobol GSA.")
-                end
+                _check_kept_rows(nk, b_idx)
                 total_dropped += n - nk
                 push!(n_kept, nk)
 
@@ -406,7 +426,10 @@ function gsa_sobol_all_y_analysis(
     end
 
     if total_dropped > 0
-        @warn "Dropped $total_dropped non-finite sample evaluation(s) from Sobol GSA (nonfinite = :drop). The resulting sensitivity indices estimate the input distribution conditioned on the finite output domain."
+        @warn "Sobol GSA (nonfinite = :drop) dropped $total_dropped of $(n * nboot) design rows " *
+            "because at least one of their model evaluations was non-finite. The indices are " *
+            "exact only if the failure region is a product of input ranges; otherwise treat " *
+            "them as approximate."
     end
 
     if 2 in method.order
