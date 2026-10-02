@@ -200,3 +200,80 @@ m = gsa(
     samples = 100
 )
 @test m isa GlobalSensitivity.SobolResult
+
+@testset "Sobol non-finite filtering and extended result" begin
+    # Backwards-compatible 6-argument constructor
+    res_6arg = GlobalSensitivity.SobolResult([0.5], nothing, nothing, nothing, [0.5], nothing)
+    @test res_6arg isa GlobalSensitivity.SobolResult
+    # Public type keeps four parameters (non-breaking for SobolResult{T1, T2, T3, T4} spellings)
+    @test res_6arg isa GlobalSensitivity.SobolResult{Vector{Float64}, Nothing, Nothing, Nothing}
+    @test res_6arg.VY === nothing
+    @test res_6arg.n === nothing
+
+    n_nan = 10000
+    A_nan, B_nan = QuasiMonteCarlo.generate_design_matrices(n_nan, lb, ub, sampler)
+    ishi_nan(X) = X[1] > 2.5 ? NaN : ishi(X)
+    function ishi_nan_batch(X)
+        y = ishi_batch(X)
+        y[X[1, :] .> 2.5] .= NaN
+        return y
+    end
+    ishi_linear_nan(X) = X[1] > 2.5 ? [NaN, NaN] : ishi_linear(X)
+
+    # Default (:propagate) keeps NaN in the result
+    res_prop = gsa(ishi_nan, Sobol(), A_nan, B_nan)
+    @test any(isnan, res_prop.S1) || isnan(res_prop.VY)
+    @test res_prop.n == n_nan
+
+    # :drop on finite output is a no-op: same indices, no warning
+    res_clean = gsa(ishi, Sobol(), A_nan, B_nan)
+    res_clean_drop = @test_logs gsa(ishi, Sobol(nonfinite = :drop), A_nan, B_nan)
+    @test res_clean_drop.S1 == res_clean.S1
+    @test res_clean_drop.ST == res_clean.ST
+    @test res_clean_drop.n == n_nan
+
+    # :drop filters NaN and warns; batch and non-batch agree
+    res_drop = @test_logs (:warn, r"Dropped") gsa(
+        ishi_nan, Sobol(nonfinite = :drop), A_nan, B_nan
+    )
+    @test !any(isnan, res_drop.S1)
+    @test !any(isnan, res_drop.ST)
+    @test res_drop.n isa Int
+    @test res_drop.n < n_nan
+    @test res_drop.VY > 0
+
+    res_drop_batch = @test_logs (:warn, r"Dropped") gsa(
+        ishi_nan_batch, Sobol(nonfinite = :drop), A_nan, B_nan; batch = true
+    )
+    @test res_drop_batch.n == res_drop.n
+    @test res_drop_batch.S1 ≈ res_drop.S1
+    @test res_drop_batch.ST ≈ res_drop.ST
+
+    # Per-replicate filtering with second order and bootstrap
+    nboot = 4
+    res_s2_boot = @test_logs (:warn, r"Dropped") gsa(
+        ishi_nan, Sobol(order = [0, 1, 2], nboot = nboot, nonfinite = :drop), A_nan, B_nan
+    )
+    @test !any(isnan, res_s2_boot.S1)
+    @test !any(isnan, res_s2_boot.ST)
+    @test !any(isnan, res_s2_boot.S2)
+    @test !any(isnan, res_s2_boot.S1_Conf_Int)
+    @test res_s2_boot.n isa Vector{Int}
+    @test length(res_s2_boot.n) == nboot
+    @test all(res_s2_boot.n .< n_nan ÷ nboot)
+
+    # Multioutput
+    res_multi = @test_logs (:warn, r"Dropped") gsa(
+        ishi_linear_nan, Sobol(nonfinite = :drop), A_nan, B_nan
+    )
+    @test !any(isnan, res_multi.S1)
+    @test !any(isnan, res_multi.ST)
+    @test res_multi.n < n_nan
+
+    @test_throws ArgumentError Sobol(nonfinite = :dorp)
+
+    # All samples non-finite is an error
+    @test_throws ErrorException gsa(
+        X -> NaN, Sobol(nonfinite = :drop), A_nan, B_nan
+    )
+end

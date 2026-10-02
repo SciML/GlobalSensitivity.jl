@@ -1,6 +1,6 @@
 """
 
-    Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95)
+    Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95, nonfinite = :propagate)
 
 # Keywords
 
@@ -8,6 +8,11 @@
   compute total and first-order indices; include `2` for second-order indices.
 - `nboot::Int = 1`: positive number of bootstrap replicates for confidence intervals.
 - `conf_level::Real = 0.95`: confidence level for bootstrap intervals.
+- `nonfinite::Symbol = :propagate`: handling of non-finite (`NaN`/`Inf`) model evaluations.
+  Option `:propagate` leaves non-finite values untouched. Option `:drop` filters non-finite
+  sample evaluations per bootstrap replicate and emits a warning with the dropped count.
+  Note that with `:drop`, the resulting indices estimate the input distribution conditioned
+  on the finite output domain.
 
 ## Method Details
 
@@ -81,10 +86,32 @@ struct Sobol <: GSAMethod
     order::Vector{Int}
     nboot::Int
     conf_level::Float64
+    nonfinite::Symbol
 end
 
-Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95) = Sobol(order, nboot, conf_level)
+function Sobol(; order = [0, 1], nboot = 1, conf_level = 0.95, nonfinite = :propagate)
+    nonfinite in (:propagate, :drop) ||
+        throw(ArgumentError("`nonfinite` must be `:propagate` or `:drop`, got `$(repr(nonfinite))`."))
+    return Sobol(order, nboot, conf_level, nonfinite)
+end
 
+"""
+    SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int, VY, n)
+
+Structure holding the output of a Sobol sensitivity analysis.
+
+# Fields
+- `S1`: First-order sensitivity indices
+- `S1_Conf_Int`: Confidence intervals for `S1` (or `nothing` if `nboot == 1`)
+- `S2`: Second-order interaction sensitivity indices (or `nothing`)
+- `S2_Conf_Int`: Confidence intervals for `S2` (or `nothing` if `nboot == 1`)
+- `ST`: Total-order sensitivity indices
+- `ST_Conf_Int`: Confidence intervals for `ST` (or `nothing` if `nboot == 1`)
+- `VY`: Pooled output variance `Var(Y)` (the Sobol denominator)
+- `n`: Number of valid samples used per replicate (`Int`, or `Vector{Int}` if `nboot > 1`)
+
+`VY` and `n` are `nothing` when constructed with the six-argument form.
+"""
 mutable struct SobolResult{T1, T2, T3, T4}
     S1::T1
     S1_Conf_Int::T2
@@ -92,7 +119,12 @@ mutable struct SobolResult{T1, T2, T3, T4}
     S2_Conf_Int::T4
     ST::T1
     ST_Conf_Int::T2
+    VY
+    n
 end
+
+SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int) =
+    SobolResult(S1, S1_Conf_Int, S2, S2_Conf_Int, ST, ST_Conf_Int, nothing, nothing)
 
 function fuse_designs(A, B; second_order = false)
     d = size(A, 1)
@@ -169,6 +201,7 @@ function gsa(
         end
     end
 end
+
 function gsa_sobol_all_y_analysis(
         method, all_y::AbstractArray{T}, d, n, Ei_estimator,
         y_size, ::Val{multioutput}
@@ -180,24 +213,52 @@ function gsa_sobol_all_y_analysis(
     Vᵢⱼs = multioutput ? Array{T, 3}[] : Matrix{T}[]
     Eᵢs = multioutput ? Matrix{T}[] : Vector{T}[]
     step = 2 in method.order ? 2 * d + 2 : d + 2
+    n_kept = Int[]
+    total_dropped = 0
+
     if !multioutput
         for i in 1:step:(step * nboot)
-            push!(Eys, mean(all_y[((i - 1) * n + 1):((i + 1) * n)]))
-            push!(Varys, var(all_y[((i - 1) * n + 1):((i + 1) * n)]))
+            b_idx = (i - 1) ÷ step + 1
+            fA_raw = all_y[((i - 1) * n + 1):(i * n)]
+            fB_raw = all_y[(i * n + 1):((i + 1) * n)]
+            fAⁱ_raw = [all_y[(j * n + 1):((j + 1) * n)] for j in (i + 1):(i + d)]
+            fBⁱ_raw = 2 in method.order ? [all_y[(j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)] : nothing
 
-            fA = all_y[((i - 1) * n + 1):(i * n)]
-            fB = all_y[(i * n + 1):((i + 1) * n)]
-            fAⁱ = [all_y[(j * n + 1):((j + 1) * n)] for j in (i + 1):(i + d)]
-            if 2 in method.order
-                fBⁱ = [all_y[(j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)]
+            if method.nonfinite === :drop
+                keep = [
+                    isfinite(fA_raw[k]) && isfinite(fB_raw[k]) &&
+                        all(isfinite(fAⁱ_raw[j][k]) for j in 1:d) &&
+                        (!(2 in method.order) || all(isfinite(fBⁱ_raw[j][k]) for j in 1:d)) for k in 1:n
+                ]
+                nk = count(keep)
+                if nk == 0
+                    error("All samples in bootstrap replicate $b_idx were non-finite (NaN/Inf); cannot perform Sobol GSA.")
+                end
+                total_dropped += n - nk
+                push!(n_kept, nk)
+
+                fA = fA_raw[keep]
+                fB = fB_raw[keep]
+                fAⁱ = [fAⁱ_raw[j][keep] for j in 1:d]
+                fBⁱ = 2 in method.order ? [fBⁱ_raw[j][keep] for j in 1:d] : nothing
+            else
+                nk = n
+                push!(n_kept, n)
+                fA = fA_raw
+                fB = fB_raw
+                fAⁱ = fAⁱ_raw
+                fBⁱ = 2 in method.order ? fBⁱ_raw : nothing
             end
 
-            push!(Vᵢs, [sum(fB .* (fAⁱ[k] .- fA)) for k in 1:d] ./ n)
+            push!(Eys, mean(vcat(fA, fB)))
+            push!(Varys, var(vcat(fA, fB)))
+
+            push!(Vᵢs, [sum(fB .* (fAⁱ[k] .- fA)) for k in 1:d] ./ nk)
             if 2 in method.order
                 M = zeros(T, d, d)
                 for k in 1:d
                     for j in (k + 1):d
-                        M[k, j] = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB)) / n
+                        M[k, j] = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB)) / nk
                     end
                 end
                 push!(Vᵢⱼs, M)
@@ -206,33 +267,33 @@ function gsa_sobol_all_y_analysis(
                 push!(
                     Eᵢs,
                     [
-                        sum((fA .- (sum(fA) ./ n)) .^ 2) ./ (n - 1) .-
-                            sum(fA .* fAⁱ[k]) ./ (n) + (sum(fA) ./ n) .^ 2 for k in 1:d
+                        sum((fA .- (sum(fA) ./ nk)) .^ 2) ./ (nk - 1) .-
+                            sum(fA .* fAⁱ[k]) ./ (nk) + (sum(fA) ./ nk) .^ 2 for k in 1:d
                     ]
                 )
             elseif Ei_estimator === :Sobol2007
-                push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (n))
+                push!(Eᵢs, [sum(fA .* (fA .- fAⁱ[k])) for k in 1:d] ./ (nk))
             elseif Ei_estimator === :Jansen1999
-                push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2n))
+                push!(Eᵢs, [sum(abs2, fA - fAⁱ[k]) for k in 1:d] ./ (2nk))
             elseif Ei_estimator === :Janon2014
                 push!(
                     Eᵢs,
                     [
                         (
-                            sum(fA .^ 2 + fAⁱ[k] .^ 2) ./ (2n) .-
-                                (sum(fA + fAⁱ[k]) ./ (2n)) .^ 2
-                        ) * (
-                            1.0 .-
+                                sum(fA .^ 2 + fAⁱ[k] .^ 2) ./ (2nk) .-
+                                (sum(fA + fAⁱ[k]) ./ (2nk)) .^ 2
+                            ) * (
+                                1.0 .-
                                 (
-                                1 / n .* sum(fA .* fAⁱ[k])
+                                    1 / nk .* sum(fA .* fAⁱ[k])
                                     .-
-                                    (1 / n .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
-                            ) ./
+                                    (1 / nk .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
+                                ) ./
                                 (
-                                1 / n .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2) -
-                                    (1 / n .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
+                                    1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2) -
+                                    (1 / nk .* sum((fA .+ fAⁱ[k]) ./ 2)) .^ 2
+                                )
                             )
-                        )
                             for k in 1:d
                     ]
                 )
@@ -240,26 +301,51 @@ function gsa_sobol_all_y_analysis(
         end
     else
         for i in 1:step:(step * nboot)
-            push!(Eys, mean(all_y[:, ((i - 1) * n + 1):((i + 1) * n)], dims = 2))
-            push!(Varys, var(all_y[:, ((i - 1) * n + 1):((i + 1) * n)], dims = 2))
+            b_idx = (i - 1) ÷ step + 1
+            fA_raw = all_y[:, ((i - 1) * n + 1):(i * n)]
+            fB_raw = all_y[:, (i * n + 1):((i + 1) * n)]
+            fAⁱ_raw = [all_y[:, (j * n + 1):((j + 1) * n)] for j in (i + 1):(i + d)]
+            fBⁱ_raw = 2 in method.order ? [all_y[:, (j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)] : nothing
 
-            fA = all_y[:, ((i - 1) * n + 1):(i * n)]
-            fB = all_y[:, (i * n + 1):((i + 1) * n)]
-            fAⁱ = [all_y[:, (j * n + 1):((j + 1) * n)] for j in (i + 1):(i + d)]
-            if 2 in method.order
-                fBⁱ = [all_y[:, (j * n + 1):((j + 1) * n)] for j in (i + d + 1):(i + 2 * d)]
+            if method.nonfinite === :drop
+                keep = [
+                    all(isfinite.(fA_raw[:, k])) && all(isfinite.(fB_raw[:, k])) &&
+                        all(all(isfinite.(fAⁱ_raw[j][:, k])) for j in 1:d) &&
+                        (!(2 in method.order) || all(all(isfinite.(fBⁱ_raw[j][:, k])) for j in 1:d)) for k in 1:n
+                ]
+                nk = count(keep)
+                if nk == 0
+                    error("All samples in bootstrap replicate $b_idx were non-finite (NaN/Inf); cannot perform Sobol GSA.")
+                end
+                total_dropped += n - nk
+                push!(n_kept, nk)
+
+                fA = fA_raw[:, keep]
+                fB = fB_raw[:, keep]
+                fAⁱ = [fAⁱ_raw[j][:, keep] for j in 1:d]
+                fBⁱ = 2 in method.order ? [fBⁱ_raw[j][:, keep] for j in 1:d] : nothing
+            else
+                nk = n
+                push!(n_kept, n)
+                fA = fA_raw
+                fB = fB_raw
+                fAⁱ = fAⁱ_raw
+                fBⁱ = 2 in method.order ? fBⁱ_raw : nothing
             end
+
+            push!(Eys, mean(hcat(fA, fB), dims = 2))
+            push!(Varys, var(hcat(fA, fB), dims = 2))
 
             push!(
                 Vᵢs,
-                reduce(hcat, [sum(fB .* (fAⁱ[k] .- fA), dims = 2) for k in 1:d] ./ n)
+                reduce(hcat, [sum(fB .* (fAⁱ[k] .- fA), dims = 2) for k in 1:d] ./ nk)
             )
 
             if 2 in method.order
                 M = zeros(T, d, d, length(Eys[1]))
                 for k in 1:d
                     for j in (k + 1):d
-                        Vₖⱼ = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB), dims = 2) / n
+                        Vₖⱼ = sum((fBⁱ[k] .* fAⁱ[j]) .- (fA .* fB), dims = 2) / nk
                         for l in 1:length(Eys[1])
                             M[k, j, l] = Vₖⱼ[l]
                         end
@@ -273,8 +359,8 @@ function gsa_sobol_all_y_analysis(
                     reduce(
                         hcat,
                         [
-                            sum((fA .- (sum(fA, dims = 2) ./ n)) .^ 2, dims = 2) ./ (n - 1) .-
-                                sum(fA .* fAⁱ[k], dims = 2) ./ (n) + (sum(fA, dims = 2) ./ n) .^ 2
+                            sum((fA .- (sum(fA, dims = 2) ./ nk)) .^ 2, dims = 2) ./ (nk - 1) .-
+                                sum(fA .* fAⁱ[k], dims = 2) ./ (nk) + (sum(fA, dims = 2) ./ nk) .^ 2
                                 for k in 1:d
                         ]
                     )
@@ -284,13 +370,13 @@ function gsa_sobol_all_y_analysis(
                     Eᵢs,
                     reduce(
                         hcat,
-                        [sum(fA .* (fA .- fAⁱ[k]), dims = 2) for k in 1:d] ./ (n)
+                        [sum(fA .* (fA .- fAⁱ[k]), dims = 2) for k in 1:d] ./ (nk)
                     )
                 )
             elseif Ei_estimator === :Jansen1999
                 push!(
                     Eᵢs,
-                    reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2n))
+                    reduce(hcat, [sum(abs2, fA - fAⁱ[k], dims = 2) for k in 1:d] ./ (2nk))
                 )
             elseif Ei_estimator === :Janon2014
                 push!(
@@ -299,25 +385,30 @@ function gsa_sobol_all_y_analysis(
                         hcat,
                         [
                             (
-                                sum(fA .^ 2 + fAⁱ[k] .^ 2, dims = 2) ./ (2n) .-
-                                    (sum(fA + fAⁱ[k], dims = 2) ./ (2n)) .^ 2
-                            ) .* (
-                                1.0 .-
+                                    sum(fA .^ 2 + fAⁱ[k] .^ 2, dims = 2) ./ (2nk) .-
+                                    (sum(fA + fAⁱ[k], dims = 2) ./ (2nk)) .^ 2
+                                ) .* (
+                                    1.0 .-
                                     (
-                                    1 / n .* sum(fA .* fAⁱ[k], dims = 2) .-
-                                        (1 / n * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
-                                ) ./
+                                        1 / nk .* sum(fA .* fAⁱ[k], dims = 2) .-
+                                        (1 / nk * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
+                                    ) ./
                                     (
-                                    1 / n .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2, dims = 2) .-
-                                        (1 / n * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
-                                )
-                            ) for k in 1:d
+                                        1 / nk .* sum((fA .^ 2 .+ fAⁱ[k] .^ 2) ./ 2, dims = 2) .-
+                                        (1 / nk * sum((fA .+ fAⁱ[k]) ./ 2, dims = 2)) .^ 2
+                                    )
+                                ) for k in 1:d
                         ]
                     )
                 )
             end
         end
     end
+
+    if total_dropped > 0
+        @warn "Dropped $total_dropped non-finite sample evaluation(s) from Sobol GSA (nonfinite = :drop). The resulting sensitivity indices estimate the input distribution conditioned on the finite output domain."
+    end
+
     if 2 in method.order
         Sᵢⱼs = similar(Vᵢⱼs)
         for i in 1:nboot
@@ -397,13 +488,19 @@ function gsa_sobol_all_y_analysis(
         _Sᵢ = f_shape(Sᵢ)
         _Tᵢ = f_shape(Tᵢ)
     end
+
+    VY = nboot > 1 ? mean(Varys) : Varys[1]
+    n_res = method.nonfinite === :drop ? (nboot > 1 ? n_kept : n_kept[1]) : (nboot > 1 ? fill(n, nboot) : n)
+
     return SobolResult(
         _Sᵢ,
         nboot > 1 ? reshape(S1_CI, size_...) : nothing,
         2 in method.order ? Sᵢⱼ : nothing,
         nboot > 1 && 2 in method.order ? S2_CI : nothing,
         _Tᵢ,
-        nboot > 1 ? reshape(ST_CI, size_...) : nothing
+        nboot > 1 ? reshape(ST_CI, size_...) : nothing,
+        VY,
+        n_res
     )
 end
 

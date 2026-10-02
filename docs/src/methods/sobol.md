@@ -2,4 +2,5 @@
 
 ```@docs
 Sobol
+GlobalSensitivity.SobolResult
 ```
