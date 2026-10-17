@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Using the Shapley method in case of correlated inputs · GlobalSensitivity.jl</title><meta name="title" content="Using the Shapley method in case of correlated inputs · GlobalSensitivity.jl"/><meta property="og:title" content="Using the Shapley method in case of correlated inputs · GlobalSensitivity.jl"/><meta property="twitter:title" content="Using the Shapley method in case of correlated inputs · GlobalSensitivity.jl"/><meta name="description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:description" content="Documentation for GlobalSensitivity.jl."/><meta property="twitter:description" content="Documentation for GlobalSensitivity.jl."/><meta property="og:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/shapley/"/><meta property="twitter:url" content="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/shapley/"/><link rel="canonical" href="https://docs.sciml.ai/GlobalSensitivity/stable/tutorials/shapley/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="GlobalSensitivity.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">GlobalSensitivity.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">GlobalSensitivity.jl: Global Sensitivity Analysis (GSA)</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../parallelized_gsa/">Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a></li><li><a class="tocitem" href="../juliacon21/">Global Sensitivity Analysis of the Lotka-Volterra model</a></li><li class="is-active"><a class="tocitem" href>Using the Shapley method in case of correlated inputs</a></li></ul></li><li><span class="tocitem">Methods</span><ul><li><a class="tocitem" href="../../methods/morris/">Morris Method</a></li><li><a class="tocitem" href="../../methods/sobol/">Sobol Method</a></li><li><a class="tocitem" href="../../methods/regression/">Regression Method</a></li><li><a class="tocitem" href="../../methods/efast/">eFAST Method</a></li><li><a class="tocitem" href="../../methods/delta/">Delta Moment-Independent Method</a></li><li><a class="tocitem" href="../../methods/dgsm/">Derivative based Global Sensitivity Measure Method</a></li><li><a class="tocitem" href="../../methods/easi/">EASI Method</a></li><li><a class="tocitem" href="../../methods/fractional/">Fractional Factorial Method</a></li><li><a class="tocitem" href="../../methods/rbdfast/">Random Balance Design FAST Method</a></li><li><a class="tocitem" href="../../methods/rsa/">RSA Method</a></li><li><a class="tocitem" href="../../methods/mutualinformation/">Mutual Information Method</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Using the Shapley method in case of correlated inputs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Using the Shapley method in case of correlated inputs</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/GlobalSensitivity.jl/blob/master/docs/src/tutorials/shapley.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Using-the-Shapley-method-in-case-of-correlated-inputs"><a class="docs-heading-anchor" href="#Using-the-Shapley-method-in-case-of-correlated-inputs">Using the Shapley method in case of correlated inputs</a><a id="Using-the-Shapley-method-in-case-of-correlated-inputs-1"></a><a class="docs-heading-anchor-permalink" href="#Using-the-Shapley-method-in-case-of-correlated-inputs" title="Permalink"></a></h1><p>One of the primary drawbacks of typical global sensitivity analysis methods is their inability to handle correlated inputs. The Shapley method is one of the few methods that can handle correlated inputs. The Shapley method is a game-theoretic approach that is based on the idea of marginal contributions of each input to the output.</p><p>It has gained extensive popularity in the field of machine learning and is used to explain the predictions of black-box models. Here we will use the Shapley method on a Scientific Machine Learning (SciML) model to understand the impact of each parameter on the output.</p><p>We will use a Neural ODE trained on a simulated dataset from the Spiral ODE model. The Neural ODE is trained to predict output at a given time. The Neural ODE is trained using the <a href="https://sciml.ai/">SciML ecosystem</a>.</p><p>As the first step let&#39;s generate the dataset.</p><pre><code class="language-julia hljs">using GlobalSensitivity, OrdinaryDiffEq, Flux, SciMLSensitivity, LinearAlgebra
+using Optimization, OptimizationOptimisers, Distributions, Copulas, CairoMakie
+
+u0 = [2.0f0; 0.0f0]
+datasize = 30
+tspan = (0.0f0, 1.5f0)
+
+function trueODEfunc(du, u, p, t)
+    true_A = [-0.1f0 2.0f0; -2.0f0 -0.1f0]
+    du .= ((u .^ 3)&#39;true_A)&#39;
+end
+t = range(tspan[1], tspan[2], length = datasize)
+prob = ODEProblem(trueODEfunc, u0, tspan)
+ode_data = Array(solve(prob, Tsit5(), saveat = t))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">2×30 Matrix{Float32}:
+ 2.0  1.9465    1.74178  1.23837  0.577126  …  1.40688   1.37023   1.29215
+ 0.0  0.798832  1.46473  1.80877  1.86465      0.451358  0.728681  0.972087</code></pre><p>Now we will define our Neural Network for the dynamics of the system. We will use a 2-layer neural network with 10 hidden units in the first layer and the second layer. We will use the <code>Chain</code> function from <code>Flux</code> to define our NN. A detailed tutorial on is available <a href="https://docs.sciml.ai/SciMLSensitivity/stable/examples/neural_ode/neural_ode_flux/">here</a>.</p><pre><code class="language-julia hljs">dudt2 = Flux.Chain(x -&gt; x .^ 3,
+    Flux.Dense(2, 10, tanh),
+    Flux.Dense(10, 2))
+p, re = Flux.destructure(dudt2) # use this p as the initial condition!
+dudt(u, p, t) = re(p)(u) # need to restrcture for backprop!
+prob = ODEProblem(dudt, u0, tspan)
+
+θ = [u0; p] # the parameter vector to optimize
+
+function predict_n_ode(θ)
+    Array(solve(prob, Tsit5(), u0 = θ[1:2], p = θ[3:end], saveat = t))
+end
+
+function loss_n_ode(θ)
+    pred = predict_n_ode(θ)
+    loss = sum(abs2, ode_data .- pred)
+    loss
+end
+
+loss_n_ode(θ)
+
+callback = function (state, l) #callback function to observe training
+    display(l)
+    return false
+end
+
+# Display the ODE with the initial parameter values.
+callback(θ, loss_n_ode(θ))
+
+# use Optimization.jl to solve the problem
+adtype = Optimization.AutoZygote()
+
+optf = Optimization.OptimizationFunction((p, _) -&gt; loss_n_ode(p), adtype)
+optprob = Optimization.OptimizationProblem(optf, θ)
+
+result_neuralode = Optimization.solve(optprob,
+    OptimizationOptimisers.Adam(0.05),
+    callback = callback,
+    maxiters = 300)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">retcode: Default
+u: 54-element Vector{Float32}:
+  1.9563191
+  0.6879913
+ -0.7868397
+  0.6055442
+ -2.0673196
+  0.27675635
+ -0.11064914
+  1.6143941
+  1.9119775
+  0.4264099
+  ⋮
+  1.1178697
+ -1.6980947
+  0.03595625
+  1.4318782
+ -1.58003
+  0.60760367
+ -0.9089012
+ -0.8256947
+ -0.02649645</code></pre><p>Now we will use the Shapley method to understand the impact of each parameter on the resultant of the cost function. We will use the <code>Shapley</code> function from <code>GlobalSensitivity</code> to compute the so called Shapley Effects. We will first have to define some distributions for the parameters. We will use the standard <code>Normal</code> distribution for all the parameters.</p><p>First let&#39;s assume no correlation between the parameters. Hence the covariance matrix is passed as the identity matrix.</p><pre><code class="language-julia hljs">d = length(θ)
+mu = zeros(Float32, d)
+#covariance matrix for the copula
+Covmat = Matrix(1.0f0 * I, d, d)
+#the marginal distributions for each parameter
+marginals = [Normal(mu[i]) for i in 1:d]
+
+copula = GaussianCopula(Covmat)
+input_distribution = SklarDist(copula, marginals)
+
+function batched_loss_n_ode(θ)
+    # The copula returns samples of `Float64`s
+    θ = convert(AbstractArray{Float32}, θ)
+    prob_func(prob, i, repeat) = remake(prob; u0 = θ[1:2, i], p = θ[3:end, i])
+    ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
+    sol = solve(
+        ensemble_prob, Tsit5(), EnsembleThreads(); saveat = t, trajectories = size(θ, 2))
+    out = zeros(size(θ, 2))
+    for i in 1:size(θ, 2)
+        out[i] = sum(abs2, ode_data .- sol[i])
+    end
+    return out
+end
+
+shapley_effects = gsa(
+    batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 10),
+    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.34023606838045645, -0.15111124644077142, -0.07670996823874338, 0.12840723654866168, -0.18340297034951067, 0.09419461619346074, -0.01078291633530387, 0.01038769107766875, -0.07379561241389798, -0.03770810376858098  …  -0.37088654405940596, 0.03269589215786964, -0.04322513553918613, 0.06675922950845253, -0.022889994142866122, 0.11689071780436605, -0.1095369498369247, -0.06169063504491039, -0.02205790872792525, 0.23303175996940384], [0.9903846621956416, 0.7947811676494898, 0.9057181330716145, 1.2537238286053594, 0.9624815189916344, 1.0359605237067038, 0.867796224866059, 0.8497184630801761, 0.8791977589039187, 1.089338087736131  …  0.8133479680184921, 0.8923130191439521, 0.9116683295883677, 1.0429462815316601, 0.9159628066095802, 0.9924248822089254, 0.8428982357167725, 0.9478311592792351, 1.470557917647716, 0.9775377205244083], [-1.600917869523001, -1.7088823350337714, -1.8519175090591078, -2.3288914675178427, -2.069866747573114, -1.9362880102716786, -1.7116635170727796, -1.6550604965594762, -1.7970232198655784, -2.1728107557313976  …  -1.9650485613756505, -1.7162376253642764, -1.830095061532387, -1.9774154822936012, -1.8181770950976432, -1.8282620513251278, -1.7616174918417988, -1.9194397072322114, -2.904351427317448, -1.6829421722584366], [2.281390006283914, 1.4066598421522287, 1.6984975725816212, 2.585705940615166, 1.7030608068740927, 2.1246772426586, 1.6900976844021718, 1.6758358787148138, 1.6494319950377827, 2.0973945481942353  …  1.2232754732568385, 1.7816294096800158, 1.7436447904540147, 2.110933941310506, 1.7723971068119109, 2.06204348693386, 1.5425435921679493, 1.7960584371423904, 2.860235609861598, 2.1490056921972442])</code></pre><pre><code class="language-julia hljs">barplot(
+    1:54, shapley_effects.shapley_effects;
+    color = :green,
+    figure = (; size = (600, 400)),
+    axis = (;
+        xlabel = &quot;parameters&quot;,
+        xticklabelrotation = 1,
+        xticks = (1:54, [&quot;θ$i&quot; for i in 1:54]),
+        ylabel = &quot;Shapley Indices&quot;,
+        limits = (nothing, (0.0, 0.2))
+    )
+)</code></pre><img src="0aa40c78.png" alt="Example block output"/><p>Now let&#39;s assume some correlation between the parameters. We will use a correlation of 0.09 between all the parameters.</p><pre><code class="language-julia hljs">Corrmat = fill(0.09f0, d, d)
+for i in 1:d
+    Corrmat[i, i] = 1.0f0
+end
+
+#since the marginals are standard normal the covariance matrix and correlation matrix are the same
+copula = GaussianCopula(Corrmat)
+input_distribution = SklarDist(copula, marginals)
+shapley_effects = gsa(
+    batched_loss_n_ode, Shapley(; n_perms = 100, n_var = 100, n_outer = 100),
+    input_distribution, batch = true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.ShapleyResult{Vector{Float64}, Vector{Float64}}([0.09247022433178448, 0.08466208213179342, 0.008227049927037253, 0.06093861479628826, 0.00912178468227005, 0.02147286774717035, 0.06245239943453558, 0.06792751417813675, 0.011600566792726188, 0.03682149519317979  …  0.07712353917754342, 0.012174235713950661, 0.09846940712296358, 0.07024460060977925, -0.003961467252387379, 0.025144060879944787, 0.031126283319464383, -0.029732154576105445, 0.008463694355572503, 0.0523801781297555], [0.2477537699833651, 0.24920853392117417, 0.251464440836813, 0.35572198419964757, 0.2500791798029814, 0.26119184901025794, 0.23798199156959746, 0.2677795839064513, 0.23802905768154467, 0.28057876571781115  …  0.23714725620589766, 0.2465811605155695, 0.270817928346152, 0.23469875977748003, 0.27265532728525965, 0.301213525968823, 0.2674221935490386, 0.22155548927967925, 0.2741267245430847, 0.2564305669936843], [-0.3931271648356111, -0.4037866443537079, -0.48464325411311626, -0.636276474235021, -0.4810334077315735, -0.4904631563129352, -0.4039923040418754, -0.45692047027850774, -0.45493638626310134, -0.51311288561373  …  -0.387685082986016, -0.47112483889656553, -0.43233373243549433, -0.3897649685540816, -0.5383659087314963, -0.5652344500189482, -0.49302121603665133, -0.4639809135642768, -0.5288246857488734, -0.4502237331778657], [0.57806761349918, 0.5731108086172948, 0.5010973539671908, 0.7581537038275975, 0.49927697709611357, 0.5334088918072759, 0.5288971029109466, 0.5927754986347813, 0.47813751984855374, 0.5867558760000896  …  0.5419321613411028, 0.49547331032446684, 0.6292725466814215, 0.5302541697736401, 0.5304429742267216, 0.6155225717788378, 0.5552737826755801, 0.4045166044120659, 0.5457520744600184, 0.5549840894373766])</code></pre><pre><code class="language-julia hljs">barplot(
+    1:54, shapley_effects.shapley_effects;
+    color = :green,
+    figure = (; size = (600, 400)),
+    axis = (;
+        xlabel = &quot;parameters&quot;,
+        xticklabelrotation = 1,
+        xticks = (1:54, [&quot;θ$i&quot; for i in 1:54]),
+        ylabel = &quot;Shapley Indices&quot;,
+        limits = (nothing, (0.0, 0.2))
+    )
+)</code></pre><img src="30af4882.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../juliacon21/">« Global Sensitivity Analysis of the Lotka-Volterra model</a><a class="docs-footer-nextpage" href="../../methods/morris/">Morris Method »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Thursday 28 November 2024 11:43">Thursday 28 November 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
