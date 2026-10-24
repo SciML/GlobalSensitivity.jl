@@ -44,7 +44,7 @@ CairoMakie.scatter(fig[1, 1], [1, 2, 3, 4], morris_sens.means_star[1, :], color 
 CairoMakie.scatter(fig[1, 2], [1, 2, 3, 4], morris_sens.means_star[2, :], color = :red,
     axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Predator&quot;))
 fig</code></pre><img src="6a300732.png" alt="Example block output"/><pre><code class="language-julia hljs">sobol_sens = gsa(f1, Sobol(), bounds, samples = 500)
-efast_sens = gsa(f1, eFAST(), bounds, samples = 500)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.eFASTResult{Matrix{Float64}}([0.000795205983899798 0.00047672238092444884 0.35512689599719605 0.5460083929075141; 0.17605606710642066 0.5501230092572708 0.005523913242849568 0.011166769096150274], [0.015340719791078539 0.018338811139348654 0.4487555698061403 0.6408343614994173; 0.35716985557095415 0.7655689284893048 0.05295951551216416 0.06860289534924213])</code></pre><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
+efast_sens = gsa(f1, eFAST(), bounds, samples = 500)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">GlobalSensitivity.eFASTResult{Matrix{Float64}}([0.0009117669868409781 0.0006638971681230942 0.35938422805505266 0.5487638842561401; 0.16052189759469995 0.5439146000181483 0.007058547599583114 0.010145748943132474], [0.020561560564533732 0.016502117308410003 0.45031537507110586 0.6372817136069766; 0.33070892893794834 0.7616790560729698 0.0633997195866004 0.0652981722821101])</code></pre><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
 barplot(fig[1, 1],
     [1, 2, 3, 4],
     sobol_sens.S1[1, :],
@@ -57,7 +57,7 @@ barplot(fig[1, 2], [1, 2, 3, 4], efast_sens.S1[1, :], color = :red,
     axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Prey (eFAST)&quot;))
 barplot(fig[2, 2], [1, 2, 3, 4], efast_sens.ST[1, :], color = :red,
     axis = (xticksvisible = false, xticklabelsvisible = false))
-fig</code></pre><img src="b5705e8f.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
+fig</code></pre><img src="0e2d951c.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = Figure(resolution = (600, 400))
 barplot(fig[1, 1],
     [1, 2, 3, 4],
     sobol_sens.S1[2, :],
@@ -70,7 +70,7 @@ barplot(fig[1, 2], [1, 2, 3, 4], efast_sens.S1[2, :], color = :red,
     axis = (xticksvisible = false, xticklabelsvisible = false, title = &quot;Predator (eFAST)&quot;))
 barplot(fig[2, 2], [1, 2, 3, 4], efast_sens.ST[2, :], color = :red,
     axis = (xticksvisible = false, xticklabelsvisible = false))
-fig</code></pre><img src="51b4991e.png" alt="Example block output"/><pre><code class="language-julia hljs">using QuasiMonteCarlo
+fig</code></pre><img src="d94cf836.png" alt="Example block output"/><pre><code class="language-julia hljs">using QuasiMonteCarlo
 samples = 500
 lb = [1.0, 1.0, 1.0, 1.0]
 ub = [5.0, 5.0, 5.0, 5.0]
@@ -128,4 +128,4 @@ CairoMakie.scatter!(
 
 title = Label(fig[0, :], &quot;First order Sobol indices&quot;)
 legend = Legend(fig[2, 3], ax)
-fig</code></pre><img src="b436f72b.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../parallelized_gsa/">« Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a><a class="docs-footer-nextpage" href="../shapley/">Using the Shapley method in case of correlated inputs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 17 October 2026 18:02">Saturday 17 October 2026</span>. Using Julia version 1.13.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig</code></pre><img src="b436f72b.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../parallelized_gsa/">« Parallelized Morris and Sobol Sensitivity Analysis of an ODE</a><a class="docs-footer-nextpage" href="../shapley/">Using the Shapley method in case of correlated inputs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 24 October 2026 08:42">Saturday 24 October 2026</span>. Using Julia version 1.13.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
